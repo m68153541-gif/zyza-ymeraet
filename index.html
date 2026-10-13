@@ -17,22 +17,20 @@
   }
   body::before {
     content: ""; position: fixed; inset: 0; z-index: -1;
-    background:
-      radial-gradient(circle at 15% 20%, rgba(120,90,200,.12), transparent 45%),
-      radial-gradient(circle at 85% 75%, rgba(200,150,80,.12), transparent 45%);
+    background: radial-gradient(circle at 15% 20%, rgba(120,90,200,.12), transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(200,150,80,.12), transparent 45%);
     animation: bgShift 20s ease-in-out infinite alternate;
   }
   @keyframes bgShift {
     0% { transform: translate(0,0) scale(1); }
     100% { transform: translate(-25px,-25px) scale(1.08); }
   }
-  .game { max-width: 560px; margin: 0 auto; padding: 16px 14px 40px; display: flex; flex-direction: column; align-items: center; perspective: 1600px; }
+  .game { max-width: 560px; margin: 0 auto; padding: 16px 14px 40px; display: flex; flex-direction: column; align-items: center; }
   .top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
   .logo {
     font-size: 17px; font-weight: 800; letter-spacing: .5px;
     background: linear-gradient(90deg, #e8c877, #f5e5b8, #e8c877);
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   }
   .balance-pill {
     display: flex; align-items: center; gap: 6px;
@@ -56,8 +54,7 @@
   }
   .tab.active {
     background: linear-gradient(140deg, #3a4258, #20242c);
-    color: var(--text);
-    box-shadow: 0 2px 12px rgba(0,0,0,.4);
+    color: var(--text); box-shadow: 0 2px 12px rgba(0,0,0,.4);
   }
   .tab .badge {
     display: inline-flex; align-items: center; justify-content: center;
@@ -65,6 +62,7 @@
     background: var(--gold); color: #1a1e26;
     font-size: 10px; font-weight: 800; border-radius: 9px;
   }
+  /* ===== SIM ===== */
   .sim-stage { width: 100%; max-width: 360px; perspective: 1400px; margin-bottom: 24px; display: flex; justify-content: center; }
   .sim-3d {
     position: relative; width: 100%; aspect-ratio: 1.586 / 1;
@@ -90,19 +88,22 @@
     background: radial-gradient(ellipse at center, rgba(0,0,0,.85), transparent 75%);
     filter: blur(10px); border-radius: 50%; z-index: -1;
   }
-  .sim-body, .sim-face, .sim-edge-bottom {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 100%, 0 75%);
+  /* ЕДИНЫЙ срез для всех слоёв — теперь углы совпадают */
+  .sim-body, .sim-face, .sim-edge-bottom, .sim-edge-right {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 14% 100%, 0 72%);
   }
   .sim-body {
-    position: absolute; inset: 0; border-radius: 0;
+    position: absolute; inset: 0;
     transform-style: preserve-3d;
     box-shadow: 0 30px 60px rgba(0,0,0,.75), 0 12px 24px rgba(0,0,0,.5), 0 4px 8px rgba(0,0,0,.4);
+    background: linear-gradient(140deg, #1e2228 0%, #12161a 100%);
   }
   .sim-face {
     position: absolute; inset: 0; overflow: hidden;
     background: linear-gradient(140deg, #4a5058 0%, #2a3038 55%, #1a1e24 100%);
     transition: background 1s ease, filter 1s ease;
-    box-shadow: inset 0 2px 4px rgba(255,255,255,.15), inset 0 -3px 6px rgba(0,0,0,.5), inset 4px 0 6px rgba(255,255,255,.06), inset -4px 0 6px rgba(0,0,0,.35);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,.15), inset 0 -3px 6px rgba(0,0,0,.5),
+                inset 4px 0 6px rgba(255,255,255,.06), inset -4px 0 6px rgba(0,0,0,.35);
   }
   .sim-edge-bottom {
     position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
@@ -134,7 +135,9 @@
     transform: translateY(-50%) translateZ(2px);
     width: 52px; height: 40px; border-radius: 8px;
     background: linear-gradient(135deg, #e8cf88 0%, #c9a95a 25%, #f0d98a 50%, #b8923f 75%, #e8cf88 100%);
-    box-shadow: 0 4px 10px rgba(0,0,0,.65), inset 0 1px 2px rgba(255,255,255,.7), inset 0 -2px 4px rgba(0,0,0,.5), inset 2px 0 3px rgba(255,255,255,.3), inset -2px 0 3px rgba(0,0,0,.3);
+    box-shadow: 0 4px 10px rgba(0,0,0,.65), inset 0 1px 2px rgba(255,255,255,.7),
+                inset 0 -2px 4px rgba(0,0,0,.5), inset 2px 0 3px rgba(255,255,255,.3),
+                inset -2px 0 3px rgba(0,0,0,.3);
     z-index: 5; overflow: hidden;
   }
   .sim-chip::before {
@@ -154,63 +157,30 @@
     animation: chipShine 3s ease-in-out infinite;
   }
   @keyframes chipShine { 0%, 100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
+
   .sim-3d.rar-trash .sim-face { background: linear-gradient(140deg, #4a5058 0%, #2a3038 55%, #1a1e24 100%); }
   .sim-3d.rar-common .sim-face { background: linear-gradient(140deg, #5a6068 0%, #343a42 55%, #1e2228 100%); }
-  .sim-3d.rar-uncommon .sim-face {
-    background: linear-gradient(140deg, #2a5578 0%, #1e3a55 55%, #0f1e2e 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,.2), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 60px rgba(120,180,220,.25), 0 0 40px rgba(120,180,220,.4);
-  }
-  .sim-3d.rar-rare .sim-face {
-    background: linear-gradient(140deg, #1e3a78 0%, #1a2848 55%, #0a1424 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,.2), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 70px rgba(100,150,230,.3), 0 0 55px rgba(100,150,230,.55);
-  }
-  .sim-3d.rar-epic .sim-face {
-    background: linear-gradient(140deg, #5a2a8a 0%, #3a1a5a 55%, #1a0e2e 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,.25), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 80px rgba(180,120,240,.35), 0 0 70px rgba(180,120,240,.7);
-    animation: epicGlow 2.5s ease-in-out infinite;
-  }
+  .sim-3d.rar-uncommon .sim-face { background: linear-gradient(140deg, #2a5578 0%, #1e3a55 55%, #0f1e2e 100%); box-shadow: inset 0 2px 4px rgba(255,255,255,.2), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 60px rgba(120,180,220,.25), 0 0 40px rgba(120,180,220,.4); }
+  .sim-3d.rar-rare .sim-face { background: linear-gradient(140deg, #1e3a78 0%, #1a2848 55%, #0a1424 100%); box-shadow: inset 0 2px 4px rgba(255,255,255,.2), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 70px rgba(100,150,230,.3), 0 0 55px rgba(100,150,230,.55); }
+  .sim-3d.rar-epic .sim-face { background: linear-gradient(140deg, #5a2a8a 0%, #3a1a5a 55%, #1a0e2e 100%); box-shadow: inset 0 2px 4px rgba(255,255,255,.25), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 80px rgba(180,120,240,.35), 0 0 70px rgba(180,120,240,.7); animation: epicGlow 2.5s ease-in-out infinite; }
   @keyframes epicGlow { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.15); } }
-  .sim-3d.rar-legend .sim-face {
-    background: linear-gradient(140deg, #8a6a1a 0%, #5a4418 55%, #2e2208 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,.3), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 90px rgba(255,220,130,.4), 0 0 90px rgba(255,220,130,.8);
-    animation: legendGlow 2s ease-in-out infinite;
-  }
+  .sim-3d.rar-legend .sim-face { background: linear-gradient(140deg, #8a6a1a 0%, #5a4418 55%, #2e2208 100%); box-shadow: inset 0 2px 4px rgba(255,255,255,.3), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 90px rgba(255,220,130,.4), 0 0 90px rgba(255,220,130,.8); animation: legendGlow 2s ease-in-out infinite; }
   @keyframes legendGlow { 0%,100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.25) saturate(1.2); } }
-  .sim-3d.rar-myth .sim-face {
-    background: linear-gradient(140deg, #a02a2a 0%, #6a1a3a 40%, #2a0e20 100%);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,.3), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 100px rgba(255,140,80,.45), 0 0 110px rgba(255,140,80,1);
-    animation: mythGlow 1.6s ease-in-out infinite;
-  }
+  .sim-3d.rar-myth .sim-face { background: linear-gradient(140deg, #a02a2a 0%, #6a1a3a 40%, #2a0e20 100%); box-shadow: inset 0 2px 4px rgba(255,255,255,.3), inset 0 -3px 6px rgba(0,0,0,.5), inset 0 0 100px rgba(255,140,80,.45), 0 0 110px rgba(255,140,80,1); animation: mythGlow 1.6s ease-in-out infinite; }
   @keyframes mythGlow { 0%,100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.3) saturate(1.3); } }
+
   .sim-content { position: absolute; inset: 0; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; z-index: 6; }
   .sim-top { display: flex; justify-content: space-between; align-items: flex-start; }
   .sim-top .left, .sim-top .right { display: flex; align-items: center; gap: 6px; }
   .big-flag { font-size: 22px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,.8)); }
   .country-name, .op-name { font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.9); letter-spacing: .3px; }
-  .op-logo {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-width: 30px; height: 26px; padding: 0 6px; border-radius: 6px;
-    background: rgba(0,0,0,.65); border: 1px solid rgba(255,255,255,.2);
-    font-size: 11px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.9);
-  }
+  .op-logo { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 26px; padding: 0 6px; border-radius: 6px; background: rgba(0,0,0,.65); border: 1px solid rgba(255,255,255,.2); font-size: 11px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.9); }
   .number-block { display: flex; flex-direction: column; align-items: flex-end; padding-right: 4px; margin-top: 4px; margin-left: 65px; }
   .number-label { font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,.55); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
   .number-row { display: flex; align-items: center; gap: 4px; }
-  .prefix-box {
-    padding: 0 7px; height: 30px; display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 900; color: var(--gold);
-    background: rgba(0,0,0,.7); border: 1px solid rgba(255,255,255,.15);
-    border-radius: 6px; font-variant-numeric: tabular-nums;
-  }
+  .prefix-box { padding: 0 7px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; color: var(--gold); background: rgba(0,0,0,.7); border: 1px solid rgba(255,255,255,.15); border-radius: 6px; font-variant-numeric: tabular-nums; }
   .digits-row { display: flex; gap: 2px; }
-  .digit-box {
-    width: 20px; height: 30px; border-radius: 5px;
-    background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.15);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; font-weight: 900; color: #fff;
-    overflow: hidden; position: relative;
-    box-shadow: inset 0 -2px 4px rgba(0,0,0,.7);
-  }
+  .digit-box { width: 20px; height: 30px; border-radius: 5px; background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: #fff; overflow: hidden; position: relative; box-shadow: inset 0 -2px 4px rgba(0,0,0,.7); }
   .digit-box .reel { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
   .digit-box .reel span { height: 30px; line-height: 30px; }
   .digit-box.locked { border-color: var(--gold); box-shadow: 0 0 8px rgba(232,200,119,.5); }
@@ -222,13 +192,10 @@
   .sim-info { font-size: 9px; color: rgba(255,255,255,.65); text-shadow: 0 1px 2px rgba(0,0,0,.9); }
   .sim-info b { color: #fff; font-weight: 800; }
   .sim-price { font-size: 13px; font-weight: 900; color: var(--gold); text-shadow: 0 0 10px rgba(232,200,119,.8); }
-  .sim-rarity {
-    font-size: 9px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;
-    padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,.6);
-    border: 1px solid currentColor; text-shadow: 0 0 6px currentColor;
-  }
+  .sim-rarity { font-size: 9px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,.6); border: 1px solid currentColor; text-shadow: 0 0 6px currentColor; }
   .r-trash { color: #8b9199; } .r-common { color: #b8bcc2; } .r-uncommon { color: #7ac0e8; }
   .r-rare { color: #6a9aff; } .r-epic { color: #b88aff; } .r-legend { color: #ffd966; } .r-myth { color: #ff9a5a; }
+
   .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%; max-width: 460px; }
   button {
     flex: 1 1 auto; min-width: 130px;
@@ -244,15 +211,14 @@
   #spinNormal { border-color: rgba(150,170,200,.35); }
   #spinLucky { background: linear-gradient(140deg, #4a2e7a, #1e1230); border-color: rgba(180,120,240,.5); color: #e8d4ff; }
   #spinSuper { background: linear-gradient(140deg, #8a6a1a, #3a2810); border-color: rgba(255,220,130,.6); color: #ffe9a8; }
+
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 22px; width: 100%; max-width: 460px; }
   @media (max-width: 500px) { .stats { grid-template-columns: repeat(2, 1fr); } }
-  .stat {
-    background: linear-gradient(140deg, rgba(42,48,64,.7), rgba(20,24,31,.9));
-    border: 1px solid rgba(255,255,255,.06); border-radius: 12px;
-    padding: 10px 8px; text-align: center;
-  }
+  .stat { background: linear-gradient(140deg, rgba(42,48,64,.7), rgba(20,24,31,.9)); border: 1px solid rgba(255,255,255,.06); border-radius: 12px; padding: 10px 8px; text-align: center; }
   .stat .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; font-weight: 600; }
   .stat .value { font-size: 15px; color: var(--text); font-weight: 800; }
+
+  /* ===== МОИ НОМЕРА ===== */
   .my-list { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 10px; }
   .my-card {
     display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center;
@@ -271,74 +237,153 @@
   .my-card .price-col .price { font-size: 16px; font-weight: 800; color: var(--gold); }
   .my-card .price-col .rar { font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; margin-top: 2px; }
   .my-card button { margin-top: 6px; padding: 6px 12px; font-size: 11.5px; min-width: auto; border-color: rgba(255,220,130,.5); color: #ffe9a8; }
+
+  .sell-all {
+    margin-top: 14px; width: 100%; max-width: 460px;
+    padding: 16px;
+    background: linear-gradient(140deg, #4a6b4a, #1e2e1e);
+    border: 1px solid rgba(140,220,140,.5); color: #d8ffd8;
+    border-radius: 12px;
+  }
+  .sell-all .sum { font-size: 13px; color: #b8e0b8; margin-bottom: 6px; text-align: center; }
+  .sell-all .total { font-size: 20px; font-weight: 800; color: #fff; text-align: center; margin-bottom: 12px; }
+  .sell-all button { width: 100%; background: linear-gradient(140deg, #2e7a2e, #1a4a1a); border-color: rgba(180,255,180,.6); color: #fff; padding: 12px; font-size: 14px; }
+
   .empty { text-align: center; color: var(--muted); padding: 60px 20px; font-size: 14px;
     background: linear-gradient(140deg, rgba(42,48,64,.4), rgba(20,24,31,.7));
     border: 1px dashed rgba(255,255,255,.08); border-radius: 14px; }
-  .profile {
-    width: 100%; max-width: 460px;
-    background: linear-gradient(140deg, #222836, #14181f);
-    border: 1px solid #333a44; border-radius: 16px;
-    padding: 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px;
-  }
-  .profile .avatar {
-    width: 84px; height: 84px; border-radius: 50%;
-    background: linear-gradient(140deg, #4a5a7a, #2a3040);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 36px; font-weight: 800; color: #fff;
-    box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 30px rgba(120,150,220,.3);
-    overflow: hidden;
-  }
+
+  /* ===== ПРОФИЛЬ ===== */
+  .profile { width: 100%; max-width: 460px; background: linear-gradient(140deg, #222836, #14181f); border: 1px solid #333a44; border-radius: 16px; padding: 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .profile .avatar { width: 84px; height: 84px; border-radius: 50%; background: linear-gradient(140deg, #4a5a7a, #2a3040); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 30px rgba(120,150,220,.3); overflow: hidden; }
   .profile .avatar img { width: 100%; height: 100%; object-fit: cover; }
   .profile .name { font-size: 20px; font-weight: 800; color: #fff; text-align: center; }
   .profile .username { font-size: 14px; color: var(--gold); font-weight: 600; }
   .profile .userid { font-size: 11px; color: var(--muted); }
-  .profile .p-balance {
-    margin-top: 8px; padding: 10px 18px; border-radius: 12px;
-    background: rgba(0,0,0,.4); border: 1px solid rgba(232,200,119,.3);
-    font-size: 18px; font-weight: 800; color: var(--gold);
-  }
-  /* ===== ПЕРЕВОД ===== */
-  .transfer {
-    width: 100%; max-width: 460px;
+  .profile .p-balance { margin-top: 8px; padding: 10px 18px; border-radius: 12px; background: rgba(0,0,0,.4); border: 1px solid rgba(232,200,119,.3); font-size: 18px; font-weight: 800; color: var(--gold); }
+
+  /* ===== МЕНЮ (Мои функции) ===== */
+  .menu { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 12px; }
+  .menu-btn {
+    display: flex; align-items: center; gap: 14px;
     background: linear-gradient(140deg, #222836, #14181f);
-    border: 1px solid #333a44; border-radius: 16px;
-    padding: 22px 20px;
+    border: 1px solid #333a44; border-radius: 14px;
+    padding: 18px 20px; cursor: pointer;
+    transition: all .2s; text-align: left;
+    color: var(--text); font-family: inherit; font-size: 15px; font-weight: 700;
+    width: 100%;
   }
-  .transfer h2 {
-    margin: 0 0 6px; font-size: 17px; color: var(--gold);
-    text-align: center; font-weight: 800;
+  .menu-btn:hover { transform: translateY(-2px); border-color: rgba(232,200,119,.5); }
+  .menu-btn .ico { font-size: 26px; width: 40px; text-align: center; }
+
+  /* ===== ТОП-3 ===== */
+  .top3 { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 10px; }
+  .top3-card {
+    display: grid; grid-template-columns: 60px 1fr auto; gap: 14px; align-items: center;
+    background: linear-gradient(140deg, #222836, #14181f);
+    border: 1px solid #333a44; border-radius: 14px; padding: 14px 16px;
   }
-  .transfer p.sub {
-    margin: 0 0 18px; font-size: 12px; color: var(--muted);
-    text-align: center; line-height: 1.4;
+  .top3-card.rank-1 { border-color: rgba(255,215,0,.7); box-shadow: 0 4px 24px rgba(255,215,0,.35); }
+  .top3-card.rank-2 { border-color: rgba(192,192,192,.6); box-shadow: 0 4px 20px rgba(192,192,192,.25); }
+  .top3-card.rank-3 { border-color: rgba(205,127,50,.6); box-shadow: 0 4px 20px rgba(205,127,50,.25); }
+  .top3-card .avatar { width: 50px; height: 50px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(140deg, #4a5a7a, #2a3040); font-size: 20px; font-weight: 800; color: #fff; }
+  .top3-card .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .top3-card .info .name { font-size: 16px; font-weight: 800; color: #fff; }
+  .top3-card .info .uname { font-size: 12px; color: var(--gold); margin-top: 2px; }
+  .top3-card .info .rank { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .top3-card .bal { font-size: 18px; font-weight: 800; color: var(--gold); text-align: right; }
+
+  /* ===== УЛУЧШЕНИЕ (колесо) ===== */
+  .upgrade { width: 100%; max-width: 460px; background: linear-gradient(140deg, #222836, #14181f); border: 1px solid #333a44; border-radius: 16px; padding: 22px 20px; }
+  .upgrade h2 { margin: 0 0 6px; font-size: 17px; color: var(--gold); text-align: center; font-weight: 800; }
+  .upgrade p.sub { margin: 0 0 18px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.4; }
+  .wheel-wrap { position: relative; width: 260px; height: 260px; margin: 0 auto; }
+  .wheel {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #2e7a2e 0deg 180deg, #7a2e2e 180deg 360deg);
+    border: 4px solid #333a44;
+    box-shadow: 0 0 30px rgba(0,0,0,.6), inset 0 0 40px rgba(0,0,0,.5);
   }
-  .transfer label {
-    display: block; font-size: 11px; color: var(--muted);
-    margin-bottom: 6px; margin-top: 14px;
-    text-transform: uppercase; letter-spacing: .5px; font-weight: 700;
+  .wheel-pointer {
+    position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 22px solid var(--gold);
+    filter: drop-shadow(0 0 8px rgba(232,200,119,.7));
+    z-index: 5;
   }
-  .transfer input {
-    width: 100%; padding: 13px 16px; border-radius: 10px;
+  .wheel-ball {
+    position: absolute; top: 50%; left: 50%;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff, #c9c9c9 60%, #888);
+    box-shadow: 0 0 12px rgba(255,255,255,.9), 0 0 24px rgba(255,255,255,.5);
+    transform: translate(-50%, -50%) translateY(-110px);
+    transition: transform 3.6s cubic-bezier(.15,.85,.3,1);
+    z-index: 4;
+  }
+  .wheel-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 70px; height: 70px; border-radius: 50%;
+    background: linear-gradient(140deg, #2a3040, #14181f);
+    border: 2px solid #333a44;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: var(--gold);
+    z-index: 6; text-align: center; line-height: 1.1;
+    padding: 6px;
+  }
+  .upgrade-pick {
+    margin-top: 18px;
+  }
+  .upgrade-pick label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; font-weight: 700; }
+  .upgrade-pick select {
+    width: 100%; padding: 12px 14px; border-radius: 10px;
     background: rgba(0,0,0,.4); border: 1px solid #333a44;
-    color: var(--text); font-size: 15px; font-family: inherit;
-    outline: none; transition: border-color .2s;
+    color: var(--text); font-size: 14px; font-family: inherit; outline: none;
   }
-  .transfer input:focus { border-color: var(--gold); }
-  .transfer button.submit {
-    margin-top: 18px; width: 100%;
-    padding: 14px 16px;
-    background: linear-gradient(140deg, #4a6b4a, #1e2e1e);
-    border: 1px solid rgba(140,220,140,.5); color: #d8ffd8;
-    font-size: 14px; font-weight: 800;
+  .upgrade-pick select:focus { border-color: var(--gold); }
+  .upgrade button.spin-wheel {
+    margin-top: 16px; width: 100%; padding: 14px;
+    background: linear-gradient(140deg, #4a3a1a, #2e2410);
+    border: 1px solid rgba(255,220,130,.5); color: #ffe9a8;
+    font-size: 15px; font-weight: 800;
   }
-  .transfer button.submit:hover:not(:disabled) {
-    box-shadow: 0 8px 24px rgba(140,220,140,.4);
+  .upgrade button.spin-wheel:disabled { opacity: .4; }
+  .upgrade-result { margin-top: 14px; text-align: center; font-size: 14px; font-weight: 700; padding: 12px; border-radius: 10px; display: none; }
+  .upgrade-result.win { background: rgba(46,122,46,.25); border: 1px solid #2e7a2e; color: #b8ffb8; display: block; }
+  .upgrade-result.lose { background: rgba(122,46,46,.25); border: 1px solid #7a2e2e; color: #ffb8b8; display: block; }
+
+  /* ===== ЕЖЕДНЕВНЫЙ БОНУС ===== */
+  .daily-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.85);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: fadeIn .3s ease;
   }
-  .transfer .hint {
-    margin-top: 14px; font-size: 11px; color: var(--muted);
-    text-align: center; line-height: 1.5;
+  .daily-overlay.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .daily-card {
+    width: 100%; max-width: 340px;
+    background: linear-gradient(140deg, #2a3040, #14181f);
+    border: 2px solid rgba(232,200,119,.5);
+    border-radius: 18px; padding: 28px 22px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.9), 0 0 60px rgba(232,200,119,.3);
   }
-  .transfer .hint b { color: var(--gold); }
+  .daily-card .emoji { font-size: 56px; margin-bottom: 8px; }
+  .daily-card h2 { margin: 0 0 8px; font-size: 20px; color: var(--gold); }
+  .daily-card p { margin: 0 0 16px; font-size: 13px; color: var(--muted); line-height: 1.4; }
+  .daily-card .reward { font-size: 32px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(232,200,119,.8); margin: 14px 0; }
+  .daily-card .streak { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+  .daily-card button {
+    width: 100%; padding: 14px;
+    background: linear-gradient(140deg, #8a6a1a, #4a3810);
+    border: 1px solid rgba(255,220,130,.6); color: #ffe9a8;
+    font-size: 15px; font-weight: 800; border-radius: 12px;
+  }
+
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px);
     background: linear-gradient(140deg, #2e3546, #14181f);
@@ -349,7 +394,7 @@
     transition: opacity .3s, transform .3s;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  #tab-my, #tab-profile, #tab-transfer { display: none; width: 100%; flex-direction: column; align-items: center; }
+  #tab-my, #tab-profile, #tab-menu, #tab-transfer, #tab-top, #tab-upgrade { display: none; width: 100%; flex-direction: column; align-items: center; }
 </style>
 </head>
 <body>
@@ -362,7 +407,7 @@
   <div class="tabs">
     <div class="tab active" id="tabBtnGame">🎰 Крутить</div>
     <div class="tab" id="tabBtnMy">📂 Номера <span class="badge" id="my-count">0</span></div>
-    <div class="tab" id="tabBtnTransfer">💸 Перевести</div>
+    <div class="tab" id="tabBtnMenu">⚡ Меню</div>
     <div class="tab" id="tabBtnProfile">👤 Профиль</div>
   </div>
 
@@ -371,23 +416,15 @@
       <div class="sim-3d rar-trash idle" id="sim-3d">
         <div class="sim-shadow"></div>
         <div class="sim-body">
-          <div class="sim-face" id="sim-face">
-            <div class="flash-layer" id="flash-layer"></div>
-          </div>
+          <div class="sim-face" id="sim-face"><div class="flash-layer" id="flash-layer"></div></div>
           <div class="sim-edge-bottom"></div>
           <div class="sim-edge-right"></div>
         </div>
         <div class="sim-chip"></div>
         <div class="sim-content">
           <div class="sim-top">
-            <div class="left">
-              <span class="big-flag" id="flag-top">🏳️</span>
-              <span class="country-name" id="country-name">—</span>
-            </div>
-            <div class="right">
-              <span class="op-name" id="operator-name">—</span>
-              <span class="op-logo" id="op-logo">?</span>
-            </div>
+            <div class="left"><span class="big-flag" id="flag-top">🏳️</span><span class="country-name" id="country-name">—</span></div>
+            <div class="right"><span class="op-name" id="operator-name">—</span><span class="op-logo" id="op-logo">?</span></div>
           </div>
           <div class="number-block">
             <div class="number-label">НОМЕР</div>
@@ -397,14 +434,8 @@
             </div>
           </div>
           <div class="sim-bottom">
-            <div class="col">
-              <div class="sim-info">Режим: <b id="mode-info">—</b></div>
-              <div class="sim-info">Красота: <b id="beauty">—</b></div>
-            </div>
-            <div class="col right">
-              <div class="sim-rarity r-trash" id="rarity-info">—</div>
-              <div class="sim-price"><span id="price">0</span> ₽</div>
-            </div>
+            <div class="col"><div class="sim-info">Режим: <b id="mode-info">—</b></div><div class="sim-info">Красота: <b id="beauty">—</b></div></div>
+            <div class="col right"><div class="sim-rarity r-trash" id="rarity-info">—</div><div class="sim-price"><span id="price">0</span> ₽</div></div>
           </div>
         </div>
       </div>
@@ -426,24 +457,54 @@
 
   <div id="tab-my">
     <div class="my-list" id="my-list"></div>
+    <div class="sell-all" id="sell-all" style="display:none;">
+      <div class="sum">Всего номеров: <span id="sell-count">0</span></div>
+      <div class="total" id="sell-total">0 ₽</div>
+      <button id="sell-all-btn">💰 Продать всё</button>
+    </div>
+  </div>
+
+  <div id="tab-menu">
+    <div class="menu">
+      <button class="menu-btn" id="menu-transfer"><span class="ico">💸</span><span>Перевести деньги</span></button>
+      <button class="menu-btn" id="menu-top"><span class="ico">🏆</span><span>Топ-3 игрока</span></button>
+      <button class="menu-btn" id="menu-upgrade"><span class="ico">🎡</span><span>Улучшение номера</span></button>
+    </div>
   </div>
 
   <div id="tab-transfer">
-    <div class="transfer">
-      <h2>💸 Перевод другу</h2>
-      <p class="sub">Введи username получателя и сумму.<br>Деньги придут ему на баланс мгновенно.</p>
+    <div class="upgrade">
+      <h2>💸 Перевод</h2>
+      <p class="sub">Деньги придут моментально.</p>
+      <label style="display:block;font-size:11px;color:var(--muted);margin-bottom:6px;margin-top:14px;text-transform:uppercase;font-weight:700;">Username получателя</label>
+      <input id="tf-username" type="text" placeholder="@username" style="width:100%;padding:13px 16px;border-radius:10px;background:rgba(0,0,0,.4);border:1px solid #333a44;color:var(--text);font-size:15px;font-family:inherit;outline:none;">
+      <label style="display:block;font-size:11px;color:var(--muted);margin-bottom:6px;margin-top:14px;text-transform:uppercase;font-weight:700;">Сумма (₽)</label>
+      <input id="tf-amount" type="number" placeholder="1000" min="1" style="width:100%;padding:13px 16px;border-radius:10px;background:rgba(0,0,0,.4);border:1px solid #333a44;color:var(--text);font-size:15px;font-family:inherit;outline:none;">
+      <button class="spin-wheel" id="tf-submit" style="background:linear-gradient(140deg,#4a6b4a,#1e2e1e);border-color:rgba(140,220,140,.5);color:#d8ffd8;">Перевести</button>
+      <div style="margin-top:14px;font-size:11px;color:var(--muted);text-align:center;line-height:1.5;">Друг должен хотя бы раз зайти в игру — тогда его username в системе.</div>
+    </div>
+  </div>
 
-      <label for="tf-username">Username получателя</label>
-      <input id="tf-username" type="text" placeholder="@username" autocomplete="off" spellcheck="false">
+  <div id="tab-top">
+    <div class="top3" id="top3-list"></div>
+  </div>
 
-      <label for="tf-amount">Сумма (₽)</label>
-      <input id="tf-amount" type="number" placeholder="1000" min="1" step="1">
-
-      <button class="submit" id="tf-submit">Перевести</button>
-
-      <div class="hint">
-        Друг должен хотя бы раз зайти в игру через Telegram — тогда его username будет в системе.
+  <div id="tab-upgrade">
+    <div class="upgrade">
+      <h2>🎡 Улучшение номера</h2>
+      <p class="sub">Поставь номер. Если шарик упадёт на зелёное — цена ×2.<br>На красное — номер сгорает.</p>
+      <div class="wheel-wrap">
+        <div class="wheel-pointer"></div>
+        <div class="wheel"></div>
+        <div class="wheel-ball" id="wheel-ball"></div>
+        <div class="wheel-center">КРУТИ</div>
       </div>
+      <div class="upgrade-pick">
+        <label for="up-select">Выбери номер</label>
+        <select id="up-select"></select>
+      </div>
+      <button class="spin-wheel" id="up-spin">Крутить колесо</button>
+      <div class="upgrade-result" id="up-result"></div>
     </div>
   </div>
 
@@ -460,12 +521,23 @@
 
 <div class="toast" id="toast"></div>
 
+<div class="daily-overlay" id="daily-overlay">
+  <div class="daily-card">
+    <div class="emoji">🎁</div>
+    <h2>Ежедневный бонус</h2>
+    <p>Заходи каждый день — приз растёт!</p>
+    <div class="reward" id="daily-reward">+10 000 ₽</div>
+    <div class="streak" id="daily-streak">День 1</div>
+    <button id="daily-close">Забрать</button>
+  </div>
+</div>
+
 <script>
 (function() {
   "use strict";
 
   // ============================================================
-  //  TELEGRAM USER
+  //  TELEGRAM
   // ============================================================
   const TG = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
   const TG_USER = TG && TG.initDataUnsafe && TG.initDataUnsafe.user ? TG.initDataUnsafe.user : null;
@@ -475,10 +547,10 @@
     : "Гость";
   const USER_USERNAME_RAW = TG_USER && TG_USER.username ? TG_USER.username : "";
   const USER_USERNAME = USER_USERNAME_RAW ? "@" + USER_USERNAME_RAW : "@нет_юзернейма";
-  const USER_PHOTO = TG_USER && TG_USER.photo_url ? TG_USER.photo_url : null;
+  const USER_PHOTO = TG_USER && TG_USER.photo_url ? TG_USER.photo_url : "";
   if (TG) { TG.ready(); TG.expand(); }
 
-  const API = ""; // тот же домен что и index — сервер на Render
+  const API = "";
 
   // ============================================================
   //  ДАННЫЕ
@@ -500,7 +572,6 @@
     "Монако": {"code":"+377","flag":"🇲🇨","rarity":2.50,"operators":{"Monaco Telecom":1.0,"Orange MC":1.2}},
     "Катар": {"code":"+974","flag":"🇶🇦","rarity":2.60,"operators":{"Ooredoo":1.0,"Vodafone QA":1.2}}
   };
-
   const RARITIES = [
     [0.00,"МУСОР",0.20,"r-trash","rar-trash"],
     [1.05,"ОБЫЧНОЕ",0.60,"r-common","rar-common"],
@@ -522,8 +593,9 @@
   const stSpins = $("st-spins"), stSold = $("st-sold"), stEarned = $("st-earned"), stBest = $("st-best");
   const modeInfo = $("mode-info"), rarityInfo = $("rarity-info");
   const myList = $("my-list"), myCount = $("my-count");
-  const tabGame = $("tab-game"), tabMy = $("tab-my"), tabProfile = $("tab-profile"), tabTransfer = $("tab-transfer");
-  const tabBtnGame = $("tabBtnGame"), tabBtnMy = $("tabBtnMy"), tabBtnProfile = $("tabBtnProfile"), tabBtnTransfer = $("tabBtnTransfer");
+  const tabGame = $("tab-game"), tabMy = $("tab-my"), tabProfile = $("tab-profile"),
+        tabMenu = $("tab-menu"), tabTransfer = $("tab-transfer"), tabTop = $("tab-top"), tabUpgrade = $("tab-upgrade");
+  const tabBtnGame = $("tabBtnGame"), tabBtnMy = $("tabBtnMy"), tabBtnProfile = $("tabBtnProfile"), tabBtnMenu = $("tabBtnMenu");
   const sim3d = $("sim-3d"), simFace = $("sim-face"), flashLayer = $("flash-layer");
 
   const DEFAULT_STATE = {
@@ -533,43 +605,50 @@
   };
   let STATE = loadState();
   function loadState() {
-    try { const raw = localStorage.getItem("sim_spinner_v9_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
+    try { const raw = localStorage.getItem("sim_spinner_v10_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
     return JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
-  function saveState() { try { localStorage.setItem("sim_spinner_v9_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+  function saveState() { try { localStorage.setItem("sim_spinner_v10_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
 
   // ============================================================
   //  СЕРВЕР
   // ============================================================
   async function syncBalanceFromServer() {
     try {
-      const params = new URLSearchParams({
-        user_id: USER_ID,
-        username: USER_USERNAME_RAW,
-        first_name: USER_NAME
-      });
+      const params = new URLSearchParams({ user_id: USER_ID, username: USER_USERNAME_RAW, first_name: USER_NAME, photo: USER_PHOTO });
       const res = await fetch(API + "/api/balance?" + params);
       const data = await res.json();
       if (data.balance !== undefined) {
-        STATE.balance = data.balance;
-        saveState();
-        updateStats();
+        STATE.balance = data.balance; saveState(); updateStats();
       }
-    } catch (e) { /* сервер недоступен — работаем локально */ }
+    } catch (e) {}
   }
-
   async function syncSpinToServer(cost, price, mode) {
     try {
       await fetch(API + "/api/spin", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ user_id: USER_ID, mode: mode, cost: cost, price: price })
+        method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ user_id: USER_ID, mode, cost, price })
       });
     } catch (e) {}
   }
+  async function checkDaily() {
+    try {
+      const res = await fetch(API + "/api/daily?user_id=" + USER_ID);
+      const data = await res.json();
+      if (data.available) {
+        STATE.balance = data.balance; saveState(); updateStats();
+        $("daily-reward").textContent = "+" + data.reward.toLocaleString("ru-RU") + " ₽";
+        $("daily-streak").textContent = "День " + data.streak + " подряд";
+        $("daily-overlay").classList.add("show");
+      }
+    } catch (e) {}
+  }
+  $("daily-close").addEventListener("click", () => {
+    $("daily-overlay").classList.remove("show");
+  });
 
   // ============================================================
-  //  BEAUTY + ЦЕНА
+  //  BEAUTY / ЦЕНА
   // ============================================================
   function beautyScore(number) {
     const digits = number.split("");
@@ -590,29 +669,23 @@
     const cnt = {};
     for (const d of digits) cnt[d] = (cnt[d] || 0) + 1;
     const most = Math.max(...Object.values(cnt));
-    if (most >= 6) score += 1.7;
-    else if (most === 5) score += 0.85;
-    else if (most === 4) score += 0.32;
-    else if (most === 3) score += 0.09;
+    if (most >= 6) score += 1.7; else if (most === 5) score += 0.85;
+    else if (most === 4) score += 0.32; else if (most === 3) score += 0.09;
     for (const m of ["777777","888888","999999","000000","123456","654321"]) if (number.includes(m)) score += 3.3;
     for (const m of ["7777","8888","9999","0000","777","888","999","000","111","222","555","666"]) if (number.includes(m)) score += 0.95;
     if (number.startsWith("007")) score += 0.6;
     if (number[0] === number[8]) score += 0.2;
     const zeros = digits.filter(d => d === "0").length;
-    if (zeros >= 5) score += 1.3;
-    else if (zeros >= 4) score += 0.6;
-    else if (zeros >= 3) score += 0.2;
+    if (zeros >= 5) score += 1.3; else if (zeros >= 4) score += 0.6; else if (zeros >= 3) score += 0.2;
     if (["77","88","99","00","11","22"].includes(number.slice(0,2))) score += 0.22;
     if (new Set(digits).size >= 8) score -= 0.05;
     return Math.round(score * 100) / 100;
   }
-
   function getRarity(beauty) {
     let r = RARITIES[0];
     for (const item of RARITIES) if (beauty >= item[0]) r = item;
     return { name: r[1], mult: r[2], cls: r[3], card: r[4] };
   }
-
   function makeNumber(beauty, country, opmult) {
     const r = getRarity(beauty);
     const base = 20 * country.rarity * opmult * beauty * r.mult;
@@ -622,11 +695,7 @@
     price = Math.max(price, 5);
     return { price, rarity: r };
   }
-
-  function randomDigits(n) {
-    return Array.from({length: n}, () => "0123456789"[Math.floor(Math.random()*10)]).join("");
-  }
-
+  function randomDigits(n) { return Array.from({length: n}, () => "0123456789"[Math.floor(Math.random()*10)]).join(""); }
   function generatePattern(mode) {
     let patterns, weights;
     if (mode === "super") { patterns = ["repeat_high","repeat_mid","sequence","zeros","magic","palindrome"]; weights = [3,4,2,2,4,3]; }
@@ -640,25 +709,16 @@
     if (pattern === "repeat_mid") { const d = "0123456789"[Math.floor(Math.random()*10)]; return d.repeat(6) + randomDigits(3); }
     if (pattern === "sequence") return Math.random() < 0.5 ? "123456789" : "987654321";
     if (pattern === "zeros") return randomDigits(2) + "0".repeat(7);
-    if (pattern === "magic") {
-      const magic = ["777","888","999","000","111","222","555","666"][Math.floor(Math.random()*8)];
-      return Math.random() < 0.5 ? magic + randomDigits(6) : randomDigits(6) + magic;
-    }
+    if (pattern === "magic") { const magic = ["777","888","999","000","111","222","555","666"][Math.floor(Math.random()*8)]; return Math.random() < 0.5 ? magic + randomDigits(6) : randomDigits(6) + magic; }
     if (pattern === "palindrome") { const half = randomDigits(4); const mid = "0123456789"[Math.floor(Math.random()*10)]; return half + mid + half.split("").reverse().join(""); }
-    if (pattern === "double") {
-      let s = "";
-      for (let i = 0; i < 4; i++) { const d = "0123456789"[Math.floor(Math.random()*10)]; s += d + d; }
-      return s + "0123456789"[Math.floor(Math.random()*10)];
-    }
+    if (pattern === "double") { let s = ""; for (let i = 0; i < 4; i++) { const d = "0123456789"[Math.floor(Math.random()*10)]; s += d + d; } return s + "0123456789"[Math.floor(Math.random()*10)]; }
     return randomDigits(9);
   }
-
   const MODES = {
     normal: { minBeauty: 1.00, bonus: 1.00, patternChance: 0.30 },
     lucky:  { minBeauty: 1.60, bonus: 1.50, patternChance: 0.65 },
     super:  { minBeauty: 2.80, bonus: 2.20, patternChance: 0.90 },
   };
-
   function weightedCountry(mode) {
     const names = Object.keys(COUNTRIES);
     const weights = names.map(c => {
@@ -672,12 +732,10 @@
     for (let i = 0; i < names.length; i++) { r -= weights[i]; if (r <= 0) return names[i]; }
     return names[names.length - 1];
   }
-
   function generateNumber(mode) {
     const cfg = MODES[mode];
     const st = STATE.streak;
     let number, beauty;
-
     for (let attempt = 0; attempt < 12; attempt++) {
       const usePattern = Math.random() < cfg.patternChance || attempt >= 4;
       number = usePattern ? generatePattern(mode) : randomDigits(9);
@@ -714,17 +772,24 @@
   //  ВКЛАДКИ
   // ============================================================
   function showTab(name) {
-    [tabBtnGame, tabBtnMy, tabBtnTransfer, tabBtnProfile].forEach(b => b.classList.remove("active"));
-    [tabGame, tabMy, tabTransfer, tabProfile].forEach(t => t.style.display = "none");
+    [tabBtnGame, tabBtnMy, tabBtnMenu, tabBtnProfile].forEach(b => b.classList.remove("active"));
+    [tabGame, tabMy, tabMenu, tabTransfer, tabTop, tabUpgrade, tabProfile].forEach(t => t.style.display = "none");
     if (name === "game") { tabBtnGame.classList.add("active"); tabGame.style.display = "flex"; }
     if (name === "my")   { tabBtnMy.classList.add("active");   tabMy.style.display = "flex"; renderMyNumbers(); }
-    if (name === "transfer") { tabBtnTransfer.classList.add("active"); tabTransfer.style.display = "flex"; }
+    if (name === "menu") { tabBtnMenu.classList.add("active"); tabMenu.style.display = "flex"; }
+    if (name === "transfer") { tabBtnMenu.classList.add("active"); tabTransfer.style.display = "flex"; }
+    if (name === "top") { tabBtnMenu.classList.add("active"); tabTop.style.display = "flex"; loadTop(); }
+    if (name === "upgrade") { tabBtnMenu.classList.add("active"); tabUpgrade.style.display = "flex"; renderUpgradeSelect(); }
     if (name === "profile") { tabBtnProfile.classList.add("active"); tabProfile.style.display = "flex"; renderProfile(); }
   }
   tabBtnGame.addEventListener("click", () => showTab("game"));
   tabBtnMy.addEventListener("click", () => showTab("my"));
-  tabBtnTransfer.addEventListener("click", () => showTab("transfer"));
+  tabBtnMenu.addEventListener("click", () => showTab("menu"));
   tabBtnProfile.addEventListener("click", () => showTab("profile"));
+
+  $("menu-transfer").addEventListener("click", () => showTab("transfer"));
+  $("menu-top").addEventListener("click", () => showTab("top"));
+  $("menu-upgrade").addEventListener("click", () => showTab("upgrade"));
 
   // ============================================================
   //  ПРОФИЛЬ
@@ -740,58 +805,170 @@
   }
 
   // ============================================================
-  //  ПЕРЕВОД
+  //  ПЕРЕВОД — моментальное зачисление
   // ============================================================
   $("tf-submit").addEventListener("click", async () => {
     const toUsername = $("tf-username").value.trim();
     const amount = parseInt($("tf-amount").value, 10);
-
-    if (!toUsername) { toast("Введи username получателя"); return; }
-    if (!amount || amount <= 0) { toast("Введи сумму больше 0"); return; }
+    if (!toUsername) { toast("Введи username"); return; }
+    if (!amount || amount <= 0) { toast("Введи сумму"); return; }
     if (amount > STATE.balance) { toast("Недостаточно средств"); return; }
 
     const btn = $("tf-submit");
-    btn.disabled = true;
-    btn.textContent = "Отправка...";
+    btn.disabled = true; btn.textContent = "Отправка...";
 
     try {
       const res = await fetch(API + "/api/transfer", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          user_id: USER_ID,
-          to_username: toUsername,
-          amount: amount
-        })
+        method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ user_id: USER_ID, to_username: toUsername, amount })
       });
       const data = await res.json();
-
       if (!res.ok || data.error) {
         toast(data.error || "Ошибка перевода");
-        btn.disabled = false;
-        btn.textContent = "Перевести";
-        return;
+        btn.disabled = false; btn.textContent = "Перевести"; return;
       }
-
-      // Обновляем баланс из ответа
-      STATE.balance = data.from_balance;
-      saveState();
-      updateStats();
-      renderProfile();
-
-      toast("✅ Переведено " + amount.toLocaleString("ru-RU") + " ₽ игроку " + data.to_username);
-      $("tf-username").value = "";
-      $("tf-amount").value = "";
-    } catch (e) {
-      toast("Сервер недоступен");
-    }
-
-    btn.disabled = false;
-    btn.textContent = "Перевести";
+      STATE.balance = data.from_balance; saveState(); updateStats(); renderProfile();
+      toast("✅ Переведено " + amount.toLocaleString("ru-RU") + " ₽ для @" + data.to_username);
+      $("tf-username").value = ""; $("tf-amount").value = "";
+    } catch (e) { toast("Сервер недоступен"); }
+    btn.disabled = false; btn.textContent = "Перевести";
   });
 
   // ============================================================
-  //  ОСТАЛЬНОЕ (без изменений)
+  //  ТОП-3
+  // ============================================================
+  async function loadTop() {
+    const list = $("top3-list");
+    list.innerHTML = "<div class='empty'>Загрузка...</div>";
+    try {
+      const res = await fetch(API + "/api/top");
+      const data = await res.json();
+      if (!data.top || !data.top.length) {
+        list.innerHTML = "<div class='empty'>Пока никто не играл.</div>";
+        return;
+      }
+      list.innerHTML = "";
+      data.top.forEach((p, i) => {
+        const card = document.createElement("div");
+        card.className = "top3-card rank-" + (i+1);
+        const medal = ["🥇","🥈","🥉"][i];
+        const avatarHTML = p.photo
+          ? '<img src="' + p.photo + '" alt="">'
+          : (p.first_name || "?").charAt(0).toUpperCase();
+        card.innerHTML =
+          '<div class="avatar">' + avatarHTML + '</div>' +
+          '<div class="info">' +
+            '<div class="name">' + medal + " " + (p.first_name || "Игрок") + '</div>' +
+            '<div class="uname">@' + (p.username || "нет_юзернейма") + '</div>' +
+            '<div class="rank">Место #' + (i+1) + '</div>' +
+          '</div>' +
+          '<div class="bal">' + p.balance.toLocaleString("ru-RU") + " ₽</div>";
+        list.appendChild(card);
+      });
+    } catch (e) {
+      list.innerHTML = "<div class='empty'>Не удалось загрузить топ.</div>";
+    }
+  }
+
+  // ============================================================
+  //  УЛУЧШЕНИЕ — колесо
+  // ============================================================
+  let upgradeSpinning = false;
+  function renderUpgradeSelect() {
+    const sel = $("up-select");
+    sel.innerHTML = "";
+    if (!STATE.my_numbers.length) {
+      sel.innerHTML = "<option value=''>Нет номеров — сначала накрути ЭПИК+</option>";
+      return;
+    }
+    STATE.my_numbers.forEach(item => {
+      const opt = document.createElement("option");
+      opt.value = item.id;
+      opt.textContent = item.country_code + " " + item.number + " — " + item.price.toLocaleString("ru-RU") + " ₽ (" + item.rarity + ")";
+      sel.appendChild(opt);
+    });
+  }
+  $("up-spin").addEventListener("click", () => {
+    if (upgradeSpinning) return;
+    const id = parseInt($("up-select").value, 10);
+    if (!id) { toast("Сначала выбери номер"); return; }
+    const item = STATE.my_numbers.find(x => x.id === id);
+    if (!item) { toast("Номер не найден"); return; }
+
+    upgradeSpinning = true;
+    $("up-spin").disabled = true;
+    $("up-result").className = "upgrade-result";
+
+    // Крутим: шарик делает несколько оборотов и останавливается случайно
+    const ball = $("wheel-ball");
+    // 0deg — верх (12 часов). Зелёная зона: 180°–360° (правая половина снизу). Красная: 0°–180°.
+    // Угол 0 = верх. Идём по часовой: 0-180 — красная (право-низ), 180-360 — зелёная (лево-низ).
+    // Упростим: рандом 0..360, если между 0 и 180 = красная, иначе зелёная.
+    // Чтобы было честно 50/50.
+    const win = Math.random() < 0.5;
+    // Угол выпадения
+    let angle;
+    if (win) {
+      // зелёная зона
+      angle = 180 + Math.random() * 180;
+    } else {
+      angle = Math.random() * 180;
+    }
+    const totalRotation = 360 * 5 + angle; // 5 полных оборотов + финальный угол
+    ball.style.transform = "translate(-50%, -50%) rotate(" + totalRotation + "deg) translateY(-110px)";
+
+    setTimeout(() => {
+      if (win) {
+        // Удвоить цену
+        item.price = item.price * 2;
+        saveState(); updateStats();
+        $("up-result").textContent = "🎉 УСПЕХ! Цена удвоена: " + item.price.toLocaleString("ru-RU") + " ₽";
+        $("up-result").className = "upgrade-result win";
+      } else {
+        // Удалить номер
+        STATE.my_numbers = STATE.my_numbers.filter(x => x.id !== id);
+        saveState(); updateStats();
+        $("up-result").textContent = "💥 ПРОВАЛ! Номер сгорел.";
+        $("up-result").className = "upgrade-result lose";
+      }
+      renderUpgradeSelect();
+      upgradeSpinning = false;
+      $("up-spin").disabled = false;
+      // Сброс шарика
+      setTimeout(() => {
+        ball.style.transition = "none";
+        ball.style.transform = "translate(-50%, -50%) translateY(-110px)";
+        setTimeout(() => { ball.style.transition = "transform 3.6s cubic-bezier(.15,.85,.3,1)"; }, 50);
+      }, 1800);
+    }, 3700);
+  });
+
+  // ============================================================
+  //  ПРОДАЖА ВСЕГО
+  // ============================================================
+  function updateSellAll() {
+    const block = $("sell-all");
+    if (!STATE.my_numbers.length) { block.style.display = "none"; return; }
+    block.style.display = "block";
+    const total = STATE.my_numbers.reduce((s, x) => s + x.price, 0);
+    $("sell-count").textContent = STATE.my_numbers.length;
+    $("sell-total").textContent = total.toLocaleString("ru-RU") + " ₽";
+  }
+  $("sell-all-btn").addEventListener("click", () => {
+    if (!STATE.my_numbers.length) return;
+    const total = STATE.my_numbers.reduce((s, x) => s + x.price, 0);
+    if (!confirm("Продать все " + STATE.my_numbers.length + " номеров за " + total.toLocaleString("ru-RU") + " ₽?")) return;
+    STATE.balance += total;
+    STATE.stats.sold += STATE.my_numbers.length;
+    STATE.stats.earned += total;
+    STATE.stats.best_price = Math.max(STATE.stats.best_price, ...STATE.my_numbers.map(x => x.price));
+    STATE.my_numbers = [];
+    saveState(); updateStats(); renderMyNumbers();
+    toast("💰 Продано всё за " + total.toLocaleString("ru-RU") + " ₽");
+  });
+
+  // ============================================================
+  //  ЦИФРЫ
   // ============================================================
   function buildDigitsRow() {
     digitsRow.innerHTML = "";
@@ -861,7 +1038,6 @@
       flashLayer.style.animation = "flashAnim .9s ease-out";
     }
   }
-
   function showResult(r) {
     prefixEl.textContent = r.country_code;
     flagTop.textContent = r.flag;
@@ -874,7 +1050,6 @@
     rarityInfo.className = "sim-rarity " + (r.rarity_class || "r-common");
     applyCardRarity(r.rarity_card || "rar-trash");
   }
-
   function updateStats() {
     const s = STATE.stats;
     stSpins.textContent = s.spins;
@@ -883,27 +1058,21 @@
     stBest.textContent = s.best_price.toLocaleString("ru-RU");
     balanceEl.textContent = STATE.balance.toLocaleString("ru-RU");
     myCount.textContent = STATE.my_numbers.length;
+    updateSellAll();
   }
-
   let spinning = false;
-  function setButtonsDisabled(v) {
-    $("spinNormal").disabled = v; $("spinLucky").disabled = v; $("spinSuper").disabled = v;
-  }
+  function setButtonsDisabled(v) { $("spinNormal").disabled = v; $("spinLucky").disabled = v; $("spinSuper").disabled = v; }
 
   function spin(mode) {
     if (spinning) return;
     spinning = true; setButtonsDisabled(true);
     const cost = mode === "super" ? 20000 : (mode === "lucky" ? 5000 : 150);
-    if (STATE.balance < cost) {
-      toast("Недостаточно средств");
-      spinning = false; setButtonsDisabled(false); return;
-    }
+    if (STATE.balance < cost) { toast("Недостаточно средств"); spinning = false; setButtonsDisabled(false); return; }
     STATE.balance -= cost;
     STATE.stats.spins += 1; STATE.stats.spent += cost;
 
     const result = generateNumber(mode);
     result.cost = cost; result.mode = mode;
-
     if (KEEP_FROM.includes(result.rarity)) {
       result.id = STATE.next_id++; result.kept = true;
       STATE.my_numbers.push(result);
@@ -914,29 +1083,25 @@
       STATE.stats.best_price = Math.max(STATE.stats.best_price, result.price);
     }
     STATE.last = result;
-
-    // Синхронизация с сервером
     syncSpinToServer(cost, result.price, mode);
 
     Array.from(digitsRow.children).forEach(b => b.classList.remove("locked"));
     modeInfo.textContent = {normal:"обычный", lucky:"удача+", super:"макс. удача"}[mode] || mode;
 
-    sim3d.classList.remove("idle");
-    sim3d.classList.add("spinning");
+    sim3d.classList.remove("idle"); sim3d.classList.add("spinning");
     simFace.style.filter = "brightness(.7)";
 
     animateDigits(result.number).then(() => {
-      sim3d.classList.remove("spinning");
-      sim3d.classList.add("idle");
+      sim3d.classList.remove("spinning"); sim3d.classList.add("idle");
       simFace.style.filter = "";
       showResult(result);
       updateStats();
       saveState();
 
       if (result.kept) {
-        if (result.rarity === "МИФ") toast("🔥 МИФ! Номер ушёл в «Мои номера»");
-        else if (result.rarity === "ЛЕГЕНДА") toast("⭐ ЛЕГЕНДА! Номер ушёл в «Мои номера»");
-        else if (result.rarity === "ЭПИК") toast("💜 ЭПИК! Номер ушёл в «Мои номера»");
+        if (result.rarity === "МИФ") toast("🔥 МИФ! Ушёл в «Мои номера»");
+        else if (result.rarity === "ЛЕГЕНДА") toast("⭐ ЛЕГЕНДА! Ушёл в «Мои номера»");
+        else if (result.rarity === "ЭПИК") toast("💜 ЭПИК! Ушёл в «Мои номера»");
       } else {
         toast("Продано за " + result.price.toLocaleString("ru-RU") + " ₽");
       }
@@ -948,6 +1113,7 @@
     myList.innerHTML = "";
     if (!STATE.my_numbers.length) {
       myList.innerHTML = "<div class='empty'>Пока пусто.<br>Эпик и выше попадают сюда автоматически.</div>";
+      updateSellAll();
       return;
     }
     STATE.my_numbers.forEach(item => {
@@ -972,23 +1138,18 @@
       card.querySelector("button").addEventListener("click", () => sellFromMy(item.id));
       myList.appendChild(card);
     });
+    updateSellAll();
   }
-
   function sellFromMy(id) {
     const item = STATE.my_numbers.find(x => x.id === id);
     if (!item) { toast("Номер не найден"); return; }
-    const ok = confirm(
-      "Продать этот номер?\n\n" + item.country_code + item.number + "\n" +
-      "Страна: " + item.country + "\nОператор: " + item.operator + "\n" +
-      "Редкость: " + item.rarity + "\nЦена: " + item.price.toLocaleString("ru-RU") + " ₽"
-    );
-    if (!ok) return;
+    if (!confirm("Продать " + item.country_code + item.number + " за " + item.price.toLocaleString("ru-RU") + " ₽?")) return;
     STATE.my_numbers = STATE.my_numbers.filter(x => x.id !== id);
     STATE.balance += item.price;
     STATE.stats.sold += 1; STATE.stats.earned += item.price;
     STATE.stats.best_price = Math.max(STATE.stats.best_price, item.price);
     saveState(); updateStats();
-    toast("Продан " + item.country_code + item.number + " за " + item.price.toLocaleString("ru-RU") + " ₽");
+    toast("Продан за " + item.price.toLocaleString("ru-RU") + " ₽");
     renderMyNumbers();
   }
 
@@ -996,10 +1157,10 @@
   $("spinLucky").addEventListener("click",  () => spin("lucky"));
   $("spinSuper").addEventListener("click",  () => spin("super"));
 
-  // Старт
+  // СТАРТ
   updateStats();
   if (STATE.last) showResult(STATE.last);
-  syncBalanceFromServer();
+  syncBalanceFromServer().then(() => checkDaily());
 })();
 </script>
 </body>
