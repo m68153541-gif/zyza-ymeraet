@@ -88,7 +88,6 @@
     background: radial-gradient(ellipse at center, rgba(0,0,0,.85), transparent 75%);
     filter: blur(10px); border-radius: 50%; z-index: -1;
   }
-  /* ЕДИНЫЙ срез для всех слоёв — теперь углы совпадают */
   .sim-body, .sim-face, .sim-edge-bottom, .sim-edge-right {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 14% 100%, 0 72%);
   }
@@ -218,7 +217,6 @@
   .stat .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; font-weight: 600; }
   .stat .value { font-size: 15px; color: var(--text); font-weight: 800; }
 
-  /* ===== МОИ НОМЕРА ===== */
   .my-list { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 10px; }
   .my-card {
     display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center;
@@ -253,7 +251,6 @@
     background: linear-gradient(140deg, rgba(42,48,64,.4), rgba(20,24,31,.7));
     border: 1px dashed rgba(255,255,255,.08); border-radius: 14px; }
 
-  /* ===== ПРОФИЛЬ ===== */
   .profile { width: 100%; max-width: 460px; background: linear-gradient(140deg, #222836, #14181f); border: 1px solid #333a44; border-radius: 16px; padding: 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
   .profile .avatar { width: 84px; height: 84px; border-radius: 50%; background: linear-gradient(140deg, #4a5a7a, #2a3040); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 30px rgba(120,150,220,.3); overflow: hidden; }
   .profile .avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -262,7 +259,6 @@
   .profile .userid { font-size: 11px; color: var(--muted); }
   .profile .p-balance { margin-top: 8px; padding: 10px 18px; border-radius: 12px; background: rgba(0,0,0,.4); border: 1px solid rgba(232,200,119,.3); font-size: 18px; font-weight: 800; color: var(--gold); }
 
-  /* ===== МЕНЮ (Мои функции) ===== */
   .menu { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 12px; }
   .menu-btn {
     display: flex; align-items: center; gap: 14px;
@@ -276,7 +272,6 @@
   .menu-btn:hover { transform: translateY(-2px); border-color: rgba(232,200,119,.5); }
   .menu-btn .ico { font-size: 26px; width: 40px; text-align: center; }
 
-  /* ===== ТОП-3 ===== */
   .top3 { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 10px; }
   .top3-card {
     display: grid; grid-template-columns: 60px 1fr auto; gap: 14px; align-items: center;
@@ -293,49 +288,64 @@
   .top3-card .info .rank { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .top3-card .bal { font-size: 18px; font-weight: 800; color: var(--gold); text-align: right; }
 
-  /* ===== УЛУЧШЕНИЕ (колесо) ===== */
+  /* ===== УЛУЧШЕНИЕ (колесо) — теперь крутится само колесо ===== */
   .upgrade { width: 100%; max-width: 460px; background: linear-gradient(140deg, #222836, #14181f); border: 1px solid #333a44; border-radius: 16px; padding: 22px 20px; }
   .upgrade h2 { margin: 0 0 6px; font-size: 17px; color: var(--gold); text-align: center; font-weight: 800; }
   .upgrade p.sub { margin: 0 0 18px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.4; }
-  .wheel-wrap { position: relative; width: 260px; height: 260px; margin: 0 auto; }
+
+  .wheel-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto 8px;
+  }
+  .wheel-pointer {
+    position: absolute;
+    top: -10px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 26px solid var(--gold);
+    filter: drop-shadow(0 0 10px rgba(232,200,119,.9));
+    z-index: 10;
+  }
   .wheel {
     position: absolute; inset: 0;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, #2e7a2e 0deg 180deg, #7a2e2e 180deg 360deg);
-    border: 4px solid #333a44;
-    box-shadow: 0 0 30px rgba(0,0,0,.6), inset 0 0 40px rgba(0,0,0,.5);
+    border: 5px solid #333a44;
+    box-shadow: 0 0 30px rgba(0,0,0,.6), inset 0 0 40px rgba(0,0,0,.6);
+    /* Верх — граница между зонами. Слева от вертикали (по часовой 180-360°) — зелёная, справа (0-180°) — красная */
+    background: conic-gradient(from 180deg,
+      #2e7a2e 0deg 180deg,        /* зелёная — от 180° до 360° (левая половина сверху) */
+      #7a2e2e 180deg 360deg       /* красная — от 360° до 540° (правая половина) */
+    );
+    transform: rotate(0deg);
+    transition: transform 4s cubic-bezier(.17,.85,.3,1);
+    will-change: transform;
   }
-  .wheel-pointer {
-    position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
-    width: 0; height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-top: 22px solid var(--gold);
-    filter: drop-shadow(0 0 8px rgba(232,200,119,.7));
-    z-index: 5;
+  .wheel-label-left, .wheel-label-right {
+    position: absolute;
+    font-size: 26px; font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,.9);
+    pointer-events: none;
+    z-index: 3;
   }
-  .wheel-ball {
-    position: absolute; top: 50%; left: 50%;
-    width: 20px; height: 20px; border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #fff, #c9c9c9 60%, #888);
-    box-shadow: 0 0 12px rgba(255,255,255,.9), 0 0 24px rgba(255,255,255,.5);
-    transform: translate(-50%, -50%) translateY(-110px);
-    transition: transform 3.6s cubic-bezier(.15,.85,.3,1);
-    z-index: 4;
-  }
+  .wheel-label-left { top: 22%; left: 16%; }
+  .wheel-label-right { top: 22%; right: 16%; }
   .wheel-center {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 70px; height: 70px; border-radius: 50%;
+    width: 80px; height: 80px; border-radius: 50%;
     background: linear-gradient(140deg, #2a3040, #14181f);
     border: 2px solid #333a44;
     display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 800; color: var(--gold);
-    z-index: 6; text-align: center; line-height: 1.1;
-    padding: 6px;
+    font-size: 11px; font-weight: 800; color: var(--gold);
+    z-index: 6; text-align: center; line-height: 1.15;
+    padding: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.6);
   }
-  .upgrade-pick {
-    margin-top: 18px;
-  }
+
+  .upgrade-pick { margin-top: 18px; }
   .upgrade-pick label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; font-weight: 700; }
   .upgrade-pick select {
     width: 100%; padding: 12px 14px; border-radius: 10px;
@@ -348,13 +358,13 @@
     background: linear-gradient(140deg, #4a3a1a, #2e2410);
     border: 1px solid rgba(255,220,130,.5); color: #ffe9a8;
     font-size: 15px; font-weight: 800;
+    border-radius: 12px; cursor: pointer;
   }
-  .upgrade button.spin-wheel:disabled { opacity: .4; }
+  .upgrade button.spin-wheel:disabled { opacity: .4; cursor: not-allowed; }
   .upgrade-result { margin-top: 14px; text-align: center; font-size: 14px; font-weight: 700; padding: 12px; border-radius: 10px; display: none; }
   .upgrade-result.win { background: rgba(46,122,46,.25); border: 1px solid #2e7a2e; color: #b8ffb8; display: block; }
   .upgrade-result.lose { background: rgba(122,46,46,.25); border: 1px solid #7a2e2e; color: #ffb8b8; display: block; }
 
-  /* ===== ЕЖЕДНЕВНЫЙ БОНУС ===== */
   .daily-overlay {
     position: fixed; inset: 0; z-index: 200;
     background: rgba(0,0,0,.85);
@@ -381,7 +391,7 @@
     width: 100%; padding: 14px;
     background: linear-gradient(140deg, #8a6a1a, #4a3810);
     border: 1px solid rgba(255,220,130,.6); color: #ffe9a8;
-    font-size: 15px; font-weight: 800; border-radius: 12px;
+    font-size: 15px; font-weight: 800; border-radius: 12px; cursor: pointer;
   }
 
   .toast {
@@ -492,17 +502,21 @@
   <div id="tab-upgrade">
     <div class="upgrade">
       <h2>🎡 Улучшение номера</h2>
-      <p class="sub">Поставь номер. Если шарик упадёт на зелёное — цена ×2.<br>На красное — номер сгорает.</p>
+      <p class="sub">Стрелка сверху указывает результат.<br>🟢 зелёная — цена ×2 · 🔴 красная — номер сгорает.</p>
+
       <div class="wheel-wrap">
         <div class="wheel-pointer"></div>
-        <div class="wheel"></div>
-        <div class="wheel-ball" id="wheel-ball"></div>
-        <div class="wheel-center">КРУТИ</div>
+        <div class="wheel" id="wheel"></div>
+        <div class="wheel-label-left">🟢</div>
+        <div class="wheel-label-right">🔴</div>
+        <div class="wheel-center">КРУТИ<br>КОЛЕСО</div>
       </div>
+
       <div class="upgrade-pick">
         <label for="up-select">Выбери номер</label>
         <select id="up-select"></select>
       </div>
+
       <button class="spin-wheel" id="up-spin">Крутить колесо</button>
       <div class="upgrade-result" id="up-result"></div>
     </div>
@@ -536,15 +550,10 @@
 (function() {
   "use strict";
 
-  // ============================================================
-  //  TELEGRAM
-  // ============================================================
   const TG = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
   const TG_USER = TG && TG.initDataUnsafe && TG.initDataUnsafe.user ? TG.initDataUnsafe.user : null;
   const USER_ID = TG_USER ? String(TG_USER.id) : "guest_" + Math.floor(Math.random() * 1000000);
-  const USER_NAME = TG_USER
-    ? ((TG_USER.first_name || "") + (TG_USER.last_name ? " " + TG_USER.last_name : "")).trim() || "Игрок"
-    : "Гость";
+  const USER_NAME = TG_USER ? ((TG_USER.first_name || "") + (TG_USER.last_name ? " " + TG_USER.last_name : "")).trim() || "Игрок" : "Гость";
   const USER_USERNAME_RAW = TG_USER && TG_USER.username ? TG_USER.username : "";
   const USER_USERNAME = USER_USERNAME_RAW ? "@" + USER_USERNAME_RAW : "@нет_юзернейма";
   const USER_PHOTO = TG_USER && TG_USER.photo_url ? TG_USER.photo_url : "";
@@ -552,9 +561,6 @@
 
   const API = "";
 
-  // ============================================================
-  //  ДАННЫЕ
-  // ============================================================
   const COUNTRIES = {
     "Африка": {"code":"+2","flag":"🌍","rarity":0.20,"operators":{"MTN":1.0,"Airtel":1.1,"Safaricom":1.3,"Vodacom":1.2}},
     "Пакистан": {"code":"+92","flag":"🇵🇰","rarity":0.30,"operators":{"Jazz":1.0,"Zong":1.2,"Ufone":1.1,"Telenor":1.3}},
@@ -605,30 +611,22 @@
   };
   let STATE = loadState();
   function loadState() {
-    try { const raw = localStorage.getItem("sim_spinner_v10_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
+    try { const raw = localStorage.getItem("sim_spinner_v11_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
     return JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
-  function saveState() { try { localStorage.setItem("sim_spinner_v10_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+  function saveState() { try { localStorage.setItem("sim_spinner_v11_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
 
-  // ============================================================
-  //  СЕРВЕР
-  // ============================================================
   async function syncBalanceFromServer() {
     try {
       const params = new URLSearchParams({ user_id: USER_ID, username: USER_USERNAME_RAW, first_name: USER_NAME, photo: USER_PHOTO });
       const res = await fetch(API + "/api/balance?" + params);
       const data = await res.json();
-      if (data.balance !== undefined) {
-        STATE.balance = data.balance; saveState(); updateStats();
-      }
+      if (data.balance !== undefined) { STATE.balance = data.balance; saveState(); updateStats(); }
     } catch (e) {}
   }
   async function syncSpinToServer(cost, price, mode) {
     try {
-      await fetch(API + "/api/spin", {
-        method: "POST", headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ user_id: USER_ID, mode, cost, price })
-      });
+      await fetch(API + "/api/spin", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ user_id: USER_ID, mode, cost, price }) });
     } catch (e) {}
   }
   async function checkDaily() {
@@ -643,13 +641,8 @@
       }
     } catch (e) {}
   }
-  $("daily-close").addEventListener("click", () => {
-    $("daily-overlay").classList.remove("show");
-  });
+  $("daily-close").addEventListener("click", () => $("daily-overlay").classList.remove("show"));
 
-  // ============================================================
-  //  BEAUTY / ЦЕНА
-  // ============================================================
   function beautyScore(number) {
     const digits = number.split("");
     let score = 1.0;
@@ -657,12 +650,9 @@
     for (let i = 1; i < digits.length; i++) {
       if (digits[i] === digits[i-1]) { repeats++; maxRepeat = Math.max(maxRepeat, repeats); } else repeats = 1;
     }
-    if (maxRepeat >= 8) score += 6.5;
-    else if (maxRepeat >= 6) score += 4.0;
-    else if (maxRepeat >= 5) score += 2.4;
-    else if (maxRepeat >= 4) score += 1.2;
-    else if (maxRepeat === 3) score += 0.45;
-    else if (maxRepeat === 2) score += 0.15;
+    if (maxRepeat >= 8) score += 6.5; else if (maxRepeat >= 6) score += 4.0;
+    else if (maxRepeat >= 5) score += 2.4; else if (maxRepeat >= 4) score += 1.2;
+    else if (maxRepeat === 3) score += 0.45; else if (maxRepeat === 2) score += 0.15;
     if (new Set(digits).size === 1) score += 9.0;
     if (number === number.split("").reverse().join("")) score += 2.6;
     if (number === "123456789" || number === "987654321") score += 7.0;
@@ -768,9 +758,6 @@
     };
   }
 
-  // ============================================================
-  //  ВКЛАДКИ
-  // ============================================================
   function showTab(name) {
     [tabBtnGame, tabBtnMy, tabBtnMenu, tabBtnProfile].forEach(b => b.classList.remove("active"));
     [tabGame, tabMy, tabMenu, tabTransfer, tabTop, tabUpgrade, tabProfile].forEach(t => t.style.display = "none");
@@ -791,9 +778,6 @@
   $("menu-top").addEventListener("click", () => showTab("top"));
   $("menu-upgrade").addEventListener("click", () => showTab("upgrade"));
 
-  // ============================================================
-  //  ПРОФИЛЬ
-  // ============================================================
   function renderProfile() {
     $("pf-name").textContent = USER_NAME;
     $("pf-username").textContent = USER_USERNAME;
@@ -804,29 +788,21 @@
     else av.textContent = USER_NAME.charAt(0).toUpperCase();
   }
 
-  // ============================================================
-  //  ПЕРЕВОД — моментальное зачисление
-  // ============================================================
   $("tf-submit").addEventListener("click", async () => {
     const toUsername = $("tf-username").value.trim();
     const amount = parseInt($("tf-amount").value, 10);
     if (!toUsername) { toast("Введи username"); return; }
     if (!amount || amount <= 0) { toast("Введи сумму"); return; }
     if (amount > STATE.balance) { toast("Недостаточно средств"); return; }
-
     const btn = $("tf-submit");
     btn.disabled = true; btn.textContent = "Отправка...";
-
     try {
       const res = await fetch(API + "/api/transfer", {
         method: "POST", headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ user_id: USER_ID, to_username: toUsername, amount })
       });
       const data = await res.json();
-      if (!res.ok || data.error) {
-        toast(data.error || "Ошибка перевода");
-        btn.disabled = false; btn.textContent = "Перевести"; return;
-      }
+      if (!res.ok || data.error) { toast(data.error || "Ошибка перевода"); btn.disabled = false; btn.textContent = "Перевести"; return; }
       STATE.balance = data.from_balance; saveState(); updateStats(); renderProfile();
       toast("✅ Переведено " + amount.toLocaleString("ru-RU") + " ₽ для @" + data.to_username);
       $("tf-username").value = ""; $("tf-amount").value = "";
@@ -834,27 +810,19 @@
     btn.disabled = false; btn.textContent = "Перевести";
   });
 
-  // ============================================================
-  //  ТОП-3
-  // ============================================================
   async function loadTop() {
     const list = $("top3-list");
     list.innerHTML = "<div class='empty'>Загрузка...</div>";
     try {
       const res = await fetch(API + "/api/top");
       const data = await res.json();
-      if (!data.top || !data.top.length) {
-        list.innerHTML = "<div class='empty'>Пока никто не играл.</div>";
-        return;
-      }
+      if (!data.top || !data.top.length) { list.innerHTML = "<div class='empty'>Пока никто не играл.</div>"; return; }
       list.innerHTML = "";
       data.top.forEach((p, i) => {
         const card = document.createElement("div");
         card.className = "top3-card rank-" + (i+1);
         const medal = ["🥇","🥈","🥉"][i];
-        const avatarHTML = p.photo
-          ? '<img src="' + p.photo + '" alt="">'
-          : (p.first_name || "?").charAt(0).toUpperCase();
+        const avatarHTML = p.photo ? '<img src="' + p.photo + '" alt="">' : (p.first_name || "?").charAt(0).toUpperCase();
         card.innerHTML =
           '<div class="avatar">' + avatarHTML + '</div>' +
           '<div class="info">' +
@@ -865,15 +833,15 @@
           '<div class="bal">' + p.balance.toLocaleString("ru-RU") + " ₽</div>";
         list.appendChild(card);
       });
-    } catch (e) {
-      list.innerHTML = "<div class='empty'>Не удалось загрузить топ.</div>";
-    }
+    } catch (e) { list.innerHTML = "<div class='empty'>Не удалось загрузить топ.</div>"; }
   }
 
   // ============================================================
-  //  УЛУЧШЕНИЕ — колесо
+  //  УЛУЧШЕНИЕ — колесо крутится, стрелка сверху неподвижна
   // ============================================================
   let upgradeSpinning = false;
+  let wheelRotation = 0; // накопленный угол колеса
+
   function renderUpgradeSelect() {
     const sel = $("up-select");
     sel.innerHTML = "";
@@ -888,6 +856,7 @@
       sel.appendChild(opt);
     });
   }
+
   $("up-spin").addEventListener("click", () => {
     if (upgradeSpinning) return;
     const id = parseInt($("up-select").value, 10);
@@ -899,33 +868,39 @@
     $("up-spin").disabled = true;
     $("up-result").className = "upgrade-result";
 
-    // Крутим: шарик делает несколько оборотов и останавливается случайно
-    const ball = $("wheel-ball");
-    // 0deg — верх (12 часов). Зелёная зона: 180°–360° (правая половина снизу). Красная: 0°–180°.
-    // Угол 0 = верх. Идём по часовой: 0-180 — красная (право-низ), 180-360 — зелёная (лево-низ).
-    // Упростим: рандом 0..360, если между 0 и 180 = красная, иначе зелёная.
-    // Чтобы было честно 50/50.
-    const win = Math.random() < 0.5;
-    // Угол выпадения
-    let angle;
+    // Крутим: зелёная зона занимает левую половину (180°-360°), красная правую (0°-180°)
+    // Стрелка сверху (0° — верх колеса). Мы крутим КОЛЕСО, стрелка остаётся на месте.
+    // Итоговый угол колеса определяет, какая зона окажется сверху.
+    const win = Math.random() < 0.5; // 50/50
+
+    let targetAngle;
     if (win) {
-      // зелёная зона
-      angle = 180 + Math.random() * 180;
+      // Зелёная зона (180°-360° в системе колеса) должна встать под стрелку (0°).
+      // Колесо поворачиваем так, чтобы центр зелёной зоны (270°) оказался вверху.
+      // Итоговое вращение колеса: -270° или эквивалент.
+      const randOffset = (Math.random() - 0.5) * 140; // ±70° внутри зелёной
+      targetAngle = -270 + randOffset;
     } else {
-      angle = Math.random() * 180;
+      // Красная зона (0°-180°) центр = 90°. Вращение колеса = -90° + рандом ±70°.
+      const randOffset = (Math.random() - 0.5) * 140;
+      targetAngle = -90 + randOffset;
     }
-    const totalRotation = 360 * 5 + angle; // 5 полных оборотов + финальный угол
-    ball.style.transform = "translate(-50%, -50%) rotate(" + totalRotation + "deg) translateY(-110px)";
+
+    // Добавляем 5 полных оборотов + учёт прошлого вращения
+    const fullSpins = 5 * 360;
+    const newRotation = wheelRotation + fullSpins + (targetAngle - (wheelRotation % 360));
+    wheelRotation = newRotation;
+
+    const wheel = $("wheel");
+    wheel.style.transform = "rotate(" + newRotation + "deg)";
 
     setTimeout(() => {
       if (win) {
-        // Удвоить цену
         item.price = item.price * 2;
         saveState(); updateStats();
         $("up-result").textContent = "🎉 УСПЕХ! Цена удвоена: " + item.price.toLocaleString("ru-RU") + " ₽";
         $("up-result").className = "upgrade-result win";
       } else {
-        // Удалить номер
         STATE.my_numbers = STATE.my_numbers.filter(x => x.id !== id);
         saveState(); updateStats();
         $("up-result").textContent = "💥 ПРОВАЛ! Номер сгорел.";
@@ -934,18 +909,9 @@
       renderUpgradeSelect();
       upgradeSpinning = false;
       $("up-spin").disabled = false;
-      // Сброс шарика
-      setTimeout(() => {
-        ball.style.transition = "none";
-        ball.style.transform = "translate(-50%, -50%) translateY(-110px)";
-        setTimeout(() => { ball.style.transition = "transform 3.6s cubic-bezier(.15,.85,.3,1)"; }, 50);
-      }, 1800);
-    }, 3700);
+    }, 4100);
   });
 
-  // ============================================================
-  //  ПРОДАЖА ВСЕГО
-  // ============================================================
   function updateSellAll() {
     const block = $("sell-all");
     if (!STATE.my_numbers.length) { block.style.display = "none"; return; }
@@ -967,9 +933,6 @@
     toast("💰 Продано всё за " + total.toLocaleString("ru-RU") + " ₽");
   });
 
-  // ============================================================
-  //  ЦИФРЫ
-  // ============================================================
   function buildDigitsRow() {
     digitsRow.innerHTML = "";
     for (let i = 0; i < DIGITS; i++) {
@@ -1033,8 +996,7 @@
     sim3d.classList.remove("rar-trash","rar-common","rar-uncommon","rar-rare","rar-epic","rar-legend","rar-myth","idle","flash");
     sim3d.classList.add(cardCls);
     if (["rar-epic", "rar-legend", "rar-myth"].includes(cardCls)) {
-      flashLayer.style.animation = "none";
-      void flashLayer.offsetWidth;
+      flashLayer.style.animation = "none"; void flashLayer.offsetWidth;
       flashLayer.style.animation = "flashAnim .9s ease-out";
     }
   }
@@ -1087,7 +1049,6 @@
 
     Array.from(digitsRow.children).forEach(b => b.classList.remove("locked"));
     modeInfo.textContent = {normal:"обычный", lucky:"удача+", super:"макс. удача"}[mode] || mode;
-
     sim3d.classList.remove("idle"); sim3d.classList.add("spinning");
     simFace.style.filter = "brightness(.7)";
 
@@ -1097,7 +1058,6 @@
       showResult(result);
       updateStats();
       saveState();
-
       if (result.kept) {
         if (result.rarity === "МИФ") toast("🔥 МИФ! Ушёл в «Мои номера»");
         else if (result.rarity === "ЛЕГЕНДА") toast("⭐ ЛЕГЕНДА! Ушёл в «Мои номера»");
@@ -1113,8 +1073,7 @@
     myList.innerHTML = "";
     if (!STATE.my_numbers.length) {
       myList.innerHTML = "<div class='empty'>Пока пусто.<br>Эпик и выше попадают сюда автоматически.</div>";
-      updateSellAll();
-      return;
+      updateSellAll(); return;
     }
     STATE.my_numbers.forEach(item => {
       const card = document.createElement("div");
@@ -1157,7 +1116,6 @@
   $("spinLucky").addEventListener("click",  () => spin("lucky"));
   $("spinSuper").addEventListener("click",  () => spin("super"));
 
-  // СТАРТ
   updateStats();
   if (STATE.last) showResult(STATE.last);
   syncBalanceFromServer().then(() => checkDaily());
