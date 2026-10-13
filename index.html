@@ -72,44 +72,57 @@
     background: var(--gold); color: #1a1e26;
     font-size: 10px; font-weight: 800; border-radius: 9px;
   }
-  .sim-stage { width: 100%; max-width: 360px; perspective: 1400px; margin-bottom: 24px; display: flex; justify-content: center; }
+
+  /* ===== SIM-КАРТА ===== */
+  .sim-stage {
+    width: 100%; max-width: 360px;
+    perspective: 1400px;
+    margin-bottom: 24px;
+    display: flex; justify-content: center;
+  }
   .sim-3d {
     position: relative; width: 100%; aspect-ratio: 1.586 / 1;
     transform-style: preserve-3d;
-    transform: rotateX(12deg) rotateY(-8deg);
-    transition: transform .8s cubic-bezier(.2,.8,.2,1);
+    transform: rotateX(10deg) rotateY(-6deg);
+    transition: transform .6s cubic-bezier(.2,.8,.2,1);
   }
   .sim-3d.idle { animation: simFloat 4s ease-in-out infinite; }
   @keyframes simFloat {
-    0%, 100% { transform: rotateX(12deg) rotateY(-8deg) translateY(0); }
-    50%      { transform: rotateX(12deg) rotateY(-8deg) translateY(-6px); }
+    0%, 100% { transform: rotateX(10deg) rotateY(-6deg) translateY(0); }
+    50%      { transform: rotateX(10deg) rotateY(-6deg) translateY(-5px); }
   }
-  /* Анимация прокрутки — полный оборот вокруг Y + подпрыгивание */
-  .sim-3d.spinning {
-    animation: simSpin 1.4s cubic-bezier(.3,.7,.4,1) infinite;
-  }
+  .sim-3d.spinning { animation: simSpin 1.1s cubic-bezier(.45,.05,.55,.95) infinite; }
   @keyframes simSpin {
-    0%   { transform: rotateX(12deg) rotateY(-8deg)  translateY(0)    scale(1); }
-    25%  { transform: rotateX(20deg) rotateY(90deg)  translateY(-18px) scale(1.03); }
-    50%  { transform: rotateX(12deg) rotateY(180deg) translateY(0)    scale(1); }
-    75%  { transform: rotateX(20deg) rotateY(270deg) translateY(-18px) scale(1.03); }
-    100% { transform: rotateX(12deg) rotateY(352deg) translateY(0)    scale(1); }
+    0%   { transform: rotateX(10deg) rotateY(-6deg)  translateY(0)     scale(1); }
+    25%  { transform: rotateX(6deg)  rotateY(-14deg) translateY(-14px) scale(1.03); }
+    50%  { transform: rotateX(14deg) rotateY(4deg)   translateY(-20px) scale(1.05); }
+    75%  { transform: rotateX(8deg)  rotateY(-14deg) translateY(-12px) scale(1.02); }
+    100% { transform: rotateX(10deg) rotateY(-6deg)  translateY(0)     scale(1); }
   }
   .sim-shadow {
-    position: absolute; left: 6%; right: 6%; bottom: -22px; height: 30px;
+    position: absolute; left: 8%; right: 8%; bottom: -20px; height: 26px;
     background: radial-gradient(ellipse at center, rgba(0,0,0,.85), transparent 75%);
-    filter: blur(10px); border-radius: 50%; z-index: -1; transform: translateZ(-40px);
+    filter: blur(10px); border-radius: 50%; z-index: -1;
   }
+
+  /* ==== Форма карты ====
+     Срез в левом нижнем углу: 15% по X, 25% по Y.
+     Всё что внутри — обрезается автоматически, без чёрных полей. */
+  .sim-body, .sim-face, .sim-edge-bottom {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 100%, 0 75%);
+  }
+
   .sim-body {
-    position: absolute; inset: 0; border-radius: 16px;
+    position: absolute; inset: 0; border-radius: 0;
     transform-style: preserve-3d;
-    box-shadow: 0 30px 60px rgba(0,0,0,.75), 0 12px 24px rgba(0,0,0,.5), 0 4px 8px rgba(0,0,0,.4);
+    box-shadow:
+      0 30px 60px rgba(0,0,0,.75),
+      0 12px 24px rgba(0,0,0,.5),
+      0 4px 8px rgba(0,0,0,.4);
   }
-  /* Аккуратный срез — левый нижний угол */
   .sim-face {
     position: absolute; inset: 0;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 72%);
-    border-radius: 14px; overflow: hidden;
+    overflow: hidden;
     background: linear-gradient(140deg, #4a5058 0%, #2a3038 55%, #1a1e24 100%);
     transition: background 1s ease, filter 1s ease;
     box-shadow:
@@ -122,7 +135,6 @@
     position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
     background: linear-gradient(180deg, #1a1e24, #0a0c10);
     transform-origin: bottom; transform: translateY(100%) rotateX(-90deg);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 72%);
   }
   .sim-edge-right {
     position: absolute; right: 0; top: 0; bottom: 0; width: 8px;
@@ -144,10 +156,12 @@
     0% { opacity: 1; background: radial-gradient(circle at center, rgba(255,255,255,.9), transparent 65%); }
     100% { opacity: 0; background: radial-gradient(circle at center, rgba(255,255,255,.9), transparent 65%); }
   }
+
+  /* Чип — теперь сдвинут левее-ниже, вне линии номера */
   .sim-chip {
-    position: absolute; left: 8%; top: 63%;
+    position: absolute; left: 7%; top: 65%;
     transform: translateY(-50%) translateZ(2px);
-    width: 58px; height: 44px; border-radius: 8px;
+    width: 52px; height: 40px; border-radius: 8px;
     background: linear-gradient(135deg, #e8cf88 0%, #c9a95a 25%, #f0d98a 50%, #b8923f 75%, #e8cf88 100%);
     box-shadow:
       0 4px 10px rgba(0,0,0,.65),
@@ -158,7 +172,7 @@
     z-index: 5; overflow: hidden;
   }
   .sim-chip::before {
-    content: ""; position: absolute; inset: 5px;
+    content: ""; position: absolute; inset: 4px;
     background-image:
       linear-gradient(to right, rgba(0,0,0,.7) 2px, transparent 2px),
       linear-gradient(to right, rgba(0,0,0,.7) 2px, transparent 2px),
@@ -177,6 +191,8 @@
     0%, 100% { transform: translateX(-100%); }
     50%      { transform: translateX(100%); }
   }
+
+  /* ==== Обложки по редкости ==== */
   .sim-3d.rar-trash .sim-face { background: linear-gradient(140deg, #4a5058 0%, #2a3038 55%, #1a1e24 100%); }
   .sim-3d.rar-common .sim-face { background: linear-gradient(140deg, #5a6068 0%, #343a42 55%, #1e2228 100%); }
   .sim-3d.rar-uncommon .sim-face {
@@ -205,11 +221,12 @@
     animation: mythGlow 1.6s ease-in-out infinite;
   }
   @keyframes mythGlow { 0%,100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.3) saturate(1.3); } }
+
+  /* ==== Содержимое — БЕЗ clip-path, чтобы не было чёрных полей ==== */
   .sim-content {
     position: absolute; inset: 0; padding: 12px 14px;
     display: flex; flex-direction: column; justify-content: space-between;
     z-index: 6;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 72%);
   }
   .sim-top { display: flex; justify-content: space-between; align-items: flex-start; }
   .sim-top .left, .sim-top .right { display: flex; align-items: center; gap: 6px; }
@@ -221,7 +238,11 @@
     background: rgba(0,0,0,.65); border: 1px solid rgba(255,255,255,.2);
     font-size: 11px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.9);
   }
-  .number-block { display: flex; flex-direction: column; align-items: flex-end; padding-right: 4px; margin-top: 4px; margin-left: 70px; }
+  /* Номер — правее, чтобы не пересекался с чипом */
+  .number-block {
+    display: flex; flex-direction: column; align-items: flex-end;
+    padding-right: 4px; margin-top: 4px; margin-left: 65px;
+  }
   .number-label { font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,.55); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
   .number-row { display: flex; align-items: center; gap: 4px; }
   .prefix-box {
@@ -243,7 +264,8 @@
   .digit-box .reel span { height: 30px; line-height: 30px; }
   .digit-box.locked { border-color: var(--gold); box-shadow: 0 0 8px rgba(232,200,119,.5); }
   .digit-box.win { animation: digitPulse .4s ease; }
-  @keyframes digitPulse { 0% { transform: scale(1); } 50% { transform: scale(1.18); box-shadow: 0 0 14px currentColor; } 100% { transform: scale(1); } }
+  @keyframes digitPulse { 0% { transform: scale(1); } 50% { transform: scale(1.18); } 100% { transform: scale(1); } }
+
   .sim-bottom { display: flex; justify-content: space-between; align-items: flex-end; padding-right: 8px; }
   .sim-bottom .col { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
   .sim-bottom .right { align-items: flex-end; }
@@ -257,6 +279,8 @@
   }
   .r-trash { color: #8b9199; } .r-common { color: #b8bcc2; } .r-uncommon { color: #7ac0e8; }
   .r-rare { color: #6a9aff; } .r-epic { color: #b88aff; } .r-legend { color: #ffd966; } .r-myth { color: #ff9a5a; }
+
+  /* ==== Кнопки ==== */
   .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%; max-width: 460px; }
   button {
     flex: 1 1 auto; min-width: 130px;
@@ -272,6 +296,7 @@
   #spinNormal { border-color: rgba(150,170,200,.35); }
   #spinLucky { background: linear-gradient(140deg, #4a2e7a, #1e1230); border-color: rgba(180,120,240,.5); color: #e8d4ff; }
   #spinSuper { background: linear-gradient(140deg, #8a6a1a, #3a2810); border-color: rgba(255,220,130,.6); color: #ffe9a8; }
+
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 22px; width: 100%; max-width: 460px; }
   @media (max-width: 500px) { .stats { grid-template-columns: repeat(2, 1fr); } }
   .stat {
@@ -281,6 +306,7 @@
   }
   .stat .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; font-weight: 600; }
   .stat .value { font-size: 15px; color: var(--text); font-weight: 800; }
+
   .my-list { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 10px; }
   .my-card {
     display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center;
@@ -302,7 +328,7 @@
   .empty { text-align: center; color: var(--muted); padding: 60px 20px; font-size: 14px;
     background: linear-gradient(140deg, rgba(42,48,64,.4), rgba(20,24,31,.7));
     border: 1px dashed rgba(255,255,255,.08); border-radius: 14px; }
-  /* Профиль */
+
   .profile {
     width: 100%; max-width: 460px;
     background: linear-gradient(140deg, #222836, #14181f);
@@ -318,21 +344,15 @@
     overflow: hidden;
   }
   .profile .avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .profile .name {
-    font-size: 20px; font-weight: 800; color: #fff;
-    text-align: center;
-  }
-  .profile .username {
-    font-size: 14px; color: var(--gold); font-weight: 600;
-  }
-  .profile .userid {
-    font-size: 11px; color: var(--muted);
-  }
+  .profile .name { font-size: 20px; font-weight: 800; color: #fff; text-align: center; }
+  .profile .username { font-size: 14px; color: var(--gold); font-weight: 600; }
+  .profile .userid { font-size: 11px; color: var(--muted); }
   .profile .p-balance {
     margin-top: 8px; padding: 10px 18px; border-radius: 12px;
     background: rgba(0,0,0,.4); border: 1px solid rgba(232,200,119,.3);
     font-size: 18px; font-weight: 800; color: var(--gold);
   }
+
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px);
     background: linear-gradient(140deg, #2e3546, #14181f);
@@ -438,24 +458,20 @@
 (function() {
   "use strict";
 
-  // ============================================================
-  //  TELEGRAM USER
-  // ============================================================
+  // ==== Telegram user ====
   const TG = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
   const TG_USER = TG && TG.initDataUnsafe && TG.initDataUnsafe.user ? TG.initDataUnsafe.user : null;
-
   const USER_ID = TG_USER ? String(TG_USER.id) : "guest_" + Math.floor(Math.random() * 1000000);
   const USER_NAME = TG_USER
     ? ((TG_USER.first_name || "") + (TG_USER.last_name ? " " + TG_USER.last_name : "")).trim() || "Игрок"
     : "Гость";
   const USER_USERNAME = TG_USER && TG_USER.username ? "@" + TG_USER.username : "@нет_юзернейма";
   const USER_PHOTO = TG_USER && TG_USER.photo_url ? TG_USER.photo_url : null;
+  if (TG) { TG.ready(); TG.expand(); }
 
-  if (TG) {
-    TG.ready();
-    TG.expand();
-  }
-
+  // ============================================================
+  //  ДАННЫЕ
+  // ============================================================
   const COUNTRIES = {
     "Африка": {"code":"+2","flag":"🌍","rarity":0.20,"operators":{"MTN":1.0,"Airtel":1.1,"Safaricom":1.3,"Vodacom":1.2}},
     "Пакистан": {"code":"+92","flag":"🇵🇰","rarity":0.30,"operators":{"Jazz":1.0,"Zong":1.2,"Ufone":1.1,"Telenor":1.3}},
@@ -473,6 +489,7 @@
     "Монако": {"code":"+377","flag":"🇲🇨","rarity":2.50,"operators":{"Monaco Telecom":1.0,"Orange MC":1.2}},
     "Катар": {"code":"+974","flag":"🇶🇦","rarity":2.60,"operators":{"Ooredoo":1.0,"Vodafone QA":1.2}}
   };
+
   const RARITIES = [
     [0.00,"МУСОР",0.20,"r-trash","rar-trash"],
     [1.05,"ОБЫЧНОЕ",0.60,"r-common","rar-common"],
@@ -484,7 +501,7 @@
   ];
   const KEEP_FROM = ["ЭПИК","ЛЕГЕНДА","МИФ"];
   const DIGITS = 9;
-  const MAX_PRICE = 40000000; // 40 млн — потолок
+  const MAX_PRICE = 40000000;
   const $ = id => document.getElementById(id);
 
   const balanceEl = $("balance"), digitsRow = $("digits-row"), prefixEl = $("prefix");
@@ -499,19 +516,19 @@
   const sim3d = $("sim-3d"), simFace = $("sim-face"), flashLayer = $("flash-layer");
 
   const DEFAULT_STATE = {
-    balance: 100000, last: null, my_numbers: [],
+    balance: 50000, last: null, my_numbers: [],
     stats: { spins: 0, sold: 0, earned: 0, spent: 0, best_price: 0 },
-    next_id: 1, streak: { epic: 0, legend: 0, myth: 0 }, history: []
+    next_id: 1, streak: { epic: 0, legend: 0, myth: 0 }
   };
   let STATE = loadState();
   function loadState() {
-    try { const raw = localStorage.getItem("sim_spinner_v5_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
+    try { const raw = localStorage.getItem("sim_spinner_v6_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
     return JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
-  function saveState() { try { localStorage.setItem("sim_spinner_v5_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+  function saveState() { try { localStorage.setItem("sim_spinner_v6_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
 
   // ============================================================
-  //  Beauty score — чуть мягче, чтобы распределение было стабильнее
+  //  BEAUTY SCORE
   // ============================================================
   function beautyScore(number) {
     const digits = number.split("");
@@ -522,44 +539,63 @@
     }
     if (maxRepeat >= 8) score += 6.5;
     else if (maxRepeat >= 6) score += 4.0;
-    else if (maxRepeat >= 5) score += 2.2;
-    else if (maxRepeat >= 4) score += 1.0;
-    else if (maxRepeat === 3) score += 0.40;
+    else if (maxRepeat >= 5) score += 2.4;
+    else if (maxRepeat >= 4) score += 1.2;
+    else if (maxRepeat === 3) score += 0.45;
     else if (maxRepeat === 2) score += 0.15;
+
     if (new Set(digits).size === 1) score += 9.0;
     if (number === number.split("").reverse().join("")) score += 2.6;
     if (number === "123456789" || number === "987654321") score += 7.0;
+
     const cnt = {};
     for (const d of digits) cnt[d] = (cnt[d] || 0) + 1;
     const most = Math.max(...Object.values(cnt));
-    if (most >= 6) score += 1.6; else if (most === 5) score += 0.8;
-    else if (most === 4) score += 0.3; else if (most === 3) score += 0.08;
-    for (const m of ["777777","888888","999999","000000","123456","654321"]) if (number.includes(m)) score += 3.2;
-    for (const m of ["7777","8888","9999","0000","777","888","999","000","111","222","555","666"]) if (number.includes(m)) score += 0.9;
+    if (most >= 6) score += 1.7;
+    else if (most === 5) score += 0.85;
+    else if (most === 4) score += 0.32;
+    else if (most === 3) score += 0.09;
+
+    for (const m of ["777777","888888","999999","000000","123456","654321"]) if (number.includes(m)) score += 3.3;
+    for (const m of ["7777","8888","9999","0000","777","888","999","000","111","222","555","666"]) if (number.includes(m)) score += 0.95;
+
     if (number.startsWith("007")) score += 0.6;
-    if (number[0] === number[8]) score += 0.18;
+    if (number[0] === number[8]) score += 0.2;
     const zeros = digits.filter(d => d === "0").length;
-    if (zeros >= 5) score += 1.3; else if (zeros >= 4) score += 0.6; else if (zeros >= 3) score += 0.2;
+    if (zeros >= 5) score += 1.3;
+    else if (zeros >= 4) score += 0.6;
+    else if (zeros >= 3) score += 0.2;
     if (["77","88","99","00","11","22"].includes(number.slice(0,2))) score += 0.22;
-    if (new Set(digits).size >= 8) score -= 0.04;
+    if (new Set(digits).size >= 8) score -= 0.05;
     return Math.round(score * 100) / 100;
   }
+
   function getRarity(beauty) {
     let r = RARITIES[0];
     for (const item of RARITIES) if (beauty >= item[0]) r = item;
     return { name: r[1], mult: r[2], cls: r[3], card: r[4] };
   }
-  // Цена — нелинейная, чтобы топовые номера доходили до ~40 млн
+
+  // ============================================================
+  //  ЦЕНА
+  //  Базовая цена очень низкая — простой номер стоит копейки.
+  //  Топовые номера уходят за миллионы и до 40 млн.
+  // ============================================================
   function makeNumber(beauty, country, opmult) {
     const r = getRarity(beauty);
-    const base = 45 * country.rarity * opmult * beauty * r.mult;
-    // Усиление для топовых: добавляем квадратичный буст к дорогим
-    const boost = Math.pow(beauty, 1.7) / 4;
-    let price = Math.floor(base + boost * country.rarity * opmult * 500);
+    // базовая — 20 ₽ * страна * оператор * красота * редкость
+    const base = 20 * country.rarity * opmult * beauty * r.mult;
+    // нелинейный буст для очень красивых номеров
+    const boost = Math.pow(Math.max(0, beauty - 1.5), 2.4) * country.rarity * opmult * 3;
+    let price = Math.floor(base + boost);
     if (price > MAX_PRICE) price = MAX_PRICE;
     price = Math.max(price, 5);
     return { price, rarity: r };
   }
+
+  // ============================================================
+  //  ГЕНЕРАЦИЯ
+  // ============================================================
   function generatePattern(mode) {
     let patterns, weights;
     if (mode === "super") { patterns = ["repeat_high","repeat_mid","sequence","zeros","magic","palindrome"]; weights = [1,3,2,2,5,2]; }
@@ -585,6 +621,7 @@
     }
     return rand(9);
   }
+
   function weightedCountry(mode) {
     const names = Object.keys(COUNTRIES);
     const weights = names.map(c => {
@@ -598,35 +635,47 @@
     for (let i = 0; i < names.length; i++) { r -= weights[i]; if (r <= 0) return names[i]; }
     return names[names.length - 1];
   }
-  // Стабильность: усредняем 3 броска и берём средний — меньше разброс
-  function stableRandom(chance) {
-    const a = Math.random(), b = Math.random(), c = Math.random();
-    const avg = (a + b + c) / 3;
-    // Смещаем к chance
-    return avg < chance * (1 + (avg - 0.5) * 0.5);
-  }
+
   function generateNumber(mode) {
-    const chance = mode === "super" ? 0.85 : (mode === "lucky" ? 0.65 : 0.12);
-    let number = stableRandom(chance) ? generatePattern(mode) : Array.from({length:9}, () => "0123456789"[Math.floor(Math.random()*10)]).join("");
+    let number, beauty;
+    const st = STATE.streak;
+
+    if (mode === "normal") {
+      // === 150 ₽ — чаще мусор, но иногда что-то хорошее ===
+      // 88% — случайный номер, 12% — паттерн
+      number = Math.random() < 0.12 ? generatePattern("normal") : Array.from({length:9}, () => "0123456789"[Math.floor(Math.random()*10)]).join("");
+      beauty = beautyScore(number);
+    } else if (mode === "lucky") {
+      // === 5000 ₽ — 65% паттерн, ×1.3 красоты ===
+      number = Math.random() < 0.65 ? generatePattern("lucky") : Array.from({length:9}, () => "0123456789"[Math.floor(Math.random()*10)]).join("");
+      beauty = beautyScore(number);
+      beauty = Math.round(beauty * 1.3 * 100) / 100;
+      // anti-streak
+      if (st.myth >= 1) beauty = Math.round(beauty * 0.45 * 100) / 100;
+      else if (st.legend >= 1) beauty = Math.round(beauty * 0.65 * 100) / 100;
+      else if (st.epic >= 2) beauty = Math.round(beauty * 0.85 * 100) / 100;
+    } else {
+      // === 20000 ₽ — 90% паттерн, ×1.9 красоты, топовые страны ===
+      number = Math.random() < 0.90 ? generatePattern("super") : Array.from({length:9}, () => "0123456789"[Math.floor(Math.random()*10)]).join("");
+      beauty = beautyScore(number);
+      beauty = Math.round(beauty * 1.9 * 100) / 100;
+      // anti-streak, мягче
+      if (st.myth >= 1) beauty = Math.round(beauty * 0.55 * 100) / 100;
+      else if (st.legend >= 1) beauty = Math.round(beauty * 0.75 * 100) / 100;
+    }
+
     const cName = weightedCountry(mode);
     const country = COUNTRIES[cName];
     const opNames = Object.keys(country.operators);
     const opName = opNames[Math.floor(Math.random() * opNames.length)];
     const opMult = country.operators[opName];
-    let beauty = beautyScore(number);
-    if (mode === "lucky") beauty = Math.round(beauty * 1.3 * 100) / 100;
-    else if (mode === "super") beauty = Math.round(beauty * 1.8 * 100) / 100;
-    // Anti-streak
-    const st = STATE.streak;
-    if (mode === "lucky" || mode === "super") {
-      if (st.myth >= 1) beauty = Math.round(beauty * 0.4 * 100) / 100;
-      else if (st.legend >= 1) beauty = Math.round(beauty * 0.6 * 100) / 100;
-      else if (st.epic >= 2) beauty = Math.round(beauty * 0.8 * 100) / 100;
-    }
+
     const { price, rarity } = makeNumber(beauty, country, opMult);
+
     if (rarity.name === "МИФ") st.myth += 1; else st.myth = 0;
     if (rarity.name === "ЛЕГЕНДА" || rarity.name === "МИФ") st.legend += 1; else st.legend = 0;
     if (["ЭПИК","ЛЕГЕНДА","МИФ"].includes(rarity.name)) st.epic += 1; else st.epic = 0;
+
     return {
       number, country: cName, country_code: country.code, flag: country.flag,
       operator: opName, beauty, rarity: rarity.name, rarity_mult: rarity.mult,
@@ -648,20 +697,14 @@
   tabBtnMy.addEventListener("click", () => showTab("my"));
   tabBtnProfile.addEventListener("click", () => showTab("profile"));
 
-  // ============================================================
-  //  ПРОФИЛЬ
-  // ============================================================
   function renderProfile() {
     $("pf-name").textContent = USER_NAME;
     $("pf-username").textContent = USER_USERNAME;
     $("pf-userid").textContent = "ID: " + USER_ID;
     $("pf-balance").textContent = STATE.balance.toLocaleString("ru-RU") + " ₽";
     const av = $("pf-avatar");
-    if (USER_PHOTO) {
-      av.innerHTML = '<img src="' + USER_PHOTO + '" alt="">';
-    } else {
-      av.textContent = USER_NAME.charAt(0).toUpperCase();
-    }
+    if (USER_PHOTO) av.innerHTML = '<img src="' + USER_PHOTO + '" alt="">';
+    else av.textContent = USER_NAME.charAt(0).toUpperCase();
   }
 
   // ============================================================
@@ -735,6 +778,7 @@
       flashLayer.style.animation = "flashAnim .9s ease-out";
     }
   }
+
   function showResult(r) {
     prefixEl.textContent = r.country_code;
     flagTop.textContent = r.flag;
@@ -747,14 +791,17 @@
     rarityInfo.className = "sim-rarity " + (r.rarity_class || "r-common");
     applyCardRarity(r.rarity_card || "rar-trash");
   }
+
   function updateStats() {
     const s = STATE.stats;
-    stSpins.textContent = s.spins; stSold.textContent = s.sold;
+    stSpins.textContent = s.spins;
+    stSold.textContent = s.sold;
     stEarned.textContent = s.earned.toLocaleString("ru-RU");
     stBest.textContent = s.best_price.toLocaleString("ru-RU");
     balanceEl.textContent = STATE.balance.toLocaleString("ru-RU");
     myCount.textContent = STATE.my_numbers.length;
   }
+
   let spinning = false;
   function setButtonsDisabled(v) {
     $("spinNormal").disabled = v; $("spinLucky").disabled = v; $("spinSuper").disabled = v;
@@ -788,7 +835,6 @@
     Array.from(digitsRow.children).forEach(b => b.classList.remove("locked"));
     modeInfo.textContent = {normal:"обычный", lucky:"удача+", super:"макс. удача"}[mode] || mode;
 
-    // Анимация карты: полный оборот
     sim3d.classList.remove("idle");
     sim3d.classList.add("spinning");
     simFace.style.filter = "brightness(.7)";
@@ -841,6 +887,7 @@
       myList.appendChild(card);
     });
   }
+
   function sellFromMy(id) {
     const item = STATE.my_numbers.find(x => x.id === id);
     if (!item) { toast("Номер не найден"); return; }
