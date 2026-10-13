@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Крути номер</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   :root { --bg: #0f1216; --text: #e6e9ee; --muted: #7a808a; --gold: #e8c877; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -30,7 +31,10 @@
     display: flex; flex-direction: column; align-items: center;
     perspective: 1600px;
   }
-  .top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .top-bar {
+    width: 100%; display: flex; justify-content: space-between;
+    align-items: center; gap: 10px; margin-bottom: 14px;
+  }
   .logo {
     font-size: 17px; font-weight: 800; letter-spacing: .5px;
     background: linear-gradient(90deg, #e8c877, #f5e5b8, #e8c877);
@@ -49,9 +53,10 @@
   .tabs {
     display: flex; gap: 6px; margin-bottom: 20px;
     background: rgba(0,0,0,.4); padding: 4px; border-radius: 12px;
+    flex-wrap: wrap; justify-content: center;
   }
   .tab {
-    padding: 8px 20px; border-radius: 8px; cursor: pointer;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer;
     color: var(--muted); font-size: 13px; font-weight: 600;
     user-select: none; transition: all .25s;
     display: flex; align-items: center; gap: 6px;
@@ -79,6 +84,17 @@
     0%, 100% { transform: rotateX(12deg) rotateY(-8deg) translateY(0); }
     50%      { transform: rotateX(12deg) rotateY(-8deg) translateY(-6px); }
   }
+  /* Анимация прокрутки — полный оборот вокруг Y + подпрыгивание */
+  .sim-3d.spinning {
+    animation: simSpin 1.4s cubic-bezier(.3,.7,.4,1) infinite;
+  }
+  @keyframes simSpin {
+    0%   { transform: rotateX(12deg) rotateY(-8deg)  translateY(0)    scale(1); }
+    25%  { transform: rotateX(20deg) rotateY(90deg)  translateY(-18px) scale(1.03); }
+    50%  { transform: rotateX(12deg) rotateY(180deg) translateY(0)    scale(1); }
+    75%  { transform: rotateX(20deg) rotateY(270deg) translateY(-18px) scale(1.03); }
+    100% { transform: rotateX(12deg) rotateY(352deg) translateY(0)    scale(1); }
+  }
   .sim-shadow {
     position: absolute; left: 6%; right: 6%; bottom: -22px; height: 30px;
     background: radial-gradient(ellipse at center, rgba(0,0,0,.85), transparent 75%);
@@ -89,9 +105,10 @@
     transform-style: preserve-3d;
     box-shadow: 0 30px 60px rgba(0,0,0,.75), 0 12px 24px rgba(0,0,0,.5), 0 4px 8px rgba(0,0,0,.4);
   }
+  /* Аккуратный срез — левый нижний угол */
   .sim-face {
     position: absolute; inset: 0;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 22% 100%, 0 78%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 72%);
     border-radius: 14px; overflow: hidden;
     background: linear-gradient(140deg, #4a5058 0%, #2a3038 55%, #1a1e24 100%);
     transition: background 1s ease, filter 1s ease;
@@ -105,7 +122,7 @@
     position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
     background: linear-gradient(180deg, #1a1e24, #0a0c10);
     transform-origin: bottom; transform: translateY(100%) rotateX(-90deg);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 22% 100%, 0 78%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 72%);
   }
   .sim-edge-right {
     position: absolute; right: 0; top: 0; bottom: 0; width: 8px;
@@ -192,7 +209,7 @@
     position: absolute; inset: 0; padding: 12px 14px;
     display: flex; flex-direction: column; justify-content: space-between;
     z-index: 6;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 22% 100%, 0 78%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%, 0 72%);
   }
   .sim-top { display: flex; justify-content: space-between; align-items: flex-start; }
   .sim-top .left, .sim-top .right { display: flex; align-items: center; gap: 6px; }
@@ -285,6 +302,37 @@
   .empty { text-align: center; color: var(--muted); padding: 60px 20px; font-size: 14px;
     background: linear-gradient(140deg, rgba(42,48,64,.4), rgba(20,24,31,.7));
     border: 1px dashed rgba(255,255,255,.08); border-radius: 14px; }
+  /* Профиль */
+  .profile {
+    width: 100%; max-width: 460px;
+    background: linear-gradient(140deg, #222836, #14181f);
+    border: 1px solid #333a44; border-radius: 16px;
+    padding: 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .profile .avatar {
+    width: 84px; height: 84px; border-radius: 50%;
+    background: linear-gradient(140deg, #4a5a7a, #2a3040);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 800; color: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 30px rgba(120,150,220,.3);
+    overflow: hidden;
+  }
+  .profile .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .profile .name {
+    font-size: 20px; font-weight: 800; color: #fff;
+    text-align: center;
+  }
+  .profile .username {
+    font-size: 14px; color: var(--gold); font-weight: 600;
+  }
+  .profile .userid {
+    font-size: 11px; color: var(--muted);
+  }
+  .profile .p-balance {
+    margin-top: 8px; padding: 10px 18px; border-radius: 12px;
+    background: rgba(0,0,0,.4); border: 1px solid rgba(232,200,119,.3);
+    font-size: 18px; font-weight: 800; color: var(--gold);
+  }
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px);
     background: linear-gradient(140deg, #2e3546, #14181f);
@@ -295,7 +343,7 @@
     transition: opacity .3s, transform .3s;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  #tab-my { display: none; width: 100%; flex-direction: column; align-items: center; }
+  #tab-my, #tab-profile { display: none; width: 100%; flex-direction: column; align-items: center; }
 </style>
 </head>
 <body>
@@ -308,6 +356,7 @@
   <div class="tabs">
     <div class="tab active" id="tabBtnGame">🎰 Крутить</div>
     <div class="tab" id="tabBtnMy">📂 Мои номера <span class="badge" id="my-count">0</span></div>
+    <div class="tab" id="tabBtnProfile">👤 Профиль</div>
   </div>
 
   <div id="tab-game" style="width:100%; display:flex; flex-direction:column; align-items:center;">
@@ -371,6 +420,16 @@
   <div id="tab-my">
     <div class="my-list" id="my-list"></div>
   </div>
+
+  <div id="tab-profile">
+    <div class="profile">
+      <div class="avatar" id="pf-avatar">?</div>
+      <div class="name" id="pf-name">—</div>
+      <div class="username" id="pf-username">@—</div>
+      <div class="userid" id="pf-userid">ID: —</div>
+      <div class="p-balance" id="pf-balance">0 ₽</div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -378,6 +437,25 @@
 <script>
 (function() {
   "use strict";
+
+  // ============================================================
+  //  TELEGRAM USER
+  // ============================================================
+  const TG = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  const TG_USER = TG && TG.initDataUnsafe && TG.initDataUnsafe.user ? TG.initDataUnsafe.user : null;
+
+  const USER_ID = TG_USER ? String(TG_USER.id) : "guest_" + Math.floor(Math.random() * 1000000);
+  const USER_NAME = TG_USER
+    ? ((TG_USER.first_name || "") + (TG_USER.last_name ? " " + TG_USER.last_name : "")).trim() || "Игрок"
+    : "Гость";
+  const USER_USERNAME = TG_USER && TG_USER.username ? "@" + TG_USER.username : "@нет_юзернейма";
+  const USER_PHOTO = TG_USER && TG_USER.photo_url ? TG_USER.photo_url : null;
+
+  if (TG) {
+    TG.ready();
+    TG.expand();
+  }
+
   const COUNTRIES = {
     "Африка": {"code":"+2","flag":"🌍","rarity":0.20,"operators":{"MTN":1.0,"Airtel":1.1,"Safaricom":1.3,"Vodacom":1.2}},
     "Пакистан": {"code":"+92","flag":"🇵🇰","rarity":0.30,"operators":{"Jazz":1.0,"Zong":1.2,"Ufone":1.1,"Telenor":1.3}},
@@ -406,6 +484,7 @@
   ];
   const KEEP_FROM = ["ЭПИК","ЛЕГЕНДА","МИФ"];
   const DIGITS = 9;
+  const MAX_PRICE = 40000000; // 40 млн — потолок
   const $ = id => document.getElementById(id);
 
   const balanceEl = $("balance"), digitsRow = $("digits-row"), prefixEl = $("prefix");
@@ -415,22 +494,25 @@
   const stSpins = $("st-spins"), stSold = $("st-sold"), stEarned = $("st-earned"), stBest = $("st-best");
   const modeInfo = $("mode-info"), rarityInfo = $("rarity-info");
   const myList = $("my-list"), myCount = $("my-count");
-  const tabGame = $("tab-game"), tabMy = $("tab-my");
-  const tabBtnGame = $("tabBtnGame"), tabBtnMy = $("tabBtnMy");
+  const tabGame = $("tab-game"), tabMy = $("tab-my"), tabProfile = $("tab-profile");
+  const tabBtnGame = $("tabBtnGame"), tabBtnMy = $("tabBtnMy"), tabBtnProfile = $("tabBtnProfile");
   const sim3d = $("sim-3d"), simFace = $("sim-face"), flashLayer = $("flash-layer");
 
   const DEFAULT_STATE = {
     balance: 100000, last: null, my_numbers: [],
     stats: { spins: 0, sold: 0, earned: 0, spent: 0, best_price: 0 },
-    next_id: 1, streak: { epic: 0, legend: 0, myth: 0 }
+    next_id: 1, streak: { epic: 0, legend: 0, myth: 0 }, history: []
   };
   let STATE = loadState();
   function loadState() {
-    try { const raw = localStorage.getItem("sim_spinner_v4"); if (raw) return JSON.parse(raw); } catch(e){}
+    try { const raw = localStorage.getItem("sim_spinner_v5_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
     return JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
-  function saveState() { try { localStorage.setItem("sim_spinner_v4", JSON.stringify(STATE)); } catch(e){} }
+  function saveState() { try { localStorage.setItem("sim_spinner_v5_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
 
+  // ============================================================
+  //  Beauty score — чуть мягче, чтобы распределение было стабильнее
+  // ============================================================
   function beautyScore(number) {
     const digits = number.split("");
     let score = 1.0;
@@ -440,26 +522,26 @@
     }
     if (maxRepeat >= 8) score += 6.5;
     else if (maxRepeat >= 6) score += 4.0;
-    else if (maxRepeat >= 5) score += 2.4;
-    else if (maxRepeat >= 4) score += 1.2;
-    else if (maxRepeat === 3) score += 0.50;
-    else if (maxRepeat === 2) score += 0.18;
+    else if (maxRepeat >= 5) score += 2.2;
+    else if (maxRepeat >= 4) score += 1.0;
+    else if (maxRepeat === 3) score += 0.40;
+    else if (maxRepeat === 2) score += 0.15;
     if (new Set(digits).size === 1) score += 9.0;
-    if (number === number.split("").reverse().join("")) score += 2.8;
-    if (number === "123456789" || number === "987654321") score += 7.5;
+    if (number === number.split("").reverse().join("")) score += 2.6;
+    if (number === "123456789" || number === "987654321") score += 7.0;
     const cnt = {};
     for (const d of digits) cnt[d] = (cnt[d] || 0) + 1;
     const most = Math.max(...Object.values(cnt));
-    if (most >= 6) score += 1.8; else if (most === 5) score += 0.9;
-    else if (most === 4) score += 0.35; else if (most === 3) score += 0.10;
-    for (const m of ["777777","888888","999999","000000","123456","654321"]) if (number.includes(m)) score += 3.5;
-    for (const m of ["7777","8888","9999","0000","777","888","999","000","111","222","555","666"]) if (number.includes(m)) score += 1.0;
-    if (number.startsWith("007")) score += 0.7;
-    if (number[0] === number[8]) score += 0.20;
+    if (most >= 6) score += 1.6; else if (most === 5) score += 0.8;
+    else if (most === 4) score += 0.3; else if (most === 3) score += 0.08;
+    for (const m of ["777777","888888","999999","000000","123456","654321"]) if (number.includes(m)) score += 3.2;
+    for (const m of ["7777","8888","9999","0000","777","888","999","000","111","222","555","666"]) if (number.includes(m)) score += 0.9;
+    if (number.startsWith("007")) score += 0.6;
+    if (number[0] === number[8]) score += 0.18;
     const zeros = digits.filter(d => d === "0").length;
-    if (zeros >= 5) score += 1.4; else if (zeros >= 4) score += 0.65; else if (zeros >= 3) score += 0.22;
-    if (["77","88","99","00","11","22"].includes(number.slice(0,2))) score += 0.25;
-    if (new Set(digits).size >= 8) score -= 0.05;
+    if (zeros >= 5) score += 1.3; else if (zeros >= 4) score += 0.6; else if (zeros >= 3) score += 0.2;
+    if (["77","88","99","00","11","22"].includes(number.slice(0,2))) score += 0.22;
+    if (new Set(digits).size >= 8) score -= 0.04;
     return Math.round(score * 100) / 100;
   }
   function getRarity(beauty) {
@@ -467,9 +549,14 @@
     for (const item of RARITIES) if (beauty >= item[0]) r = item;
     return { name: r[1], mult: r[2], cls: r[3], card: r[4] };
   }
+  // Цена — нелинейная, чтобы топовые номера доходили до ~40 млн
   function makeNumber(beauty, country, opmult) {
     const r = getRarity(beauty);
-    let price = Math.floor(40 * country.rarity * opmult * beauty * r.mult);
+    const base = 45 * country.rarity * opmult * beauty * r.mult;
+    // Усиление для топовых: добавляем квадратичный буст к дорогим
+    const boost = Math.pow(beauty, 1.7) / 4;
+    let price = Math.floor(base + boost * country.rarity * opmult * 500);
+    if (price > MAX_PRICE) price = MAX_PRICE;
     price = Math.max(price, 5);
     return { price, rarity: r };
   }
@@ -502,32 +589,39 @@
     const names = Object.keys(COUNTRIES);
     const weights = names.map(c => {
       const r = COUNTRIES[c].rarity;
-      if (mode === "super") return 1 / Math.pow(r, 0.4);
-      if (mode === "lucky") return 1 / Math.pow(r, 0.7);
-      return 1 / Math.pow(r, 1.3);
+      if (mode === "super") return 1 / Math.pow(r, 0.5);
+      if (mode === "lucky") return 1 / Math.pow(r, 0.8);
+      return 1 / Math.pow(r, 1.2);
     });
     const total = weights.reduce((a,b)=>a+b,0);
     let r = Math.random() * total;
     for (let i = 0; i < names.length; i++) { r -= weights[i]; if (r <= 0) return names[i]; }
     return names[names.length - 1];
   }
+  // Стабильность: усредняем 3 броска и берём средний — меньше разброс
+  function stableRandom(chance) {
+    const a = Math.random(), b = Math.random(), c = Math.random();
+    const avg = (a + b + c) / 3;
+    // Смещаем к chance
+    return avg < chance * (1 + (avg - 0.5) * 0.5);
+  }
   function generateNumber(mode) {
-    const chance = mode === "super" ? 0.95 : (mode === "lucky" ? 0.75 : 0.10);
-    let number = Math.random() < chance ? generatePattern(mode) : Array.from({length:9}, () => "0123456789"[Math.floor(Math.random()*10)]).join("");
+    const chance = mode === "super" ? 0.85 : (mode === "lucky" ? 0.65 : 0.12);
+    let number = stableRandom(chance) ? generatePattern(mode) : Array.from({length:9}, () => "0123456789"[Math.floor(Math.random()*10)]).join("");
     const cName = weightedCountry(mode);
     const country = COUNTRIES[cName];
     const opNames = Object.keys(country.operators);
     const opName = opNames[Math.floor(Math.random() * opNames.length)];
     const opMult = country.operators[opName];
     let beauty = beautyScore(number);
-    if (mode === "lucky") beauty = Math.round(beauty * 1.4 * 100) / 100;
-    else if (mode === "super") beauty = Math.round(beauty * 2.0 * 100) / 100;
-    // ANTI-STREAK
+    if (mode === "lucky") beauty = Math.round(beauty * 1.3 * 100) / 100;
+    else if (mode === "super") beauty = Math.round(beauty * 1.8 * 100) / 100;
+    // Anti-streak
     const st = STATE.streak;
     if (mode === "lucky" || mode === "super") {
-      if (st.myth >= 1) beauty = Math.round(beauty * 0.35 * 100) / 100;
-      else if (st.legend >= 1) beauty = Math.round(beauty * 0.55 * 100) / 100;
-      else if (st.epic >= 2) beauty = Math.round(beauty * 0.75 * 100) / 100;
+      if (st.myth >= 1) beauty = Math.round(beauty * 0.4 * 100) / 100;
+      else if (st.legend >= 1) beauty = Math.round(beauty * 0.6 * 100) / 100;
+      else if (st.epic >= 2) beauty = Math.round(beauty * 0.8 * 100) / 100;
     }
     const { price, rarity } = makeNumber(beauty, country, opMult);
     if (rarity.name === "МИФ") st.myth += 1; else st.myth = 0;
@@ -540,16 +634,39 @@
     };
   }
 
-  tabBtnGame.addEventListener("click", () => {
-    tabBtnGame.classList.add("active"); tabBtnMy.classList.remove("active");
-    tabGame.style.display = "flex"; tabMy.style.display = "none";
-  });
-  tabBtnMy.addEventListener("click", () => {
-    tabBtnMy.classList.add("active"); tabBtnGame.classList.remove("active");
-    tabGame.style.display = "none"; tabMy.style.display = "flex";
-    renderMyNumbers();
-  });
+  // ============================================================
+  //  ВКЛАДКИ
+  // ============================================================
+  function showTab(name) {
+    [tabBtnGame, tabBtnMy, tabBtnProfile].forEach(b => b.classList.remove("active"));
+    [tabGame, tabMy, tabProfile].forEach(t => t.style.display = "none");
+    if (name === "game") { tabBtnGame.classList.add("active"); tabGame.style.display = "flex"; }
+    if (name === "my")   { tabBtnMy.classList.add("active");   tabMy.style.display = "flex"; renderMyNumbers(); }
+    if (name === "profile") { tabBtnProfile.classList.add("active"); tabProfile.style.display = "flex"; renderProfile(); }
+  }
+  tabBtnGame.addEventListener("click", () => showTab("game"));
+  tabBtnMy.addEventListener("click", () => showTab("my"));
+  tabBtnProfile.addEventListener("click", () => showTab("profile"));
 
+  // ============================================================
+  //  ПРОФИЛЬ
+  // ============================================================
+  function renderProfile() {
+    $("pf-name").textContent = USER_NAME;
+    $("pf-username").textContent = USER_USERNAME;
+    $("pf-userid").textContent = "ID: " + USER_ID;
+    $("pf-balance").textContent = STATE.balance.toLocaleString("ru-RU") + " ₽";
+    const av = $("pf-avatar");
+    if (USER_PHOTO) {
+      av.innerHTML = '<img src="' + USER_PHOTO + '" alt="">';
+    } else {
+      av.textContent = USER_NAME.charAt(0).toUpperCase();
+    }
+  }
+
+  // ============================================================
+  //  ЦИФРЫ И АНИМАЦИЯ
+  // ============================================================
   function buildDigitsRow() {
     digitsRow.innerHTML = "";
     for (let i = 0; i < DIGITS; i++) {
@@ -625,7 +742,7 @@
     operatorName.textContent = r.operator;
     opLogo.textContent = r.operator.slice(0, 2).toUpperCase();
     beautyEl.textContent = r.beauty;
-    priceEl.textContent = r.price;
+    priceEl.textContent = r.price.toLocaleString("ru-RU");
     rarityInfo.textContent = r.rarity;
     rarityInfo.className = "sim-rarity " + (r.rarity_class || "r-common");
     applyCardRarity(r.rarity_card || "rar-trash");
@@ -633,8 +750,9 @@
   function updateStats() {
     const s = STATE.stats;
     stSpins.textContent = s.spins; stSold.textContent = s.sold;
-    stEarned.textContent = s.earned; stBest.textContent = s.best_price;
-    balanceEl.textContent = STATE.balance;
+    stEarned.textContent = s.earned.toLocaleString("ru-RU");
+    stBest.textContent = s.best_price.toLocaleString("ru-RU");
+    balanceEl.textContent = STATE.balance.toLocaleString("ru-RU");
     myCount.textContent = STATE.my_numbers.length;
   }
   let spinning = false;
@@ -670,15 +788,15 @@
     Array.from(digitsRow.children).forEach(b => b.classList.remove("locked"));
     modeInfo.textContent = {normal:"обычный", lucky:"удача+", super:"макс. удача"}[mode] || mode;
 
+    // Анимация карты: полный оборот
     sim3d.classList.remove("idle");
-    sim3d.style.transform = "rotateX(25deg) rotateY(-15deg) translateY(8px) scale(.97)";
-    simFace.style.filter = "brightness(.6)";
-    applyCardRarity("rar-trash");
+    sim3d.classList.add("spinning");
+    simFace.style.filter = "brightness(.7)";
 
     animateDigits(result.number).then(() => {
-      sim3d.style.transform = "";
-      simFace.style.filter = "";
+      sim3d.classList.remove("spinning");
       sim3d.classList.add("idle");
+      simFace.style.filter = "";
       showResult(result);
       updateStats();
       saveState();
@@ -688,7 +806,7 @@
         else if (result.rarity === "ЛЕГЕНДА") toast("⭐ ЛЕГЕНДА! Номер ушёл в «Мои номера»");
         else if (result.rarity === "ЭПИК") toast("💜 ЭПИК! Номер ушёл в «Мои номера»");
       } else {
-        toast("Продано за " + result.price + " ₽");
+        toast("Продано за " + result.price.toLocaleString("ru-RU") + " ₽");
       }
       spinning = false; setButtonsDisabled(false);
     });
@@ -715,7 +833,7 @@
           "</div>" +
         "</div>" +
         "<div class='price-col'>" +
-          "<div class='price'>" + item.price + " ₽</div>" +
+          "<div class='price'>" + item.price.toLocaleString("ru-RU") + " ₽</div>" +
           "<div class='rar " + rc + "'>" + item.rarity + "</div>" +
           "<button data-id='" + item.id + "'>Продать</button>" +
         "</div>";
@@ -729,7 +847,7 @@
     const ok = confirm(
       "Продать этот номер?\n\n" + item.country_code + item.number + "\n" +
       "Страна: " + item.country + "\nОператор: " + item.operator + "\n" +
-      "Редкость: " + item.rarity + "\nЦена: " + item.price + " ₽"
+      "Редкость: " + item.rarity + "\nЦена: " + item.price.toLocaleString("ru-RU") + " ₽"
     );
     if (!ok) return;
     STATE.my_numbers = STATE.my_numbers.filter(x => x.id !== id);
@@ -737,7 +855,7 @@
     STATE.stats.sold += 1; STATE.stats.earned += item.price;
     STATE.stats.best_price = Math.max(STATE.stats.best_price, item.price);
     saveState(); updateStats();
-    toast("Продан " + item.country_code + item.number + " за " + item.price + " ₽");
+    toast("Продан " + item.country_code + item.number + " за " + item.price.toLocaleString("ru-RU") + " ₽");
     renderMyNumbers();
   }
 
