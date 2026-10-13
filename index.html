@@ -26,15 +26,8 @@
     0% { transform: translate(0,0) scale(1); }
     100% { transform: translate(-25px,-25px) scale(1.08); }
   }
-  .game {
-    max-width: 560px; margin: 0 auto; padding: 16px 14px 40px;
-    display: flex; flex-direction: column; align-items: center;
-    perspective: 1600px;
-  }
-  .top-bar {
-    width: 100%; display: flex; justify-content: space-between;
-    align-items: center; gap: 10px; margin-bottom: 14px;
-  }
+  .game { max-width: 560px; margin: 0 auto; padding: 16px 14px 40px; display: flex; flex-direction: column; align-items: center; perspective: 1600px; }
+  .top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
   .logo {
     font-size: 17px; font-weight: 800; letter-spacing: .5px;
     background: linear-gradient(90deg, #e8c877, #f5e5b8, #e8c877);
@@ -56,7 +49,7 @@
     flex-wrap: wrap; justify-content: center;
   }
   .tab {
-    padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    padding: 8px 14px; border-radius: 8px; cursor: pointer;
     color: var(--muted); font-size: 13px; font-weight: 600;
     user-select: none; transition: all .25s;
     display: flex; align-items: center; gap: 6px;
@@ -72,12 +65,7 @@
     background: var(--gold); color: #1a1e26;
     font-size: 10px; font-weight: 800; border-radius: 9px;
   }
-  .sim-stage {
-    width: 100%; max-width: 360px;
-    perspective: 1400px;
-    margin-bottom: 24px;
-    display: flex; justify-content: center;
-  }
+  .sim-stage { width: 100%; max-width: 360px; perspective: 1400px; margin-bottom: 24px; display: flex; justify-content: center; }
   .sim-3d {
     position: relative; width: 100%; aspect-ratio: 1.586 / 1;
     transform-style: preserve-3d;
@@ -108,21 +96,13 @@
   .sim-body {
     position: absolute; inset: 0; border-radius: 0;
     transform-style: preserve-3d;
-    box-shadow:
-      0 30px 60px rgba(0,0,0,.75),
-      0 12px 24px rgba(0,0,0,.5),
-      0 4px 8px rgba(0,0,0,.4);
+    box-shadow: 0 30px 60px rgba(0,0,0,.75), 0 12px 24px rgba(0,0,0,.5), 0 4px 8px rgba(0,0,0,.4);
   }
   .sim-face {
-    position: absolute; inset: 0;
-    overflow: hidden;
+    position: absolute; inset: 0; overflow: hidden;
     background: linear-gradient(140deg, #4a5058 0%, #2a3038 55%, #1a1e24 100%);
     transition: background 1s ease, filter 1s ease;
-    box-shadow:
-      inset 0 2px 4px rgba(255,255,255,.15),
-      inset 0 -3px 6px rgba(0,0,0,.5),
-      inset 4px 0 6px rgba(255,255,255,.06),
-      inset -4px 0 6px rgba(0,0,0,.35);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,.15), inset 0 -3px 6px rgba(0,0,0,.5), inset 4px 0 6px rgba(255,255,255,.06), inset -4px 0 6px rgba(0,0,0,.35);
   }
   .sim-edge-bottom {
     position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
@@ -154,12 +134,7 @@
     transform: translateY(-50%) translateZ(2px);
     width: 52px; height: 40px; border-radius: 8px;
     background: linear-gradient(135deg, #e8cf88 0%, #c9a95a 25%, #f0d98a 50%, #b8923f 75%, #e8cf88 100%);
-    box-shadow:
-      0 4px 10px rgba(0,0,0,.65),
-      inset 0 1px 2px rgba(255,255,255,.7),
-      inset 0 -2px 4px rgba(0,0,0,.5),
-      inset 2px 0 3px rgba(255,255,255,.3),
-      inset -2px 0 3px rgba(0,0,0,.3);
+    box-shadow: 0 4px 10px rgba(0,0,0,.65), inset 0 1px 2px rgba(255,255,255,.7), inset 0 -2px 4px rgba(0,0,0,.5), inset 2px 0 3px rgba(255,255,255,.3), inset -2px 0 3px rgba(0,0,0,.3);
     z-index: 5; overflow: hidden;
   }
   .sim-chip::before {
@@ -178,10 +153,7 @@
     background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.55) 48%, rgba(255,255,255,.75) 50%, rgba(255,255,255,.55) 52%, transparent 70%);
     animation: chipShine 3s ease-in-out infinite;
   }
-  @keyframes chipShine {
-    0%, 100% { transform: translateX(-100%); }
-    50%      { transform: translateX(100%); }
-  }
+  @keyframes chipShine { 0%, 100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
   .sim-3d.rar-trash .sim-face { background: linear-gradient(140deg, #4a5058 0%, #2a3038 55%, #1a1e24 100%); }
   .sim-3d.rar-common .sim-face { background: linear-gradient(140deg, #5a6068 0%, #343a42 55%, #1e2228 100%); }
   .sim-3d.rar-uncommon .sim-face {
@@ -210,11 +182,7 @@
     animation: mythGlow 1.6s ease-in-out infinite;
   }
   @keyframes mythGlow { 0%,100% { filter: brightness(1) saturate(1); } 50% { filter: brightness(1.3) saturate(1.3); } }
-  .sim-content {
-    position: absolute; inset: 0; padding: 12px 14px;
-    display: flex; flex-direction: column; justify-content: space-between;
-    z-index: 6;
-  }
+  .sim-content { position: absolute; inset: 0; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; z-index: 6; }
   .sim-top { display: flex; justify-content: space-between; align-items: flex-start; }
   .sim-top .left, .sim-top .right { display: flex; align-items: center; gap: 6px; }
   .big-flag { font-size: 22px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,.8)); }
@@ -225,10 +193,7 @@
     background: rgba(0,0,0,.65); border: 1px solid rgba(255,255,255,.2);
     font-size: 11px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.9);
   }
-  .number-block {
-    display: flex; flex-direction: column; align-items: flex-end;
-    padding-right: 4px; margin-top: 4px; margin-left: 65px;
-  }
+  .number-block { display: flex; flex-direction: column; align-items: flex-end; padding-right: 4px; margin-top: 4px; margin-left: 65px; }
   .number-label { font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,.55); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
   .number-row { display: flex; align-items: center; gap: 4px; }
   .prefix-box {
@@ -332,6 +297,48 @@
     background: rgba(0,0,0,.4); border: 1px solid rgba(232,200,119,.3);
     font-size: 18px; font-weight: 800; color: var(--gold);
   }
+  /* ===== ПЕРЕВОД ===== */
+  .transfer {
+    width: 100%; max-width: 460px;
+    background: linear-gradient(140deg, #222836, #14181f);
+    border: 1px solid #333a44; border-radius: 16px;
+    padding: 22px 20px;
+  }
+  .transfer h2 {
+    margin: 0 0 6px; font-size: 17px; color: var(--gold);
+    text-align: center; font-weight: 800;
+  }
+  .transfer p.sub {
+    margin: 0 0 18px; font-size: 12px; color: var(--muted);
+    text-align: center; line-height: 1.4;
+  }
+  .transfer label {
+    display: block; font-size: 11px; color: var(--muted);
+    margin-bottom: 6px; margin-top: 14px;
+    text-transform: uppercase; letter-spacing: .5px; font-weight: 700;
+  }
+  .transfer input {
+    width: 100%; padding: 13px 16px; border-radius: 10px;
+    background: rgba(0,0,0,.4); border: 1px solid #333a44;
+    color: var(--text); font-size: 15px; font-family: inherit;
+    outline: none; transition: border-color .2s;
+  }
+  .transfer input:focus { border-color: var(--gold); }
+  .transfer button.submit {
+    margin-top: 18px; width: 100%;
+    padding: 14px 16px;
+    background: linear-gradient(140deg, #4a6b4a, #1e2e1e);
+    border: 1px solid rgba(140,220,140,.5); color: #d8ffd8;
+    font-size: 14px; font-weight: 800;
+  }
+  .transfer button.submit:hover:not(:disabled) {
+    box-shadow: 0 8px 24px rgba(140,220,140,.4);
+  }
+  .transfer .hint {
+    margin-top: 14px; font-size: 11px; color: var(--muted);
+    text-align: center; line-height: 1.5;
+  }
+  .transfer .hint b { color: var(--gold); }
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px);
     background: linear-gradient(140deg, #2e3546, #14181f);
@@ -342,7 +349,7 @@
     transition: opacity .3s, transform .3s;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  #tab-my, #tab-profile { display: none; width: 100%; flex-direction: column; align-items: center; }
+  #tab-my, #tab-profile, #tab-transfer { display: none; width: 100%; flex-direction: column; align-items: center; }
 </style>
 </head>
 <body>
@@ -354,7 +361,8 @@
 
   <div class="tabs">
     <div class="tab active" id="tabBtnGame">🎰 Крутить</div>
-    <div class="tab" id="tabBtnMy">📂 Мои номера <span class="badge" id="my-count">0</span></div>
+    <div class="tab" id="tabBtnMy">📂 Номера <span class="badge" id="my-count">0</span></div>
+    <div class="tab" id="tabBtnTransfer">💸 Перевести</div>
     <div class="tab" id="tabBtnProfile">👤 Профиль</div>
   </div>
 
@@ -420,6 +428,25 @@
     <div class="my-list" id="my-list"></div>
   </div>
 
+  <div id="tab-transfer">
+    <div class="transfer">
+      <h2>💸 Перевод другу</h2>
+      <p class="sub">Введи username получателя и сумму.<br>Деньги придут ему на баланс мгновенно.</p>
+
+      <label for="tf-username">Username получателя</label>
+      <input id="tf-username" type="text" placeholder="@username" autocomplete="off" spellcheck="false">
+
+      <label for="tf-amount">Сумма (₽)</label>
+      <input id="tf-amount" type="number" placeholder="1000" min="1" step="1">
+
+      <button class="submit" id="tf-submit">Перевести</button>
+
+      <div class="hint">
+        Друг должен хотя бы раз зайти в игру через Telegram — тогда его username будет в системе.
+      </div>
+    </div>
+  </div>
+
   <div id="tab-profile">
     <div class="profile">
       <div class="avatar" id="pf-avatar">?</div>
@@ -437,16 +464,25 @@
 (function() {
   "use strict";
 
+  // ============================================================
+  //  TELEGRAM USER
+  // ============================================================
   const TG = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
   const TG_USER = TG && TG.initDataUnsafe && TG.initDataUnsafe.user ? TG.initDataUnsafe.user : null;
   const USER_ID = TG_USER ? String(TG_USER.id) : "guest_" + Math.floor(Math.random() * 1000000);
   const USER_NAME = TG_USER
     ? ((TG_USER.first_name || "") + (TG_USER.last_name ? " " + TG_USER.last_name : "")).trim() || "Игрок"
     : "Гость";
-  const USER_USERNAME = TG_USER && TG_USER.username ? "@" + TG_USER.username : "@нет_юзернейма";
+  const USER_USERNAME_RAW = TG_USER && TG_USER.username ? TG_USER.username : "";
+  const USER_USERNAME = USER_USERNAME_RAW ? "@" + USER_USERNAME_RAW : "@нет_юзернейма";
   const USER_PHOTO = TG_USER && TG_USER.photo_url ? TG_USER.photo_url : null;
   if (TG) { TG.ready(); TG.expand(); }
 
+  const API = ""; // тот же домен что и index — сервер на Render
+
+  // ============================================================
+  //  ДАННЫЕ
+  // ============================================================
   const COUNTRIES = {
     "Африка": {"code":"+2","flag":"🌍","rarity":0.20,"operators":{"MTN":1.0,"Airtel":1.1,"Safaricom":1.3,"Vodacom":1.2}},
     "Пакистан": {"code":"+92","flag":"🇵🇰","rarity":0.30,"operators":{"Jazz":1.0,"Zong":1.2,"Ufone":1.1,"Telenor":1.3}},
@@ -486,8 +522,8 @@
   const stSpins = $("st-spins"), stSold = $("st-sold"), stEarned = $("st-earned"), stBest = $("st-best");
   const modeInfo = $("mode-info"), rarityInfo = $("rarity-info");
   const myList = $("my-list"), myCount = $("my-count");
-  const tabGame = $("tab-game"), tabMy = $("tab-my"), tabProfile = $("tab-profile");
-  const tabBtnGame = $("tabBtnGame"), tabBtnMy = $("tabBtnMy"), tabBtnProfile = $("tabBtnProfile");
+  const tabGame = $("tab-game"), tabMy = $("tab-my"), tabProfile = $("tab-profile"), tabTransfer = $("tab-transfer");
+  const tabBtnGame = $("tabBtnGame"), tabBtnMy = $("tabBtnMy"), tabBtnProfile = $("tabBtnProfile"), tabBtnTransfer = $("tabBtnTransfer");
   const sim3d = $("sim-3d"), simFace = $("sim-face"), flashLayer = $("flash-layer");
 
   const DEFAULT_STATE = {
@@ -497,11 +533,44 @@
   };
   let STATE = loadState();
   function loadState() {
-    try { const raw = localStorage.getItem("sim_spinner_v8_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
+    try { const raw = localStorage.getItem("sim_spinner_v9_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
     return JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
-  function saveState() { try { localStorage.setItem("sim_spinner_v8_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+  function saveState() { try { localStorage.setItem("sim_spinner_v9_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
 
+  // ============================================================
+  //  СЕРВЕР
+  // ============================================================
+  async function syncBalanceFromServer() {
+    try {
+      const params = new URLSearchParams({
+        user_id: USER_ID,
+        username: USER_USERNAME_RAW,
+        first_name: USER_NAME
+      });
+      const res = await fetch(API + "/api/balance?" + params);
+      const data = await res.json();
+      if (data.balance !== undefined) {
+        STATE.balance = data.balance;
+        saveState();
+        updateStats();
+      }
+    } catch (e) { /* сервер недоступен — работаем локально */ }
+  }
+
+  async function syncSpinToServer(cost, price, mode) {
+    try {
+      await fetch(API + "/api/spin", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ user_id: USER_ID, mode: mode, cost: cost, price: price })
+      });
+    } catch (e) {}
+  }
+
+  // ============================================================
+  //  BEAUTY + ЦЕНА
+  // ============================================================
   function beautyScore(number) {
     const digits = number.split("");
     let score = 1.0;
@@ -515,11 +584,9 @@
     else if (maxRepeat >= 4) score += 1.2;
     else if (maxRepeat === 3) score += 0.45;
     else if (maxRepeat === 2) score += 0.15;
-
     if (new Set(digits).size === 1) score += 9.0;
     if (number === number.split("").reverse().join("")) score += 2.6;
     if (number === "123456789" || number === "987654321") score += 7.0;
-
     const cnt = {};
     for (const d of digits) cnt[d] = (cnt[d] || 0) + 1;
     const most = Math.max(...Object.values(cnt));
@@ -527,10 +594,8 @@
     else if (most === 5) score += 0.85;
     else if (most === 4) score += 0.32;
     else if (most === 3) score += 0.09;
-
     for (const m of ["777777","888888","999999","000000","123456","654321"]) if (number.includes(m)) score += 3.3;
     for (const m of ["7777","8888","9999","0000","777","888","999","000","111","222","555","666"]) if (number.includes(m)) score += 0.95;
-
     if (number.startsWith("007")) score += 0.6;
     if (number[0] === number[8]) score += 0.2;
     const zeros = digits.filter(d => d === "0").length;
@@ -567,12 +632,10 @@
     if (mode === "super") { patterns = ["repeat_high","repeat_mid","sequence","zeros","magic","palindrome"]; weights = [3,4,2,2,4,3]; }
     else if (mode === "lucky") { patterns = ["repeat_mid","magic","zeros","sequence","palindrome","double"]; weights = [3,5,3,2,2,3]; }
     else { patterns = ["magic","double","zeros","palindrome"]; weights = [4,4,2,1]; }
-
     const total = weights.reduce((a,b)=>a+b,0);
     let r = Math.random() * total, idx = 0;
     for (let i = 0; i < weights.length; i++) { r -= weights[i]; if (r <= 0) { idx = i; break; } }
     const pattern = patterns[idx];
-
     if (pattern === "repeat_high") { const d = "0123456789"[Math.floor(Math.random()*10)]; return d.repeat(9); }
     if (pattern === "repeat_mid") { const d = "0123456789"[Math.floor(Math.random()*10)]; return d.repeat(6) + randomDigits(3); }
     if (pattern === "sequence") return Math.random() < 0.5 ? "123456789" : "987654321";
@@ -590,10 +653,6 @@
     return randomDigits(9);
   }
 
-  // ==== Ключевые настройки удачи ====
-  // minBeauty — минимальная красота, ниже не выдаём
-  // bonus — множитель красоты
-  // patternChance — шанс, что сразу генерим паттерн
   const MODES = {
     normal: { minBeauty: 1.00, bonus: 1.00, patternChance: 0.30 },
     lucky:  { minBeauty: 1.60, bonus: 1.50, patternChance: 0.65 },
@@ -619,24 +678,17 @@
     const st = STATE.streak;
     let number, beauty;
 
-    // Пытаемся достичь минимума за несколько попыток
     for (let attempt = 0; attempt < 12; attempt++) {
       const usePattern = Math.random() < cfg.patternChance || attempt >= 4;
       number = usePattern ? generatePattern(mode) : randomDigits(9);
       beauty = Math.round(beautyScore(number) * cfg.bonus * 100) / 100;
       if (beauty >= cfg.minBeauty) break;
     }
-
-    // Если всё равно ниже — генерим паттерн и поднимаем красоту искусственно
     if (beauty < cfg.minBeauty) {
       number = generatePattern(mode === "normal" ? "lucky" : "super");
       beauty = Math.round(beautyScore(number) * cfg.bonus * 100) / 100;
-      if (beauty < cfg.minBeauty) {
-        beauty = Math.round((cfg.minBeauty + Math.random() * 0.5) * 100) / 100;
-      }
+      if (beauty < cfg.minBeauty) beauty = Math.round((cfg.minBeauty + Math.random() * 0.5) * 100) / 100;
     }
-
-    // Anti-streak — мягкий, только чтобы не было пачек мифов
     if (mode === "super" && st.myth >= 2) beauty = Math.round(beauty * 0.85 * 100) / 100;
     if (mode === "super" && st.legend >= 3) beauty = Math.round(beauty * 0.9 * 100) / 100;
 
@@ -645,7 +697,6 @@
     const opNames = Object.keys(country.operators);
     const opName = opNames[Math.floor(Math.random() * opNames.length)];
     const opMult = country.operators[opName];
-
     const { price, rarity } = makeNumber(beauty, country, opMult);
 
     if (rarity.name === "МИФ") st.myth += 1; else st.myth = 0;
@@ -659,17 +710,25 @@
     };
   }
 
+  // ============================================================
+  //  ВКЛАДКИ
+  // ============================================================
   function showTab(name) {
-    [tabBtnGame, tabBtnMy, tabBtnProfile].forEach(b => b.classList.remove("active"));
-    [tabGame, tabMy, tabProfile].forEach(t => t.style.display = "none");
+    [tabBtnGame, tabBtnMy, tabBtnTransfer, tabBtnProfile].forEach(b => b.classList.remove("active"));
+    [tabGame, tabMy, tabTransfer, tabProfile].forEach(t => t.style.display = "none");
     if (name === "game") { tabBtnGame.classList.add("active"); tabGame.style.display = "flex"; }
     if (name === "my")   { tabBtnMy.classList.add("active");   tabMy.style.display = "flex"; renderMyNumbers(); }
+    if (name === "transfer") { tabBtnTransfer.classList.add("active"); tabTransfer.style.display = "flex"; }
     if (name === "profile") { tabBtnProfile.classList.add("active"); tabProfile.style.display = "flex"; renderProfile(); }
   }
   tabBtnGame.addEventListener("click", () => showTab("game"));
   tabBtnMy.addEventListener("click", () => showTab("my"));
+  tabBtnTransfer.addEventListener("click", () => showTab("transfer"));
   tabBtnProfile.addEventListener("click", () => showTab("profile"));
 
+  // ============================================================
+  //  ПРОФИЛЬ
+  // ============================================================
   function renderProfile() {
     $("pf-name").textContent = USER_NAME;
     $("pf-username").textContent = USER_USERNAME;
@@ -680,6 +739,60 @@
     else av.textContent = USER_NAME.charAt(0).toUpperCase();
   }
 
+  // ============================================================
+  //  ПЕРЕВОД
+  // ============================================================
+  $("tf-submit").addEventListener("click", async () => {
+    const toUsername = $("tf-username").value.trim();
+    const amount = parseInt($("tf-amount").value, 10);
+
+    if (!toUsername) { toast("Введи username получателя"); return; }
+    if (!amount || amount <= 0) { toast("Введи сумму больше 0"); return; }
+    if (amount > STATE.balance) { toast("Недостаточно средств"); return; }
+
+    const btn = $("tf-submit");
+    btn.disabled = true;
+    btn.textContent = "Отправка...";
+
+    try {
+      const res = await fetch(API + "/api/transfer", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          user_id: USER_ID,
+          to_username: toUsername,
+          amount: amount
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        toast(data.error || "Ошибка перевода");
+        btn.disabled = false;
+        btn.textContent = "Перевести";
+        return;
+      }
+
+      // Обновляем баланс из ответа
+      STATE.balance = data.from_balance;
+      saveState();
+      updateStats();
+      renderProfile();
+
+      toast("✅ Переведено " + amount.toLocaleString("ru-RU") + " ₽ игроку " + data.to_username);
+      $("tf-username").value = "";
+      $("tf-amount").value = "";
+    } catch (e) {
+      toast("Сервер недоступен");
+    }
+
+    btn.disabled = false;
+    btn.textContent = "Перевести";
+  });
+
+  // ============================================================
+  //  ОСТАЛЬНОЕ (без изменений)
+  // ============================================================
   function buildDigitsRow() {
     digitsRow.innerHTML = "";
     for (let i = 0; i < DIGITS; i++) {
@@ -802,6 +915,9 @@
     }
     STATE.last = result;
 
+    // Синхронизация с сервером
+    syncSpinToServer(cost, result.price, mode);
+
     Array.from(digitsRow.children).forEach(b => b.classList.remove("locked"));
     modeInfo.textContent = {normal:"обычный", lucky:"удача+", super:"макс. удача"}[mode] || mode;
 
@@ -880,8 +996,10 @@
   $("spinLucky").addEventListener("click",  () => spin("lucky"));
   $("spinSuper").addEventListener("click",  () => spin("super"));
 
+  // Старт
   updateStats();
   if (STATE.last) showResult(STATE.last);
+  syncBalanceFromServer();
 })();
 </script>
 </body>
