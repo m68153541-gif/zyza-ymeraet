@@ -1,32 +1,29 @@
 # ============================================================
-#  SIM SPINNER — серверная часть
-#  Запуск локально:  python app.py
-#  Railway/Render:   gunicorn app:app
+#  SIM SPINNER — сервер + игра на одной ссылке
+#  Локально:        python app.py  →  http://127.0.0.1:5000
+#  Render:          gunicorn app:app
 # ============================================================
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
+import os
 import random
 import string
 
 app = Flask(__name__)
-CORS(app)  # разрешает запросы с GitHub Pages
+CORS(app)  # разрешает запросы с других доменов (на будущее)
 
 
 # ============================================================
 #  ХРАНИЛИЩЕ ИГРОКОВ (в памяти, потом заменим на БД)
-#  Ключ — ID игрока (Telegram user_id или сгенерированный)
+#  Ключ — user_id (например, Telegram user_id)
 # ============================================================
-PLAYERS = {
-    # пример:
-    # "123456789": {"balance": 100000, "nick": "player1"}
-}
-
+PLAYERS = {}
 START_BALANCE = 100000
 
 
 def get_or_create_player(user_id):
-    """Возвращает игрока, если нет — создаёт с начальным балансом."""
+    """Возвращает игрока. Если его нет — создаёт с начальным балансом."""
     user_id = str(user_id)
     if user_id not in PLAYERS:
         PLAYERS[user_id] = {
@@ -37,23 +34,27 @@ def get_or_create_player(user_id):
 
 
 # ============================================================
-#  API
+#  ГЛАВНАЯ — отдаём игру (index.html из корня проекта)
 # ============================================================
-
 @app.route("/")
 def index():
-    return "SIM Spinner server is running"
+    return send_file("index.html")
 
 
+# ============================================================
+#  API: проверка, что сервер жив
+# ============================================================
 @app.route("/api/ping")
 def ping():
-    """Проверка, что сервер жив."""
     return jsonify({"status": "ok"})
 
 
+# ============================================================
+#  API: получить баланс игрока
+#  GET /api/balance?user_id=123
+# ============================================================
 @app.route("/api/balance")
 def balance():
-    """Получить баланс игрока."""
     user_id = request.args.get("user_id")
     if not user_id:
         return jsonify({"error": "no user_id"}), 400
@@ -65,12 +66,12 @@ def balance():
     })
 
 
+# ============================================================
+#  API: прокрутка (пока заглушка, потом перенесём логику из HTML)
+#  POST /api/spin  { "user_id": "123", "mode": "normal|lucky|super" }
+# ============================================================
 @app.route("/api/spin", methods=["POST"])
 def spin():
-    """
-    Серверная прокрутка.
-    Списывает стоимость, генерирует номер, начисляет или сохраняет.
-    """
     data = request.get_json(force=True) or {}
     user_id = data.get("user_id")
     mode = data.get("mode", "normal")
@@ -82,12 +83,14 @@ def spin():
     cost = {"normal": 150, "lucky": 5000, "super": 20000}.get(mode, 150)
 
     if player["balance"] < cost:
-        return jsonify({"error": "Недостаточно средств", "balance": player["balance"]}), 400
+        return jsonify({
+            "error": "Недостаточно средств",
+            "balance": player["balance"],
+        }), 400
 
     player["balance"] -= cost
 
-    # --- тут будет логика генерации номера ---
-    # Пока заглушка
+    # ВРЕМЕННАЯ заглушка. Позже сюда перенесём beauty_score и generate_number
     price = random.randint(50, 50000)
     player["balance"] += price
 
@@ -96,16 +99,16 @@ def spin():
         "result": {
             "number": "".join(random.choices(string.digits, k=9)),
             "price": price,
-        }
+        },
     })
 
 
+# ============================================================
+#  API: перевод денег другому игроку
+#  POST /api/transfer  { "from": "1", "to": "2", "amount": 500 }
+# ============================================================
 @app.route("/api/transfer", methods=["POST"])
 def transfer():
-    """
-    Перевод денег другому игроку.
-    Тело запроса: { "from": "user_id_1", "to": "user_id_2", "amount": 500 }
-    """
     data = request.get_json(force=True) or {}
     from_id = data.get("from")
     to_id = data.get("to")
@@ -114,9 +117,16 @@ def transfer():
     if not from_id or not to_id or not amount:
         return jsonify({"error": "нужны from, to, amount"}), 400
 
-    amount = int(amount)
+    try:
+        amount = int(amount)
+    except (ValueError, TypeError):
+        return jsonify({"error": "сумма должна быть числом"}), 400
+
     if amount <= 0:
         return jsonify({"error": "сумма должна быть больше 0"}), 400
+
+    if str(from_id) == str(to_id):
+        return jsonify({"error": "нельзя перевести самому себе"}), 400
 
     sender = get_or_create_player(from_id)
     receiver = get_or_create_player(to_id)
@@ -135,7 +145,8 @@ def transfer():
 
 
 # ============================================================
-#  ЗАПУСК
+#  ЗАПУСК (локально)
 # ============================================================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
