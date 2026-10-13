@@ -497,14 +497,11 @@
   };
   let STATE = loadState();
   function loadState() {
-    try { const raw = localStorage.getItem("sim_spinner_v7_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
+    try { const raw = localStorage.getItem("sim_spinner_v8_" + USER_ID); if (raw) return JSON.parse(raw); } catch(e){}
     return JSON.parse(JSON.stringify(DEFAULT_STATE));
   }
-  function saveState() { try { localStorage.setItem("sim_spinner_v7_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+  function saveState() { try { localStorage.setItem("sim_spinner_v8_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
 
-  // ============================================================
-  //  BEAUTY SCORE — стабильная оценка
-  // ============================================================
   function beautyScore(number) {
     const digits = number.split("");
     let score = 1.0;
@@ -561,18 +558,13 @@
     return { price, rarity: r };
   }
 
-  // ============================================================
-  //  ГЕНЕРАЦИЯ НОМЕРА ПО РЕЖИМУ
-  //  Ключевое: в каждом режиме свой минимальный уровень красоты.
-  //  Это гарантирует, что за 20000 не выпадет мусор.
-  // ============================================================
   function randomDigits(n) {
     return Array.from({length: n}, () => "0123456789"[Math.floor(Math.random()*10)]).join("");
   }
 
   function generatePattern(mode) {
     let patterns, weights;
-    if (mode === "super") { patterns = ["repeat_high","repeat_mid","sequence","zeros","magic","palindrome"]; weights = [2,3,2,2,4,3]; }
+    if (mode === "super") { patterns = ["repeat_high","repeat_mid","sequence","zeros","magic","palindrome"]; weights = [3,4,2,2,4,3]; }
     else if (mode === "lucky") { patterns = ["repeat_mid","magic","zeros","sequence","palindrome","double"]; weights = [3,5,3,2,2,3]; }
     else { patterns = ["magic","double","zeros","palindrome"]; weights = [4,4,2,1]; }
 
@@ -598,16 +590,23 @@
     return randomDigits(9);
   }
 
-  // Минимальная красота для каждого режима — гарантирует, что мусор не выпадет
-  const MIN_BEAUTY = { normal: 1.0, lucky: 1.6, super: 2.4 };
+  // ==== Ключевые настройки удачи ====
+  // minBeauty — минимальная красота, ниже не выдаём
+  // bonus — множитель красоты
+  // patternChance — шанс, что сразу генерим паттерн
+  const MODES = {
+    normal: { minBeauty: 1.00, bonus: 1.00, patternChance: 0.30 },
+    lucky:  { minBeauty: 1.60, bonus: 1.50, patternChance: 0.65 },
+    super:  { minBeauty: 2.80, bonus: 2.20, patternChance: 0.90 },
+  };
 
   function weightedCountry(mode) {
     const names = Object.keys(COUNTRIES);
     const weights = names.map(c => {
       const r = COUNTRIES[c].rarity;
-      if (mode === "super") return 1 / Math.pow(r, 0.45);
-      if (mode === "lucky") return 1 / Math.pow(r, 0.75);
-      return 1 / Math.pow(r, 1.2);
+      if (mode === "super") return 1 / Math.pow(r, 0.4);
+      if (mode === "lucky") return 1 / Math.pow(r, 0.7);
+      return 1 / Math.pow(r, 1.1);
     });
     const total = weights.reduce((a,b)=>a+b,0);
     let r = Math.random() * total;
@@ -616,37 +615,30 @@
   }
 
   function generateNumber(mode) {
-    let beauty, number;
+    const cfg = MODES[mode];
     const st = STATE.streak;
+    let number, beauty;
 
-    // Сначала пробуем сгенерировать номер нужной "красоты"
-    // Если после всех попыток красота ниже минимума — используем паттерн
-    const tries = 8;
-    for (let attempt = 0; attempt < tries; attempt++) {
-      const usePattern = Math.random() < (mode === "super" ? 0.85 : mode === "lucky" ? 0.55 : 0.15);
+    // Пытаемся достичь минимума за несколько попыток
+    for (let attempt = 0; attempt < 12; attempt++) {
+      const usePattern = Math.random() < cfg.patternChance || attempt >= 4;
       number = usePattern ? generatePattern(mode) : randomDigits(9);
-      let b = beautyScore(number);
-      // Бонус за режим
-      if (mode === "lucky") b = Math.round(b * 1.35 * 100) / 100;
-      else if (mode === "super") b = Math.round(b * 1.9 * 100) / 100;
-      beauty = b;
+      beauty = Math.round(beautyScore(number) * cfg.bonus * 100) / 100;
+      if (beauty >= cfg.minBeauty) break;
+    }
 
-      if (beauty >= MIN_BEAUTY[mode]) break;
-      // Если не дотянули до минимума — пробуем ещё раз с паттерном
-      if (attempt === tries - 1) {
-        number = generatePattern(mode === "super" ? "super" : "lucky");
-        beauty = beautyScore(number);
-        if (mode === "lucky") beauty = Math.round(beauty * 1.35 * 100) / 100;
-        else if (mode === "super") beauty = Math.round(beauty * 1.9 * 100) / 100;
-        if (beauty < MIN_BEAUTY[mode]) beauty = MIN_BEAUTY[mode] + Math.random() * 0.3;
+    // Если всё равно ниже — генерим паттерн и поднимаем красоту искусственно
+    if (beauty < cfg.minBeauty) {
+      number = generatePattern(mode === "normal" ? "lucky" : "super");
+      beauty = Math.round(beautyScore(number) * cfg.bonus * 100) / 100;
+      if (beauty < cfg.minBeauty) {
+        beauty = Math.round((cfg.minBeauty + Math.random() * 0.5) * 100) / 100;
       }
     }
 
-    // Anti-streak — мягкий, чтобы не было пачек мифов
-    if (mode !== "normal") {
-      if (st.myth >= 2) beauty = Math.round(beauty * 0.75 * 100) / 100;
-      else if (st.legend >= 2) beauty = Math.round(beauty * 0.85 * 100) / 100;
-    }
+    // Anti-streak — мягкий, только чтобы не было пачек мифов
+    if (mode === "super" && st.myth >= 2) beauty = Math.round(beauty * 0.85 * 100) / 100;
+    if (mode === "super" && st.legend >= 3) beauty = Math.round(beauty * 0.9 * 100) / 100;
 
     const cName = weightedCountry(mode);
     const country = COUNTRIES[cName];
