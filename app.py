@@ -1,5 +1,5 @@
 # ============================================================
-#  SIM SPINNER — сервер с рефералами и ботом
+#  SIM SPINNER — сервер с ботом, рефералами и рассылкой
 # ============================================================
 
 from flask import Flask, jsonify, request, send_file
@@ -7,17 +7,19 @@ from flask_cors import CORS
 import os
 import time
 import random
+import threading
 import requests
 
 app = Flask(__name__)
 CORS(app)
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "8688292241:AAEpB6R9ndFLFCjUOs_vC0gmAJZwg_TUUMw")
+# ТОКЕН БОТА — ПОСЛЕ ТЕСТА СМЕНИ В @BotFather (/revoke → /token)
+BOT_TOKEN = "8688292241:AAEpB6R9ndFLFCjUOs_vC0gmAJZwg_TUUMw"
+BOT_USERNAME = "Sim_moner_zyza_ymer_bot"
 START_BALANCE = 100000
-DAILY_BASE = 10000
-DAILY_STEP = 5000
-REF_START_BONUS = 50000          # за переход друга по ссылке
-REF_MYTH_PERCENT = 0.20          # 20% от мифа друга
+REF_START_BONUS = 50000
+REF_MYTH_PERCENT = 0.20
+DAILY_REWARDS = [10000, 15000, 20000, 25000, 30000, 40000, 50000]
 
 PLAYERS = {}
 
@@ -32,16 +34,19 @@ def get_or_create_player(user_id, username=None, first_name=None, photo=None):
             "photo": photo or "",
             "last_daily": 0,
             "daily_streak": 0,
+            "daily_claims": [],
             "level": 1,
             "xp": 0,
-            "referrer": None,           # кто пригласил
-            "ref_earnings": 0,          # сколько заработал на рефералах
+            "referrer": None,
+            "ref_earnings": 0,
             "total_spins": 0,
+            "last_seen": int(time.time()),
         }
     else:
         if username: PLAYERS[user_id]["username"] = username.lstrip("@").lower()
         if first_name: PLAYERS[user_id]["first_name"] = first_name
         if photo: PLAYERS[user_id]["photo"] = photo
+        PLAYERS[user_id]["last_seen"] = int(time.time())
     return PLAYERS[user_id]
 
 
@@ -54,11 +59,23 @@ def find_player_by_username(username):
     return None, None
 
 
-def send_telegram_message(chat_id, text):
-    """Отправка сообщения через Telegram Bot API."""
+def send_tg(chat_id, text, with_button=False):
+    if not BOT_TOKEN: return
     try:
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-        requests.post(url, json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"}, timeout=5)
+        payload = {
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": True,
+        }
+        if with_button:
+            payload["reply_markup"] = {
+                "inline_keyboard": [[
+                    {"text": "🎰 Открыть игру", "url": f"https://t.me/{BOT_USERNAME}/app"}
+                ]]
+            }
+        requests.post(url, json=payload, timeout=5)
     except Exception as e:
         print("Bot error:", e)
 
@@ -113,26 +130,30 @@ def spin():
     player["balance"] += price
     player["total_spins"] += 1
 
-    # XP и уровень
     xp_gain = 1 if mode == "normal" else (5 if mode == "lucky" else 15)
+    old_level = player["level"]
     player["xp"] += xp_gain
     new_level = 1 + player["xp"] // 100
-    if new_level > player["level"]:
+    if new_level > old_level:
         player["level"] = new_level
-        # Уведомление о новом уровне
-        send_telegram_message(user_id, f"🎉 Новый уровень: {new_level}! Стоимость прокруток выросла.")
+        if new_level % 10 == 0:
+            reward = 10000 * (new_level // 10)
+            player["balance"] += reward
+            send_tg(user_id,
+                f"🎉 <b>Новый уровень {new_level}!</b>\n\n"
+                f"Ты получил приз: <b>+{reward:,} ₽</b>\n"
+                f"Продолжай крутить! 💪".replace(",", " "))
 
-    # Реферальный бонус за мифик
     if rarity == "МИФ" and player.get("referrer"):
         bonus = int(price * REF_MYTH_PERCENT)
-        referrer = PLAYERS.get(player["referrer"])
-        if referrer:
-            referrer["balance"] += bonus
-            referrer["ref_earnings"] += bonus
-            send_telegram_message(
-                player["referrer"],
-                f"💎 Твой реферал выбил МИФ! Начислено {bonus:,} ₽".replace(",", " ")
-            )
+        ref = PLAYERS.get(player["referrer"])
+        if ref:
+            ref["balance"] += bonus
+            ref["ref_earnings"] += bonus
+            send_tg(player["referrer"],
+                f"💎 <b>Твой друг выбил МИФ!</b>\n\n"
+                f"@{player['username']} сорвал джекпот.\n"
+                f"Тебе начислено: <b>+{bonus:,} ₽</b> (20%)".replace(",", " "))
 
     return jsonify({
         "balance": player["balance"],
@@ -167,7 +188,14 @@ def transfer():
     sender["balance"] -= amount
     receiver["balance"] += amount
 
-    send_telegram_message(to_id, f"💰 Вам перевели {amount:,} ₽ от @{sender['username']}".replace(",", " "))
+    send_tg(to_id,
+        f"💰 <b>Вам перевели деньги!</b>\n\n"
+        f"От: @{sender['username'] or 'игрок'}\n"
+        f"Сумма: <b>+{amount:,} ₽</b>".replace(",", " "))
+    send_tg(from_id,
+        f"✅ <b>Перевод отправлен</b>\n\n"
+        f"Кому: @{receiver['username'] or 'игрок'}\n"
+        f"Сумма: <b>-{amount:,} ₽</b>".replace(",", " "))
 
     return jsonify({
         "status": "ok",
@@ -193,34 +221,63 @@ def top():
     return jsonify({"top": top3})
 
 
-@app.route("/api/daily")
-def daily():
+# ============================================================
+#  ЕЖЕДНЕВНЫЕ НАГРАДЫ
+# ============================================================
+@app.route("/api/daily/status")
+def daily_status():
     user_id = request.args.get("user_id")
     if not user_id: return jsonify({"error": "no user_id"}), 400
     player = get_or_create_player(user_id)
     now = int(time.time())
     one_day = 24 * 60 * 60
-    elapsed = now - player["last_daily"]
+    claims = set(ts // one_day for ts in player.get("daily_claims", []))
+    today = now // one_day
 
-    if player["last_daily"] == 0:
-        pass
-    elif elapsed < one_day:
-        return jsonify({"available": False, "next_in": one_day - elapsed, "streak": player["daily_streak"]})
+    days = []
+    for i in range(6, -1, -1):
+        day_ts = today - i
+        day_index = (6 - i)
+        days.append({
+            "day": day_index + 1,
+            "reward": DAILY_REWARDS[day_index],
+            "claimed": day_ts in claims,
+            "today": day_ts == today,
+            "can_claim": day_ts == today and day_ts not in claims,
+        })
+    return jsonify({"days": days, "streak": player.get("daily_streak", 0)})
 
-    if player["last_daily"] > 0 and elapsed > one_day * 2:
-        player["daily_streak"] = 0
 
-    player["daily_streak"] += 1
-    reward = DAILY_BASE + (player["daily_streak"] - 1) * DAILY_STEP
+@app.route("/api/daily/claim", methods=["POST"])
+def daily_claim():
+    data = request.get_json(force=True) or {}
+    user_id = data.get("user_id")
+    if not user_id: return jsonify({"error": "no user_id"}), 400
+    player = get_or_create_player(user_id)
+
+    now = int(time.time())
+    one_day = 24 * 60 * 60
+    today = now // one_day
+    claims = set(ts // one_day for ts in player.get("daily_claims", []))
+    if today in claims:
+        return jsonify({"error": "Сегодня уже забрал"}), 400
+
+    streak = 0
+    for i in range(7):
+        if (today - i) in claims:
+            streak += 1
+        else:
+            break
+
+    reward = DAILY_REWARDS[min(streak, 6)]
     player["balance"] += reward
+    player["daily_claims"].append(now)
+    player["daily_streak"] = streak + 1
     player["last_daily"] = now
 
-    return jsonify({
-        "available": True,
-        "reward": reward,
-        "streak": player["daily_streak"],
-        "balance": player["balance"],
-    })
+    send_tg(user_id, f"🎁 Ежедневная награда: +{reward:,} ₽ (день {min(streak+1,7)})".replace(",", " "))
+
+    return jsonify({"status": "ok", "reward": reward, "balance": player["balance"], "streak": player["daily_streak"]})
 
 
 # ============================================================
@@ -228,32 +285,28 @@ def daily():
 # ============================================================
 @app.route("/api/ref/register", methods=["POST"])
 def ref_register():
-    """Регистрация реферала. Вызывается при /start с параметром."""
     data = request.get_json(force=True) or {}
     user_id = data.get("user_id")
     referrer_id = data.get("referrer_id")
-
     if not user_id or not referrer_id:
         return jsonify({"error": "нужны user_id и referrer_id"}), 400
-
     player = get_or_create_player(user_id)
     if player["referrer"]:
         return jsonify({"error": "уже есть реферер"}), 400
-
     referrer = PLAYERS.get(str(referrer_id))
     if not referrer:
         return jsonify({"error": "реферер не найден"}), 404
 
     player["referrer"] = str(referrer_id)
     referrer["balance"] += REF_START_BONUS
+    referrer["ref_earnings"] += REF_START_BONUS
 
-    send_telegram_message(referrer_id, f"🎉 По твоей ссылке зашёл друг! +{REF_START_BONUS:,} ₽".replace(",", " "))
+    send_tg(referrer_id,
+        f"🎉 <b>По твоей ссылке зашёл друг!</b>\n\n"
+        f"Ты получил бонус: <b>+{REF_START_BONUS:,} ₽</b>\n"
+        f"С каждого его МИФА будешь получать 20%.".replace(",", " "))
 
-    return jsonify({
-        "status": "ok",
-        "referrer": referrer_id,
-        "bonus": REF_START_BONUS,
-    })
+    return jsonify({"status": "ok", "referrer": referrer_id, "bonus": REF_START_BONUS})
 
 
 @app.route("/api/ref/info")
@@ -261,23 +314,19 @@ def ref_info():
     user_id = request.args.get("user_id")
     if not user_id: return jsonify({"error": "no user_id"}), 400
     player = get_or_create_player(user_id)
-
-    # Считаем рефералов
     refs = [uid for uid, p in PLAYERS.items() if p.get("referrer") == str(user_id)]
-
     return jsonify({
         "ref_earnings": player["ref_earnings"],
         "ref_count": len(refs),
-        "ref_link": f"https://t.me/YOUR_BOT?start={user_id}",
+        "ref_link": f"https://t.me/{BOT_USERNAME}?start=ref_{user_id}",
     })
 
 
 # ============================================================
-#  BOT WEBHOOK (для /start с реферальной ссылкой)
+#  WEBHOOK
 # ============================================================
 @app.route(f"/webhook/{BOT_TOKEN}", methods=["POST"])
 def webhook():
-    """Telegram будет присылать сюда все обновления."""
     data = request.get_json(force=True)
     if "message" in data:
         msg = data["message"]
@@ -285,55 +334,89 @@ def webhook():
         text = msg.get("text", "")
         user = msg.get("from", {})
 
-        # /start с реферальной ссылкой
         if text.startswith("/start"):
+            # Реферальный параметр
             parts = text.split()
-            if len(parts) > 1:
-                referrer_id = parts[1]
-                # Регистрируем реферала
-                get_or_create_player(
-                    chat_id,
-                    user.get("username"),
-                    user.get("first_name"),
-                )
+            if len(parts) > 1 and parts[1].startswith("ref_"):
+                referrer_id = parts[1][4:]
+                get_or_create_player(chat_id, user.get("username"), user.get("first_name"))
                 player = PLAYERS[str(chat_id)]
                 if not player["referrer"] and referrer_id != str(chat_id):
                     player["referrer"] = referrer_id
                     referrer = PLAYERS.get(referrer_id)
                     if referrer:
                         referrer["balance"] += REF_START_BONUS
-                        send_telegram_message(referrer_id, f"🎉 По твоей ссылке зашёл друг! +{REF_START_BONUS:,} ₽".replace(",", " "))
+                        referrer["ref_earnings"] += REF_START_BONUS
+                        send_tg(referrer_id,
+                            f"🎉 <b>По твоей ссылке зашёл друг!</b>\n\n"
+                            f"Ты получил: <b>+{REF_START_BONUS:,} ₽</b>".replace(",", " "))
 
-            # Приветственное сообщение
             welcome = (
                 "🎰 <b>Добро пожаловать в «Крути номер»!</b>\n\n"
-                "Это игра, где ты крутишь SIM-карты и выбиваешь красивые номера.\n"
-                "💰 Продавай их и богатей!\n"
-                "🏆 Соревнуйся с друзьями в топе.\n"
-                "💸 Переводи деньги друзьям.\n"
-                "🎡 Улучшай номера на колесе удачи.\n\n"
-                "🎁 <b>Бонусы за друга:</b>\n"
-                "• +50 000 ₽ за каждого, кто зайдёт по твоей ссылке\n"
-                "• +20% от каждого МИФА, который он выбьет\n\n"
-                "Нажми кнопку внизу, чтобы начать! 👇"
+                "Это игра, где ты крутишь SIM-карты и выбиваешь красивые номера.\n\n"
+                "💰 <b>Как играть:</b>\n"
+                "• Выбирай страну (Африка дешевле, Дубай дороже)\n"
+                "• Крути — 150, 5000 или 20000 ₽\n"
+                "• Редкие номера уходят в «Мои номера» — продавай!\n"
+                "• Улучшай номера на колесе фортуны (×2 или сгорание)\n\n"
+                "🎁 <b>Бонусы:</b>\n"
+                "• +50 000 ₽ за каждого друга по твоей ссылке\n"
+                "• +20% от каждого МИФА друга\n"
+                "• Ежедневный бонус (растёт каждый день)\n"
+                "• Приз на каждом 10 уровне\n\n"
+                "Нажми кнопку ниже, чтобы начать! 👇"
             )
-            send_telegram_message(chat_id, welcome)
+            send_tg(chat_id, welcome, with_button=True)
 
     return jsonify({"ok": True})
 
 
 @app.route("/api/set_webhook")
 def set_webhook():
-    """Вызови один раз, чтобы установить webhook."""
     url = request.args.get("url", "")
     if not url:
         return jsonify({"error": "нужен ?url=https://..."}), 400
     full_url = f"{url}/webhook/{BOT_TOKEN}"
-    r = requests.post(
-        f"https://api.telegram.org/bot{BOT_TOKEN}/setWebhook",
-        json={"url": full_url}
-    )
+    r = requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/setWebhook", json={"url": full_url})
     return jsonify(r.json())
+
+
+# ============================================================
+#  РАССЫЛКА КАЖДЫЙ ЧАС
+# ============================================================
+HOURLY_MESSAGES = [
+    "🎰 <b>Как дела?</b>\nЗагляни в игру — может, сегодня твой день!\nЖми /start",
+    "💎 <b>Не забыл про игру?</b>\nДрузья уже крутят номера. Ты с ними?\nЖми /start",
+    "🎁 <b>Ежедневный бонус ждёт!</b>\nЗагляни в игру и забери приз.\nЖми /start",
+    "🏆 <b>Хочешь в ТОП-3?</b>\nОбгони друзей по балансу!\nЖми /start",
+    "💰 <b>Что-то давно не крутил.</b>\nЗаходи, пока удача на твоей стороне!\nЖми /start",
+    "🔥 <b>Один оборот — и ты миллионер?</b>\nТолько в «Крути номер».\nЖми /start",
+    "👥 <b>Приглашай друзей!</b>\nЗа каждого — 50 000 ₽ + 20% от его МИФов.\nЖми /start",
+]
+
+_last_hour_sent = [0]
+
+def hourly_broadcaster():
+    """Раз в час рассылает напоминание всем активным игрокам."""
+    while True:
+        try:
+            now = int(time.time())
+            current_hour = now // 3600
+            if _last_hour_sent[0] != current_hour:
+                _last_hour_sent[0] = current_hour
+                msg = random.choice(HOURLY_MESSAGES)
+                for uid, p in list(PLAYERS.items()):
+                    # только тем, кто заходил за последние 3 дня
+                    if now - p.get("last_seen", 0) < 3 * 24 * 3600:
+                        send_tg(uid, msg)
+        except Exception as e:
+            print("Broadcast error:", e)
+        time.sleep(600)  # проверяем каждые 10 минут
+
+
+# Запуск фонового потока
+_bg_thread = threading.Thread(target=hourly_broadcaster, daemon=True)
+_bg_thread.start()
 
 
 if __name__ == "__main__":
