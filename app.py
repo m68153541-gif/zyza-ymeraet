@@ -19,9 +19,6 @@ MAX_LEVEL = 100
 
 PLAYERS = {}
 
-# ============================================================
-#  ДОСТИЖЕНИЯ (всего 20)
-# ============================================================
 ACHIEVEMENTS = {
     "first_spin":   {"name": "Первый шаг",       "desc": "Сделай первую прокрутку",       "reward": 5000},
     "ten_spins":    {"name": "Разогрев",         "desc": "Сделай 10 прокруток",            "reward": 10000},
@@ -45,9 +42,6 @@ ACHIEVEMENTS = {
     "kaboom":       {"name": "БУМ!",             "desc": "Выбей пасхалку 420420420",       "reward": 5000000},
 }
 
-# ============================================================
-#  ЕЖЕДНЕВНЫЕ ЗАДАНИЯ
-# ============================================================
 QUEST_POOL = [
     {"id":"q_spin_10",    "text":"Сделай 10 прокруток",       "target":10,  "reward":15000, "type":"spins"},
     {"id":"q_spin_50",    "text":"Сделай 50 прокруток",       "target":50,  "reward":50000, "type":"spins"},
@@ -67,7 +61,6 @@ def today_key():
 
 
 def ensure_quests(player):
-    """Обновить список заданий на сегодня."""
     tk = today_key()
     if player.get("quests_date") != tk:
         picked = random.sample(QUEST_POOL, 4)
@@ -123,9 +116,6 @@ def get_or_create_player(user_id, username=None, first_name=None, photo=None):
             "quests_date": 0,
             "wins": 0,
             "prestiges": 0,
-            "marathon_until": 0,
-            "golden_until": 0,
-            "kaboom_found": False,
         }
     else:
         if username: PLAYERS[user_id]["username"] = username.lstrip("@").lower()
@@ -252,7 +242,6 @@ def spin():
     player["balance"] += price
     player["total_spins"] += 1
 
-    # XP
     xp_gain = 1 if mode == "normal" else (5 if mode == "lucky" else 15)
     old_level = player["level"]
     player["xp"] += xp_gain
@@ -275,14 +264,13 @@ def spin():
             a = unlock_achievement(player, "level_50")
             if a: new_achievements.append(a)
 
-    # Progress на задания
     add_quest_progress(player, "spins", 1)
     if rarity in ("РЕДКОЕ","ЭПИК","ЛЕГЕНДА","МИФ"):
         add_quest_progress(player, "rare", 1)
     if rarity == "ЭПИК": add_quest_progress(player, "epic", 1)
     if rarity == "ЛЕГЕНДА": add_quest_progress(player, "legend", 1)
+    if rarity == "МИФ": add_quest_progress(player, "epic", 1)
 
-    # Достижения
     if player["total_spins"] == 1:
         a = unlock_achievement(player, "first_spin")
         if a: new_achievements.append(a)
@@ -325,9 +313,8 @@ def spin():
         a = unlock_achievement(player, "hundred_millions")
         if a: new_achievements.append(a)
 
-    # Отправляем новые ачивки
     for a in new_achievements:
-        send_tg(user_id, f"🏆 <b>Достижение разблокировано!</b>\n\n«{a['name']}»\n{a['desc']}\n\nНаграда: <b>+{a['reward']:,} ₽</b>".replace(",", " "))
+        send_tg(user_id, f"🏆 <b>Достижение!</b>\n\n«{a['name']}»\n{a['desc']}\nНаграда: <b>+{a['reward']:,} ₽</b>".replace(",", " "))
 
     return jsonify({
         "balance": player["balance"], "level": player["level"], "xp": player["xp"],
@@ -373,20 +360,53 @@ def top():
     ]})
 
 
+# ============================================================
+#  ЕЖЕДНЕВНЫЕ НАГРАДЫ — исправленная логика
+# ============================================================
 @app.route("/api/daily/status")
 def daily_status():
     user_id = request.args.get("user_id")
     if not user_id: return jsonify({"error": "no user_id"}), 400
     player = get_or_create_player(user_id)
-    now = int(time.time()); one_day = 86400
+    now = int(time.time()); one_day = 86400; today = now // one_day
     claims = set(ts // one_day for ts in player.get("daily_claims", []))
-    today = now // one_day
+
+    # Считаем непрерывный стрик
+    # Если сегодня забрано — стрик считаем до сегодня
+    # Если не забрано — до вчера
+    streak = 0
+    if today in claims:
+        for i in range(7):
+            if (today - i) in claims:
+                streak += 1
+            else:
+                break
+    else:
+        for i in range(1, 8):
+            if (today - i) in claims:
+                streak += 1
+            else:
+                break
+
+    # Если стрик уже 7 — сбрасываем цикл (начнём заново)
+    if streak >= 7:
+        streak = 0
+
+    today_claimed = today in claims and streak != 0
+
     days = []
-    for i in range(6, -1, -1):
-        dt = today - i; di = 6 - i
-        days.append({"day":di+1,"reward":DAILY_REWARDS[di],"claimed":dt in claims,
-                     "today":dt == today,"can_claim":dt == today and dt not in claims})
-    return jsonify({"days": days, "streak": player.get("daily_streak",0)})
+    for i in range(7):
+        claimed = i < streak
+        can_claim = (i == streak) and (today not in claims) and (streak < 7)
+        days.append({
+            "day": i + 1,
+            "reward": DAILY_REWARDS[i],
+            "claimed": claimed,
+            "today": can_claim,
+            "can_claim": can_claim,
+        })
+
+    return jsonify({"days": days, "streak": streak, "today_claimed": today_claimed})
 
 
 @app.route("/api/daily/claim", methods=["POST"])
@@ -398,22 +418,35 @@ def daily_claim():
     now = int(time.time()); one_day = 86400; today = now // one_day
     claims = set(ts // one_day for ts in player.get("daily_claims", []))
     if today in claims: return jsonify({"error": "Сегодня уже забрал"}), 400
+
+    # Считаем стрик
     streak = 0
-    for i in range(7):
-        if (today - i) in claims: streak += 1
-        else: break
+    for i in range(1, 8):
+        if (today - i) in claims:
+            streak += 1
+        else:
+            break
+
+    # Если стрик >= 7 — начинаем новый цикл
+    if streak >= 7:
+        player["daily_claims"] = []
+        streak = 0
+
     reward = DAILY_REWARDS[min(streak, 6)]
     player["balance"] += reward
     player["daily_claims"].append(now)
     player["daily_streak"] = streak + 1
-    send_tg(user_id, f"🎁 Ежедневка: +{reward:,} ₽".replace(",", " "))
+
+    send_tg(user_id, f"🎁 Ежедневка: +{reward:,} ₽ (день {streak+1})".replace(",", " "))
+
     a1 = unlock_achievement(player, "first_daily")
     a2 = None
     if player["daily_streak"] >= 7:
         a2 = unlock_achievement(player, "week_streak")
+
     return jsonify({"status":"ok","reward":reward,"balance":player["balance"],
                     "streak":player["daily_streak"],
-                    "new_achievements": [x for x in (a1,a2) if x]})
+                    "new_achievements":[x for x in (a1,a2) if x]})
 
 
 @app.route("/api/ref/info")
@@ -454,9 +487,6 @@ def prestige():
     return jsonify({"status":"ok","prestiges":player["prestiges"],"balance":player["balance"]})
 
 
-# ============================================================
-#  WEBHOOK
-# ============================================================
 @app.route(f"/webhook/{BOT_TOKEN}", methods=["POST"])
 def webhook():
     data = request.get_json(force=True, silent=True) or {}
