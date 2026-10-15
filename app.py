@@ -1,5 +1,5 @@
 # ============================================================
-#  SIM SPINNER — сервер с заданиями, достижениями, лигами
+#  SIM SPINNER — сервер
 # ============================================================
 
 from flask import Flask, jsonify, request, send_file
@@ -11,48 +11,48 @@ CORS(app)
 
 BOT_TOKEN = "8688292241:AAEpB6R9ndFLFCjUOs_vC0gmAJZwg_TUUMw"
 BOT_USERNAME = "Sim_moner_zyza_ymer_bot"
-START_BALANCE = 100000
-REF_START_BONUS = 50000
-REF_MYTH_PERCENT = 0.20
-DAILY_REWARDS = [10000, 15000, 20000, 25000, 30000, 40000, 50000]
-MAX_LEVEL = 100
+START_BALANCE = 50000
+REF_START_BONUS = 25000
+REF_MYTH_PERCENT = 0.05          # было 0.20 → теперь 5%
+DAILY_REWARDS = [3000, 5000, 7000, 10000, 13000, 17000, 22000]
+MAX_LEVEL = 1000                 # было 100 → теперь 1000
 
 PLAYERS = {}
 
 ACHIEVEMENTS = {
-    "first_spin":   {"name": "Первый шаг",       "desc": "Сделай первую прокрутку",       "reward": 5000},
-    "ten_spins":    {"name": "Разогрев",         "desc": "Сделай 10 прокруток",            "reward": 10000},
-    "hundred_spins":{"name": "Крутила",          "desc": "Сделай 100 прокруток",           "reward": 50000},
-    "thousand_spins":{"name":"Легенда круток",   "desc": "Сделай 1000 прокруток",          "reward": 500000},
-    "first_rare":   {"name": "Первое РЕДКОЕ",   "desc": "Выбей РЕДКИЙ номер",            "reward": 10000},
-    "first_epic":   {"name": "Эпичный",          "desc": "Выбей ЭПИК",                     "reward": 50000},
-    "first_legend": {"name": "Легенда",          "desc": "Выбей ЛЕГЕНДУ",                  "reward": 200000},
-    "first_myth":   {"name": "Мифический",       "desc": "Выбей МИФ",                      "reward": 1000000},
-    "millionaire":  {"name": "Миллионер",        "desc": "Имей 1 000 000 ₽ на балансе",   "reward": 100000},
-    "ten_millions": {"name": "Десять лямов",     "desc": "Имей 10 000 000 ₽",             "reward": 500000},
-    "hundred_millions":{"name":"Сто миллионов",  "desc": "Имей 100 000 000 ₽",            "reward": 2000000},
-    "first_referral":{"name":"Первый друг",     "desc": "Пригласи первого друга",        "reward": 25000},
-    "ten_referrals":{"name": "Наставник",        "desc": "Пригласи 10 друзей",             "reward": 500000},
-    "first_daily":  {"name": "Ежедневный",       "desc": "Забери первую ежедневку",        "reward": 5000},
-    "week_streak":  {"name": "Неделя подряд",    "desc": "Заходи 7 дней подряд",           "reward": 100000},
-    "first_transfer":{"name":"Первый перевод",  "desc": "Переведи деньги другу",          "reward": 10000},
-    "level_10":     {"name": "Десятка",          "desc": "Достигни 10 уровня",             "reward": 25000},
-    "level_50":     {"name": "Полтинник",        "desc": "Достигни 50 уровня",             "reward": 500000},
-    "level_100":    {"name": "ПОБЕДИТЕЛЬ",      "desc": "Достигни 100 уровня — победа!",  "reward": 10000000},
-    "kaboom":       {"name": "БУМ!",             "desc": "Выбей пасхалку 420420420",       "reward": 5000000},
+    "first_spin":   {"name": "Первый шаг",       "desc": "Сделай первую прокрутку",       "reward": 1000},
+    "ten_spins":    {"name": "Разогрев",         "desc": "Сделай 10 прокруток",            "reward": 3000},
+    "hundred_spins":{"name": "Крутила",          "desc": "Сделай 100 прокруток",           "reward": 15000},
+    "thousand_spins":{"name":"Легенда круток",   "desc": "Сделай 1000 прокруток",          "reward": 150000},
+    "first_rare":   {"name": "Первое РЕДКОЕ",   "desc": "Выбей РЕДКИЙ номер",            "reward": 3000},
+    "first_epic":   {"name": "Эпичный",          "desc": "Выбей ЭПИК",                     "reward": 15000},
+    "first_legend": {"name": "Легенда",          "desc": "Выбей ЛЕГЕНДУ",                  "reward": 60000},
+    "first_myth":   {"name": "Мифический",       "desc": "Выбей МИФ",                      "reward": 300000},
+    "millionaire":  {"name": "Миллионер",        "desc": "Имей 1 000 000 ₽",             "reward": 30000},
+    "ten_millions": {"name": "Десять лямов",     "desc": "Имей 10 000 000 ₽",             "reward": 150000},
+    "hundred_millions":{"name":"Сто миллионов",  "desc": "Имей 100 000 000 ₽",            "reward": 600000},
+    "first_referral":{"name":"Первый друг",     "desc": "Пригласи первого друга",        "reward": 10000},
+    "ten_referrals":{"name": "Наставник",        "desc": "Пригласи 10 друзей",             "reward": 150000},
+    "first_daily":  {"name": "Ежедневный",       "desc": "Забери первую ежедневку",        "reward": 2000},
+    "week_streak":  {"name": "Неделя подряд",    "desc": "Заходи 7 дней подряд",           "reward": 30000},
+    "first_transfer":{"name":"Первый перевод",  "desc": "Переведи деньги другу",          "reward": 3000},
+    "level_10":     {"name": "Десятка",          "desc": "Достигни 10 уровня",             "reward": 5000},
+    "level_100":    {"name": "Сотка",            "desc": "Достигни 100 уровня",            "reward": 100000},
+    "level_500":    {"name": "Пятисотка",        "desc": "Достигни 500 уровня",            "reward": 500000},
+    "level_1000":   {"name": "ПОБЕДИТЕЛЬ",      "desc": "Достигни 1000 уровня — победа!", "reward": 3000000},
 }
 
 QUEST_POOL = [
-    {"id":"q_spin_10",    "text":"Сделай 10 прокруток",       "target":10,  "reward":15000, "type":"spins"},
-    {"id":"q_spin_50",    "text":"Сделай 50 прокруток",       "target":50,  "reward":50000, "type":"spins"},
-    {"id":"q_spin_100",   "text":"Сделай 100 прокруток",      "target":100, "reward":120000,"type":"spins"},
-    {"id":"q_rare",       "text":"Выбей РЕДКОЕ",              "target":1,   "reward":25000, "type":"rare"},
-    {"id":"q_epic",       "text":"Выбей ЭПИК",                "target":1,   "reward":80000, "type":"epic"},
-    {"id":"q_legend",     "text":"Выбей ЛЕГЕНДУ",             "target":1,   "reward":250000,"type":"legend"},
-    {"id":"q_earn_500k",  "text":"Заработай 500 000 ₽",       "target":500000,"reward":80000,"type":"earned"},
-    {"id":"q_earn_2m",    "text":"Заработай 2 000 000 ₽",     "target":2000000,"reward":250000,"type":"earned"},
-    {"id":"q_sell_5",     "text":"Продай 5 номеров",          "target":5,   "reward":30000, "type":"sold"},
-    {"id":"q_upgrade_1",  "text":"Улучши номер (×2)",         "target":1,   "reward":50000, "type":"upgraded"},
+    {"id":"q_spin_10",    "text":"Сделай 10 прокруток",       "target":10,  "reward":5000, "type":"spins"},
+    {"id":"q_spin_50",    "text":"Сделай 50 прокруток",       "target":50,  "reward":18000, "type":"spins"},
+    {"id":"q_spin_100",   "text":"Сделай 100 прокруток",      "target":100, "reward":40000, "type":"spins"},
+    {"id":"q_rare",       "text":"Выбей РЕДКОЕ",              "target":1,   "reward":8000, "type":"rare"},
+    {"id":"q_epic",       "text":"Выбей ЭПИК",                "target":1,   "reward":25000, "type":"epic"},
+    {"id":"q_legend",     "text":"Выбей ЛЕГЕНДУ",             "target":1,   "reward":80000, "type":"legend"},
+    {"id":"q_earn_500k",  "text":"Заработай 500 000 ₽",       "target":500000,"reward":25000,"type":"earned"},
+    {"id":"q_earn_2m",    "text":"Заработай 2 000 000 ₽",     "target":2000000,"reward":80000,"type":"earned"},
+    {"id":"q_sell_5",     "text":"Продай 5 номеров",          "target":5,   "reward":10000, "type":"sold"},
+    {"id":"q_upgrade_1",  "text":"Улучши номер (×2)",         "target":1,   "reward":15000, "type":"upgraded"},
 ]
 
 
@@ -242,26 +242,32 @@ def spin():
     player["balance"] += price
     player["total_spins"] += 1
 
+    # XP и уровни — 100 XP на уровень, максимум 1000
     xp_gain = 1 if mode == "normal" else (5 if mode == "lucky" else 15)
     old_level = player["level"]
     player["xp"] += xp_gain
     new_level = min(MAX_LEVEL, 1 + player["xp"] // 100)
     new_achievements = []
+
     if new_level > old_level:
         player["level"] = new_level
-        if new_level % 10 == 0 and new_level < MAX_LEVEL:
-            reward = 10000 * (new_level // 10)
+        # Награда за каждые 25 уровней (было 10, снижаем частоту)
+        if new_level % 25 == 0 and new_level < MAX_LEVEL:
+            reward = 5000 * (new_level // 25)
             player["balance"] += reward
             send_tg(user_id, f"🎉 <b>Уровень {new_level}!</b>\nПриз: <b>+{reward:,} ₽</b>".replace(",", " "))
-        if new_level == MAX_LEVEL and player["wins"] == 0:
-            player["wins"] += 1
-            a = unlock_achievement(player, "level_100")
-            if a: new_achievements.append(a)
         if new_level == 10:
             a = unlock_achievement(player, "level_10")
             if a: new_achievements.append(a)
-        if new_level == 50:
-            a = unlock_achievement(player, "level_50")
+        if new_level == 100:
+            a = unlock_achievement(player, "level_100")
+            if a: new_achievements.append(a)
+        if new_level == 500:
+            a = unlock_achievement(player, "level_500")
+            if a: new_achievements.append(a)
+        if new_level == MAX_LEVEL and player["wins"] == 0:
+            player["wins"] += 1
+            a = unlock_achievement(player, "level_1000")
             if a: new_achievements.append(a)
 
     add_quest_progress(player, "spins", 1)
@@ -296,7 +302,7 @@ def spin():
         a = unlock_achievement(player, "first_myth")
         if a: new_achievements.append(a)
         if player.get("referrer"):
-            bonus = int(price * REF_MYTH_PERCENT)
+            bonus = int(price * REF_MYTH_PERCENT)   # 5%
             ref = PLAYERS.get(player["referrer"])
             if ref:
                 ref["balance"] += bonus
@@ -360,9 +366,6 @@ def top():
     ]})
 
 
-# ============================================================
-#  ЕЖЕДНЕВНЫЕ НАГРАДЫ — исправленная логика
-# ============================================================
 @app.route("/api/daily/status")
 def daily_status():
     user_id = request.args.get("user_id")
@@ -371,42 +374,27 @@ def daily_status():
     now = int(time.time()); one_day = 86400; today = now // one_day
     claims = set(ts // one_day for ts in player.get("daily_claims", []))
 
-    # Считаем непрерывный стрик
-    # Если сегодня забрано — стрик считаем до сегодня
-    # Если не забрано — до вчера
     streak = 0
     if today in claims:
         for i in range(7):
-            if (today - i) in claims:
-                streak += 1
-            else:
-                break
+            if (today - i) in claims: streak += 1
+            else: break
     else:
         for i in range(1, 8):
-            if (today - i) in claims:
-                streak += 1
-            else:
-                break
+            if (today - i) in claims: streak += 1
+            else: break
 
-    # Если стрик уже 7 — сбрасываем цикл (начнём заново)
-    if streak >= 7:
-        streak = 0
-
-    today_claimed = today in claims and streak != 0
+    if streak >= 7: streak = 0
 
     days = []
     for i in range(7):
         claimed = i < streak
         can_claim = (i == streak) and (today not in claims) and (streak < 7)
         days.append({
-            "day": i + 1,
-            "reward": DAILY_REWARDS[i],
-            "claimed": claimed,
-            "today": can_claim,
-            "can_claim": can_claim,
+            "day": i + 1, "reward": DAILY_REWARDS[i],
+            "claimed": claimed, "today": can_claim, "can_claim": can_claim,
         })
-
-    return jsonify({"days": days, "streak": streak, "today_claimed": today_claimed})
+    return jsonify({"days": days, "streak": streak, "today_claimed": today in claims})
 
 
 @app.route("/api/daily/claim", methods=["POST"])
@@ -419,15 +407,10 @@ def daily_claim():
     claims = set(ts // one_day for ts in player.get("daily_claims", []))
     if today in claims: return jsonify({"error": "Сегодня уже забрал"}), 400
 
-    # Считаем стрик
     streak = 0
     for i in range(1, 8):
-        if (today - i) in claims:
-            streak += 1
-        else:
-            break
-
-    # Если стрик >= 7 — начинаем новый цикл
+        if (today - i) in claims: streak += 1
+        else: break
     if streak >= 7:
         player["daily_claims"] = []
         streak = 0
@@ -437,7 +420,7 @@ def daily_claim():
     player["daily_claims"].append(now)
     player["daily_streak"] = streak + 1
 
-    send_tg(user_id, f"🎁 Ежедневка: +{reward:,} ₽ (день {streak+1})".replace(",", " "))
+    send_tg(user_id, f"🎁 Ежедневка: +{reward:,} ₽".replace(",", " "))
 
     a1 = unlock_achievement(player, "first_daily")
     a2 = None
@@ -479,7 +462,7 @@ def prestige():
     if not user_id: return jsonify({"error": "no user_id"}), 400
     player = get_or_create_player(user_id)
     if player["level"] < MAX_LEVEL:
-        return jsonify({"error": "Нужен 100 уровень"}), 400
+        return jsonify({"error": f"Нужен {MAX_LEVEL} уровень"}), 400
     player["prestiges"] += 1
     player["level"] = 1
     player["xp"] = 0
@@ -523,10 +506,10 @@ def webhook():
                 "• Крути в трёх режимах\n"
                 "• Улучшай номера\n"
                 "• Выполняй задания и достижения\n"
-                "• Иди к 100 уровню — это победа!\n\n"
+                "• Иди к 1000 уровню — это победа!\n\n"
                 "🏆 <b>Бонусы:</b>\n"
-                "• +50к за друга\n"
-                "• +20% от его МИФов\n"
+                "• +25к за друга\n"
+                "• +5% от его МИФов\n"
                 "• Награды за достижения\n\n"
                 "Жми кнопку 👇"
             )
@@ -547,10 +530,10 @@ HOURLY_MSGS = [
     "🎰 Загляни в игру — может твой день! /start",
     "💎 Друзья крутят номера. Ты с ними? /start",
     "🎁 Ежедневка ждёт! /start",
-    "🏆 Идёшь к 100 уровню? Не сдавайся! /start",
+    "🏆 Идёшь к 1000 уровню? Не сдавайся! /start",
     "💰 Что-то давно не крутил. Заходи! /start",
     "🔥 Один оборот — и ты миллионер? /start",
-    "👥 Приглашай друзей: +50к за каждого! /start",
+    "👥 Приглашай друзей: +25к за каждого! /start",
 ]
 _last_hour = [0]
 def broadcaster():
