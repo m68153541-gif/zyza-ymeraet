@@ -155,16 +155,13 @@
   .league-silver { color:#c0c0c0; background:rgba(192,192,192,.15); border:1px solid rgba(192,192,192,.5); }
   .league-gold { color:#ffd700; background:rgba(255,215,0,.15); border:1px solid rgba(255,215,0,.5); }
 
-  /* График */
   .chart-wrap { width:100%; max-width:440px; margin-top:12px; padding:12px; background:var(--panel); border:1px solid var(--line); border-radius:12px; }
   .chart-wrap h3 { margin:0 0 10px; font-size:12px; color:var(--muted); text-transform:uppercase; font-weight:800; letter-spacing:.5px; }
   .chart { width:100%; height:100px; position:relative; }
   .chart svg { width:100%; height:100%; overflow:visible; }
   .chart .line { fill:none; stroke:var(--gold); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 4px rgba(232,200,119,.7)); }
   .chart .area { fill:url(#chartGrad); }
-  .chart .dot { fill:var(--gold); stroke:#0a0d12; stroke-width:1.5; }
 
-  /* Статистика */
   .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:440px; margin-top:10px; }
   .stat-cell { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px; text-align:center; }
   .stat-cell .lab { font-size:10px; color:var(--muted); text-transform:uppercase; font-weight:800; letter-spacing:.5px; margin-bottom:4px; }
@@ -177,8 +174,7 @@
   .best-number-card .m { font-size:11px; color:var(--muted); margin-top:3px; }
   .best-number-card .price { font-size:15px; font-weight:900; color:var(--gold); text-align:right; }
 
-  /* История */
-  .hist-item { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:6px; font-size:11px; }
+  .hist-item { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:6px; font-size:11px; }
   .hist-item .h-num { font-weight:900; color:var(--text); font-size:12px; }
   .hist-item .h-num .p { color:var(--gold); margin-right:2px; }
   .hist-item .h-meta { color:var(--muted); font-size:10px; margin-top:2px; }
@@ -213,7 +209,6 @@
   .result-msg.win { background:rgba(46,122,46,.3); border:1px solid #2e7a2e; color:#b8ffb8; display:block; }
   .result-msg.lose { background:rgba(122,46,46,.3); border:1px solid #7a2e2e; color:#ffb8b8; display:block; }
 
-  /* Настройки */
   .set-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); }
   .set-row:last-child { border-bottom:none; }
   .set-row .lbl { font-size:13px; font-weight:700; color:var(--text); }
@@ -231,7 +226,6 @@
   .dev-btn { width:100%; padding:11px; margin-top:6px; background:var(--panel); border:1px solid var(--line); border-radius:9px; color:var(--text); font-size:12px; font-weight:800; cursor:pointer; transition:all .2s; font-family:inherit; text-align:center; }
   .dev-btn:hover { border-color:var(--gold); }
 
-  /* Админ */
   .admin-player { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:7px; cursor:pointer; transition:all .2s; }
   .admin-player:hover { border-color:var(--gold); }
   .admin-player.online { border-color:rgba(140,255,140,.5); }
@@ -396,7 +390,7 @@
       <button class="menu-btn" id="menu-achievements"><span class="ico">🏆</span><span>Достижения</span><div class="yellow-dot" id="ach-dot"></div></button>
       <button class="menu-btn" id="menu-daily"><span class="ico">🎁</span><span>Ежедневка</span><span class="badge hidden" id="daily-badge">!</span></button>
       <button class="menu-btn" id="menu-transfer"><span class="ico">💸</span><span>Перевод</span></button>
-      <button class="menu-btn" id="menu-top"><span class="ico">🏆</span><span>Топ-10</span></button>
+      <button class="menu-btn" id="menu-top"><span class="ico">🥇</span><span>Топ-10</span></button>
       <button class="menu-btn" id="menu-upgrade"><span class="ico">🎡</span><span>Улучшение</span></button>
       <button class="menu-btn" id="menu-ref"><span class="ico">👥</span><span>Рефералка</span></button>
       <button class="menu-btn full" id="menu-settings"><span class="ico">⚙️</span><span>Настройки</span></button>
@@ -546,35 +540,21 @@
       <p class="sub">Игра «Крути номер»</p>
 
       <div class="set-row">
-        <div>
-          <div class="lbl">🌙 Светлая тема</div>
-          <div class="sub">Переключить оформление</div>
-        </div>
+        <div><div class="lbl">🌙 Светлая тема</div><div class="sub">Переключить оформление</div></div>
         <div class="toggle" id="t-theme"></div>
       </div>
-
       <div class="set-row">
-        <div>
-          <div class="lbl">🔊 Звуковые эффекты</div>
-          <div class="sub">Звуки при прокрутке и победах</div>
-        </div>
+        <div><div class="lbl">🔊 Звуковые эффекты</div><div class="sub">Звуки при прокрутке и победах</div></div>
         <div class="toggle on" id="t-sound"></div>
       </div>
-
       <div class="set-row">
-        <div>
-          <div class="lbl">📳 Вибрация</div>
-          <div class="sub">Лёгкая вибрация при действиях</div>
-        </div>
+        <div><div class="lbl">📳 Вибрация</div><div class="sub">Лёгкая вибрация при действиях</div></div>
         <div class="toggle on" id="t-vibe"></div>
       </div>
 
       <div class="dev-section">
         <div class="dev-title">👨‍💻 Для разработчика</div>
-        <div class="dev-info">
-          <b>BOT MODEL ZYUZYA 33</b><br>
-          Version ALPHA 0.0.6
-        </div>
+        <div class="dev-info"><b>BOT MODEL ZYUZYA 33</b><br>Version ALPHA 0.0.6</div>
         <button class="dev-btn" id="dev-code">🔗 Ссылка на код игры</button>
         <button class="dev-btn" id="dev-logs">📜 Посмотреть логи игры</button>
         <button class="dev-btn" id="dev-admin">🔐 Вход в админ-панель</button>
@@ -584,10 +564,11 @@
   </div>
 
   <div id="tab-admin">
+    <!-- Экран входа -->
     <div id="admin-login-view">
       <div class="panel">
         <h2>🔐 Вход в админ-панель</h2>
-        <p class="sub">Введите логин и пароль</p>
+        <p class="sub">Введи логин и пароль из бота</p>
         <label>Логин</label>
         <input id="adm-login" type="text" placeholder="Логин">
         <label>Пароль</label>
@@ -596,22 +577,44 @@
       </div>
     </div>
 
+    <!-- Экран админки -->
     <div id="admin-panel-view" style="display:none; width:100%; max-width:440px;">
-      <div class="panel">
+
+      <!-- Блок установки постоянных кредов (виден пока не установлены) -->
+      <div class="panel" id="adm-set-creds-wrap" style="display:none; border-color:var(--gold);">
+        <h2 style="font-size:13px;">🔑 Установи свои постоянные данные</h2>
+        <p class="sub">После этого сможешь входить без одноразовых</p>
+        <label>Новый логин</label>
+        <input id="adm-new-login" type="text" placeholder="Логин">
+        <label>Новый пароль</label>
+        <input id="adm-new-password" type="password" placeholder="Пароль">
+        <button class="action-btn" id="adm-set-creds">Сохранить</button>
+      </div>
+
+      <!-- Инфо о текущем ID + смена -->
+      <div class="panel" style="margin-top:12px;">
+        <div style="font-size:11px; color:var(--muted); margin-bottom:6px;">Твой admin ID: <b id="adm-my-id" style="color:var(--gold);">—</b></div>
+        <button class="dev-btn" id="adm-change-id" style="margin-top:0;">🆔 Сменить свой ID</button>
+      </div>
+
+      <!-- Панель управления -->
+      <div class="panel" style="margin-top:12px;">
         <h2>👑 Админ-панель</h2>
         <p class="sub">Управление игрой</p>
 
         <label>🔍 Поиск игрока</label>
-        <input class="admin-search" id="adm-search" type="text" placeholder="Username или имя...">
+        <input class="admin-search" id="adm-search" type="text" placeholder="Username / имя / ID...">
 
-        <div style="display:flex; gap:6px; margin-top:10px;">
-          <button class="dev-btn" id="adm-x2" style="margin-top:0; font-size:11px;">🔥 ×2 всем</button>
-          <button class="dev-btn" id="adm-bonus" style="margin-top:0; font-size:11px;">🎁 Бонус всем</button>
-          <button class="dev-btn" id="adm-reset" style="margin-top:0; font-size:11px; color:#ff8a8a;">⚠️ Сезон</button>
+        <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
+          <button class="dev-btn" id="adm-x2" style="margin-top:0; font-size:10px; flex:1;">🔥 ×2 всем</button>
+          <button class="dev-btn" id="adm-bonus" style="margin-top:0; font-size:10px; flex:1;">🎁 Бонус</button>
+          <button class="dev-btn" id="adm-broadcast" style="margin-top:0; font-size:10px; flex:1;">📢 Рассылка</button>
+          <button class="dev-btn" id="adm-reset" style="margin-top:0; font-size:10px; flex:1; color:#ff8a8a;">⚠️ Сезон</button>
         </div>
 
-        <div style="margin-top:14px; max-height:400px; overflow-y:auto;" id="adm-players"></div>
+        <div style="margin-top:14px; max-height:420px; overflow-y:auto;" id="adm-players"></div>
       </div>
+
       <button class="back-btn" id="backFromAdmin">← Выйти</button>
     </div>
   </div>
@@ -674,6 +677,8 @@
       <button class="modal-close" id="ap-ban" style="flex:1; background:linear-gradient(140deg,#5a1a1a,#2a0a0a); color:#ffb8b8; font-size:11px;">🚫 Бан</button>
       <button class="modal-close" id="ap-unban" style="flex:1; background:linear-gradient(140deg,#1a5a1a,#0a2a0a); color:#b8ffb8; font-size:11px;">✅ Разбан</button>
     </div>
+
+    <button class="modal-close" id="ap-reset" style="margin-top:6px; font-size:11px; background:linear-gradient(140deg,#5a3a1a,#2a1a0a); color:#ffd8b8;">🔄 Обнулить игрока</button>
 
     <button class="modal-close" id="ap-close" style="margin-top:8px; background:var(--panel); color:var(--text); border:1px solid var(--line);">Закрыть</button>
   </div>
@@ -745,19 +750,13 @@
   let goldenUntil = 0, x2Until = 0;
   let isAdmin = false, adminId = null;
   let adminSelectedPlayer = null;
-  let selectedColor = null;  // для звука/вибро
   let settings = loadSettings();
 
   function loadSettings() {
-    try {
-      const r = localStorage.getItem("sim_settings_" + USER_ID);
-      if (r) return JSON.parse(r);
-    } catch(e){}
+    try { const r = localStorage.getItem("sim_settings_" + USER_ID); if (r) return JSON.parse(r); } catch(e){}
     return { theme: "dark", sound: true, vibe: true };
   }
-  function saveSettings() {
-    try { localStorage.setItem("sim_settings_" + USER_ID, JSON.stringify(settings)); } catch(e){}
-  }
+  function saveSettings() { try { localStorage.setItem("sim_settings_" + USER_ID, JSON.stringify(settings)); } catch(e){} }
 
   const DEFAULT_STATE = {
     balance:50000,last:null,my_numbers:[],
@@ -766,10 +765,9 @@
     achievements: [], quests: [], winShown: false
   };
   let STATE = loadState();
-  function loadState() { try { const r = localStorage.getItem("sim_spinner_v21_" + USER_ID); if (r) return JSON.parse(r); } catch(e){} return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
-  function saveState() { try { localStorage.setItem("sim_spinner_v21_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+  function loadState() { try { const r = localStorage.getItem("sim_spinner_v22_" + USER_ID); if (r) return JSON.parse(r); } catch(e){} return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
+  function saveState() { try { localStorage.setItem("sim_spinner_v22_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
 
-  // ==== звук и вибро ====
   function playSound(type) {
     if (!settings.sound) return;
     try {
@@ -780,7 +778,7 @@
       const freqs = { spin: 400, win: 800, lose: 200, click: 600, ach: 1000 };
       osc.frequency.value = freqs[type] || 500;
       osc.type = "sine";
-      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
       osc.start();
       osc.stop(ctx.currentTime + 0.15);
@@ -788,42 +786,25 @@
   }
   function vibrate(ms) { if (settings.vibe && navigator.vibrate) try { navigator.vibrate(ms); } catch(e){} }
 
-  // ==== тема ====
   function applyTheme() {
     if (settings.theme === "light") document.body.classList.add("light");
     else document.body.classList.remove("light");
     $("t-theme").classList.toggle("on", settings.theme === "light");
   }
   applyTheme();
-  $("t-theme").addEventListener("click", () => {
-    settings.theme = settings.theme === "light" ? "dark" : "light";
-    saveSettings(); applyTheme(); playSound("click");
-  });
-  $("t-sound").addEventListener("click", () => {
-    settings.sound = !settings.sound;
-    $("t-sound").classList.toggle("on", settings.sound);
-    saveSettings(); playSound("click");
-  });
-  $("t-vibe").addEventListener("click", () => {
-    settings.vibe = !settings.vibe;
-    $("t-vibe").classList.toggle("on", settings.vibe);
-    saveSettings(); vibrate(30);
-  });
+  $("t-theme").addEventListener("click", () => { settings.theme = settings.theme === "light" ? "dark" : "light"; saveSettings(); applyTheme(); playSound("click"); });
+  $("t-sound").addEventListener("click", () => { settings.sound = !settings.sound; $("t-sound").classList.toggle("on", settings.sound); saveSettings(); playSound("click"); });
+  $("t-vibe").addEventListener("click", () => { settings.vibe = !settings.vibe; $("t-vibe").classList.toggle("on", settings.vibe); saveSettings(); vibrate(30); });
 
   async function syncBalance() {
     try {
       const p = new URLSearchParams({user_id:USER_ID,username:USER_USERNAME_RAW,first_name:USER_NAME,photo:USER_PHOTO});
       const r = await fetch(API + "/api/balance?" + p);
-      if (r.status === 403) {
-        const d = await r.json();
-        alert("Вы забанены: " + (d.reason || ""));
-        return;
-      }
+      if (r.status === 403) { const d = await r.json(); alert("Вы забанены: " + (d.reason || "")); return; }
       const d = await r.json();
       if (d.balance !== undefined) {
         STATE.balance = d.balance; STATE.level = d.level||STATE.level; STATE.xp = d.xp||STATE.xp;
-        goldenUntil = d.golden_until || 0;
-        x2Until = d.x2_until || 0;
+        goldenUntil = d.golden_until || 0; x2Until = d.x2_until || 0;
         updateGoldenBadge();
         saveState(); updateStats();
       }
@@ -832,8 +813,7 @@
 
   function updateGoldenBadge() {
     const now = Math.floor(Date.now() / 1000);
-    const active = (goldenUntil > now) || (x2Until > now);
-    goldenBadge.classList.toggle("show", active);
+    goldenBadge.classList.toggle("show", (goldenUntil > now) || (x2Until > now));
   }
 
   async function syncSpin(cost, price, mode, rarity, country, countryId, operator, number) {
@@ -841,17 +821,8 @@
       const r = await fetch(API + "/api/spin",{method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({user_id:USER_ID,mode,cost,price,rarity,country,country_id:countryId,operator,number})});
       const d = await r.json();
-      if (d.balance !== undefined) {
-        STATE.balance = d.balance; STATE.level = d.level; STATE.xp = d.xp;
-        saveState(); updateStats();
-        if (d.final_price && d.mult > 1) {
-          // пересчитать итоговую цену
-          STATE.balance = d.balance;
-        }
-      }
-      if (d.new_achievements && d.new_achievements.length) {
-        d.new_achievements.forEach(a => { showAchievementPopup(a); playSound("ach"); vibrate(50); });
-      }
+      if (d.balance !== undefined) { STATE.balance = d.balance; STATE.level = d.level; STATE.xp = d.xp; saveState(); updateStats(); }
+      if (d.new_achievements && d.new_achievements.length) d.new_achievements.forEach(a => { showAchievementPopup(a); playSound("ach"); vibrate(50); });
     } catch(e) {}
   }
 
@@ -886,8 +857,7 @@
         const div = document.createElement("div");
         div.className = "quest-item" + (ready ? " ready" : "") + (q.claimed ? " claimed" : "");
         const pct = Math.min(100, Math.round(q.progress / q.target * 100));
-        div.innerHTML =
-          '<div class="q-top"><div class="q-text">' + q.text + '</div><div class="q-reward">+' + q.reward.toLocaleString("ru-RU") + '₽</div></div>' +
+        div.innerHTML = '<div class="q-top"><div class="q-text">' + q.text + '</div><div class="q-reward">+' + q.reward.toLocaleString("ru-RU") + '₽</div></div>' +
           '<div class="q-bar"><div class="q-fill" style="width:' + pct + '%"></div></div>' +
           '<div class="q-status">' + (q.claimed ? "✓ Получено" : q.progress + "/" + q.target) + '</div>';
         if (ready) {
@@ -928,13 +898,10 @@
         if (a.unlocked) unlocked++;
         const div = document.createElement("div");
         div.className = "ach-item " + (a.unlocked ? "unlocked" : "locked");
-        div.innerHTML =
-          '<div class="ach-ico">' + (a.unlocked ? "🏆" : "🔒") + '</div>' +
-          '<div>' +
-            '<div class="ach-name">' + a.name + '</div>' +
-            '<div class="ach-desc">' + a.desc + '</div>' +
-            '<div class="ach-reward">+' + a.reward.toLocaleString("ru-RU") + ' ₽</div>' +
-          '</div>';
+        div.innerHTML = '<div class="ach-ico">' + (a.unlocked ? "🏆" : "🔒") + '</div>' +
+          '<div><div class="ach-name">' + a.name + '</div>' +
+          '<div class="ach-desc">' + a.desc + '</div>' +
+          '<div class="ach-reward">+' + a.reward.toLocaleString("ru-RU") + ' ₽</div></div>';
         list.appendChild(div);
       });
       $("ach-progress").textContent = unlocked + "/" + d.achievements.length;
@@ -963,41 +930,28 @@
         el.innerHTML = '<div class="lab">' + it.lab + '</div><div class="val">' + it.val + '</div>';
         grid.appendChild(el);
       });
-
-      // Лучший номер
       if (d.best_number) {
         const bn = d.best_number;
-        const c = COUNTRY_LIST.find(x => x.id === bn.country_id) || { flag: "🏳️", code: "" };
+        const c = COUNTRY_LIST.find(x => x.id === bn.country_id) || { flag: "🏳️" };
         $("best-flag").textContent = c.flag || "🏳️";
         $("best-num").innerHTML = '<span class="p">' + (COUNTRY_CODES[bn.country_id] || "") + '</span>' + bn.number;
         $("best-meta").textContent = (bn.rarity || "") + " · " + (bn.operator || "");
         $("best-price").textContent = bn.price.toLocaleString("ru-RU") + " ₽";
         $("best-number-wrap").style.display = "grid";
-      } else {
-        $("best-number-wrap").style.display = "none";
-      }
-
-      // История
+      } else { $("best-number-wrap").style.display = "none"; }
       const hlist = $("history-list");
       hlist.innerHTML = "";
-      if (!d.history || !d.history.length) {
-        hlist.innerHTML = "<div class='empty'>Пока пусто</div>";
-      } else {
-        d.history.slice().reverse().forEach(h => {
-          const el = document.createElement("div");
-          el.className = "hist-item";
-          const c = COUNTRY_LIST.find(x => x.id === h.country_id) || { flag: "🏳️" };
-          const x2txt = h.x2 ? ' <span class="x2">×2</span>' : '';
-          el.innerHTML =
-            '<div>' +
-              '<div class="h-num">' + c.flag + ' <span class="p">' + (COUNTRY_CODES[h.country_id] || "") + '</span>' + (h.number || "—") + '</div>' +
-              '<div class="h-meta">' + (h.rarity || "") + ' · ' + (h.operator || "") + (h.sold ? ' · продан' : ' · оставлен') + '</div>' +
-            '</div>' +
-            '<div></div>' +
-            '<div class="h-price">' + h.price.toLocaleString("ru-RU") + '₽' + x2txt + '</div>';
-          hlist.appendChild(el);
-        });
-      }
+      if (!d.history || !d.history.length) hlist.innerHTML = "<div class='empty'>Пока пусто</div>";
+      else d.history.slice().reverse().forEach(h => {
+        const el = document.createElement("div");
+        el.className = "hist-item";
+        const c = COUNTRY_LIST.find(x => x.id === h.country_id) || { flag: "🏳️" };
+        const x2txt = h.x2 ? ' <span class="x2">×2</span>' : '';
+        el.innerHTML = '<div><div class="h-num">' + c.flag + ' <span class="p">' + (COUNTRY_CODES[h.country_id] || "") + '</span>' + (h.number || "—") + '</div>' +
+          '<div class="h-meta">' + (h.rarity || "") + ' · ' + (h.operator || "") + (h.sold ? ' · продан' : ' · оставлен') + '</div></div>' +
+          '<div class="h-price">' + h.price.toLocaleString("ru-RU") + '₽' + x2txt + '</div>';
+        hlist.appendChild(el);
+      });
     } catch(e) { console.error(e); }
   }
 
@@ -1007,10 +961,7 @@
       const d = await r.json();
       const daily = d.daily_balance || [];
       const line = $("chart-line"), area = $("chart-area");
-      if (daily.length < 2) {
-        line.setAttribute("d", ""); area.setAttribute("d", "");
-        return;
-      }
+      if (daily.length < 2) { line.setAttribute("d", ""); area.setAttribute("d", ""); return; }
       const W = 300, H = 100, pad = 5;
       const vals = daily.map(x => x.balance);
       const maxV = Math.max(...vals, 1);
@@ -1079,8 +1030,7 @@
       el.addEventListener("click", () => {
         selectedCountry = co.id;
         document.querySelectorAll(".country-opt").forEach(x => x.classList.remove("active"));
-        el.classList.add("active"); updateSpinButtons();
-        playSound("click");
+        el.classList.add("active"); updateSpinButtons(); playSound("click");
       });
       c.appendChild(el);
     });
@@ -1228,41 +1178,70 @@
   $("backFromRef").addEventListener("click", () => showTab("menu"));
   $("backFromDaily").addEventListener("click", () => showTab("menu"));
   $("backFromSettings").addEventListener("click", () => showTab("menu"));
-  $("backFromAdmin").addEventListener("click", () => showTab("menu"));
+  $("backFromAdmin").addEventListener("click", () => {
+    isAdmin = false; adminId = null; adminSelectedPlayer = null;
+    $("admin-panel-view").style.display = "none";
+    $("admin-login-view").style.display = "block";
+    showTab("menu");
+  });
 
-  // Dev-кнопки
   $("dev-code").addEventListener("click", () => alert("Вы не являетесь разработчиком"));
   $("dev-logs").addEventListener("click", () => alert("Вы не являетесь разработчиком"));
-  $("dev-admin").addEventListener("click", () => { showTab("admin"); });
+  $("dev-admin").addEventListener("click", () => showTab("admin"));
 
-  // Админ-вход
+  // ============ АДМИН-ВХОД ============
   $("adm-submit").addEventListener("click", async () => {
     const login = $("adm-login").value.trim();
     const password = $("adm-password").value.trim();
     if (!login || !password) { alert("Заполни логин и пароль"); return; }
     try {
       const r = await fetch(API + "/api/admin/access",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({user_id:USER_ID,login,password,action:"login"})});
+        body:JSON.stringify({user_id:USER_ID,login,password})});
       const d = await r.json();
-      if (d.error) {
-        if (confirm("Неверные данные.\n\nУстановить этот логин/пароль как постоянные?\n(Одноразовые из бота одноразовые, а тут ты сохранишь свои навсегда)")) {
-          const r2 = await fetch(API + "/api/admin/access",{method:"POST",headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({user_id:USER_ID,login,password,action:"set_permanent"})});
-          const d2 = await r2.json();
-          if (d2.admin) { isAdmin = true; adminId = USER_ID; showAdminPanel(); }
-        }
-        return;
-      }
-      isAdmin = true; adminId = d.admin_id || USER_ID;
-      showAdminPanel();
+      if (d.error) { alert(d.error); return; }
+      isAdmin = true; adminId = d.admin_id;
+      $("adm-login").value = ""; $("adm-password").value = "";
+      showAdminPanel(d.must_set_creds);
     } catch(e) { alert("Сервер недоступен"); }
   });
 
-  function showAdminPanel() {
+  function showAdminPanel(mustSetCreds) {
     $("admin-login-view").style.display = "none";
     $("admin-panel-view").style.display = "block";
+    $("adm-set-creds-wrap").style.display = mustSetCreds ? "block" : "none";
+    $("adm-my-id").textContent = adminId || "—";
     loadAdminPlayers();
   }
+
+  // Установка своих постоянных кредов
+  $("adm-set-creds").addEventListener("click", async () => {
+    const login = $("adm-new-login").value.trim();
+    const password = $("adm-new-password").value.trim();
+    if (!login || !password) { alert("Заполни оба поля"); return; }
+    try {
+      const r = await fetch(API + "/api/admin/set_creds",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({admin_id:adminId,login,password})});
+      const d = await r.json();
+      if (d.error) { alert(d.error); return; }
+      alert("✅ Постоянные данные сохранены! Теперь входи по ним.");
+      $("adm-set-creds-wrap").style.display = "none";
+    } catch(e) { alert("Ошибка"); }
+  });
+
+  // Смена admin ID
+  $("adm-change-id").addEventListener("click", async () => {
+    const newId = prompt("Введите новый admin ID (можно с буквами):", adminId);
+    if (!newId || newId === adminId) return;
+    try {
+      const r = await fetch(API + "/api/admin/change_id",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({admin_id:adminId,new_id:newId})});
+      const d = await r.json();
+      if (d.error) { alert(d.error); return; }
+      adminId = d.admin_id;
+      $("adm-my-id").textContent = adminId;
+      alert("✅ Новый ID: " + adminId);
+    } catch(e) { alert("Ошибка"); }
+  });
 
   async function loadAdminPlayers() {
     try {
@@ -1276,14 +1255,12 @@
         const el = document.createElement("div");
         el.className = "admin-player" + (p.online ? " online" : "");
         const av = p.photo ? '<img src="' + p.photo + '">' : (p.first_name || "?").charAt(0).toUpperCase();
-        el.innerHTML =
-          '<div class="ap-line1">' +
-            '<div class="avatar">' + av + '</div>' +
-            '<div>' +
-              '<div class="nm">' + (p.first_name || "Игрок") + (p.banned ? " <span class=\'status-banned\'>🚫</span>" : "") + (p.online ? " <span class=\'status-on\'>●</span>" : "") + '</div>' +
-              '<div class="un">@' + (p.username || "нет") + ' · ID ' + p.user_id + '</div>' +
-            '</div>' +
-          '</div>' +
+        el.innerHTML = '<div class="ap-line1">' +
+          '<div class="avatar">' + av + '</div>' +
+          '<div>' +
+            '<div class="nm">' + (p.first_name || "Игрок") + (p.banned ? " <span class=\'status-banned\'>🚫</span>" : "") + (p.online ? " <span class=\'status-on\'>●</span>" : "") + '</div>' +
+            '<div class="un">@' + (p.username || "нет") + ' · ID ' + p.user_id + '</div>' +
+          '</div></div>' +
           '<div class="ap-line2"><span>Ур. ' + p.level + '</span><b>' + p.balance.toLocaleString("ru-RU") + ' ₽</b></div>';
         el.addEventListener("click", () => openPlayerModal(p));
         list.appendChild(el);
@@ -1313,7 +1290,7 @@
     if (isNaN(amount)) { alert("Неверное число"); return; }
     await fetch(API + "/api/admin/set_balance",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({user_id:adminSelectedPlayer.user_id,amount,admin_id:adminId})});
-    toast("✅ Баланс обновлён"); adminSelectedPlayer.balance = amount; loadAdminPlayers();
+    toast("✅ Баланс обновлён"); loadAdminPlayers();
   });
   $("ap-username-set").addEventListener("click", async () => {
     if (!adminSelectedPlayer) return;
@@ -1344,6 +1321,13 @@
       body:JSON.stringify({user_id:adminSelectedPlayer.user_id,action:"unban",admin_id:adminId})});
     toast("✅ Разбанен"); $("admin-player-modal").classList.remove("show"); loadAdminPlayers();
   });
+  $("ap-reset").addEventListener("click", async () => {
+    if (!adminSelectedPlayer) return;
+    if (!confirm("Обнулить прогресс игрока " + adminSelectedPlayer.first_name + "?")) return;
+    await fetch(API + "/api/admin/reset_player",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:adminSelectedPlayer.user_id,admin_id:adminId})});
+    toast("🔄 Игрок обнулён"); $("admin-player-modal").classList.remove("show"); loadAdminPlayers();
+  });
   $("ap-close").addEventListener("click", () => $("admin-player-modal").classList.remove("show"));
 
   // Быстрые действия
@@ -1360,9 +1344,16 @@
       body:JSON.stringify({amount,admin_id:adminId})});
     toast("🎁 Бонус выдан");
   });
+  $("adm-broadcast").addEventListener("click", async () => {
+    const text = prompt("Текст рассылки всем игрокам:");
+    if (!text) return;
+    await fetch(API + "/api/admin/broadcast",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text,admin_id:adminId})});
+    toast("📢 Отправлено");
+  });
   $("adm-reset").addEventListener("click", async () => {
     if (!confirm("⚠️ Обнулить ВСЁ для ВСЕХ игроков?\n\nЭто нельзя отменить!")) return;
-    if (!confirm("Точно-точно? Сегодняшний сезон завершится.")) return;
+    if (!confirm("Точно-точно? Сезон завершится.")) return;
     await fetch(API + "/api/admin/season_reset",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({admin_id:adminId})});
     toast("🎬 Сезон сброшен");
@@ -1670,8 +1661,7 @@
     results.forEach(r => {
       const div = document.createElement("div");
       div.className = "multi-item " + (r.rarity_card || "");
-      div.innerHTML =
-        '<div class="line1"><span class="flag">' + r.flag + '</span><span class="num"><span class="p">' + r.country_code + '</span>' + r.number + '</span></div>' +
+      div.innerHTML = '<div class="line1"><span class="flag">' + r.flag + '</span><span class="num"><span class="p">' + r.country_code + '</span>' + r.number + '</span></div>' +
         '<div class="line2"><span>' + r.rarity + ' · ' + r.operator + '</span><b>' + r.price.toLocaleString("ru-RU") + '₽</b></div>' +
         '<div class="status ' + (r.kept ? "kept" : "sold") + '">' + (r.kept ? "💾 Оставлен" : "💰 Продан") + '</div>';
       list.appendChild(div);
@@ -1689,8 +1679,7 @@
       const card = document.createElement("div");
       card.className = "my-card " + (it.rarity_card || "");
       const rc = it.rarity_class || "r-common";
-      card.innerHTML =
-        "<div class='flag-big'>" + it.flag + "</div>" +
+      card.innerHTML = "<div class='flag-big'>" + it.flag + "</div>" +
         "<div><div class='num-line'><span class='p'>" + it.country_code + "</span>" + it.number + "</div>" +
         "<div class='meta'><span>Красота: <b>" + it.beauty + "</b></span></div></div>" +
         "<div class='price-col'><div class='price'>" + it.price.toLocaleString("ru-RU") + "₽</div>" +
@@ -1719,7 +1708,6 @@
   $("spinLucky").addEventListener("click", () => spin("lucky"));
   $("spinSuper").addEventListener("click", () => spin("super"));
 
-  // Синхронизация золотого часа каждые 30 сек
   setInterval(syncBalance, 30000);
 
   renderCountryPicker();
