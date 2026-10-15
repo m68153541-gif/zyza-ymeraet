@@ -6,25 +6,30 @@
 <title>Крути номер</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  :root { --bg:#0a0d12; --line:#2a3340; --text:#e8ebf0; --muted:#7a8290; --gold:#e8c877; }
+  :root { --bg:#0a0d12; --line:#2a3340; --text:#e8ebf0; --muted:#7a8290; --gold:#e8c877; --bg-soft:rgba(28,34,44,.9); --panel:linear-gradient(140deg,#1e242e,#0f1318); }
+  body.light { --bg:#f2f4f8; --line:#d8dee8; --text:#1a1e26; --muted:#6a7280; --gold:#c99a1a; --bg-soft:rgba(255,255,255,.95); --panel:linear-gradient(140deg,#ffffff,#e8ecf2); }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html,body { margin:0; padding:0; min-height:100vh; background:#05070a; color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:14px; overflow-x:hidden; }
+  html,body { margin:0; padding:0; min-height:100vh; background:var(--bg); color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; font-size:14px; overflow-x:hidden; transition:background .3s,color .3s; }
   body::before { content:""; position:fixed; inset:0; z-index:-2; background: radial-gradient(circle at 20% 10%, rgba(80,140,255,.14), transparent 45%), radial-gradient(circle at 80% 90%, rgba(200,150,80,.14), transparent 45%), linear-gradient(180deg,#0a0d12 0%,#05070a 100%); }
+  body.light::before { background: radial-gradient(circle at 20% 10%, rgba(80,140,255,.08), transparent 45%), linear-gradient(180deg,#f2f4f8 0%,#e8ecf2 100%); }
 
   .game { max-width:560px; margin:0 auto; padding:12px 14px 40px; display:flex; flex-direction:column; align-items:center; }
 
   .top-row { width:100%; display:flex; align-items:center; gap:6px; margin-bottom:10px; min-height:36px; }
-  .balance-pill { display:flex; align-items:center; gap:4px; padding:6px 9px; border-radius:12px; background:linear-gradient(140deg,rgba(40,48,64,.9),rgba(20,24,31,.95)); border:1px solid rgba(232,200,119,.35); font-size:11px; font-weight:800; color:var(--gold); white-space:nowrap; flex:0 1 auto; min-width:0; max-width:125px; overflow:hidden; text-overflow:ellipsis; }
+  .balance-pill { display:flex; align-items:center; gap:4px; padding:6px 9px; border-radius:12px; background:var(--panel); border:1px solid rgba(232,200,119,.35); font-size:11px; font-weight:800; color:var(--gold); white-space:nowrap; flex:0 1 auto; min-width:0; max-width:125px; overflow:hidden; text-overflow:ellipsis; }
   .balance-pill::before { content:"💰"; font-size:11px; flex-shrink:0; }
+  .golden-badge { display:none; padding:4px 8px; border-radius:10px; background:linear-gradient(140deg,#8a6a1a,#4a3810); border:1px solid rgba(255,220,130,.7); color:#ffe9a8; font-size:10px; font-weight:900; white-space:nowrap; animation:pulse 1.4s infinite; }
+  .golden-badge.show { display:block; }
+  @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08); } }
   .level-mini { flex:1 1 auto; display:flex; align-items:center; gap:5px; min-width:50px; overflow:hidden; }
   .level-mini .num { font-size:10px; font-weight:900; color:var(--gold); white-space:nowrap; }
-  .level-mini .track { flex:1; height:7px; border-radius:4px; background:rgba(0,0,0,.7); border:1px solid rgba(232,200,119,.25); overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,.9); min-width:20px; }
+  .level-mini .track { flex:1; height:7px; border-radius:4px; background:rgba(0,0,0,.5); border:1px solid rgba(232,200,119,.25); overflow:hidden; min-width:20px; }
+  body.light .level-mini .track { background:rgba(0,0,0,.15); }
   .level-mini .fill { height:100%; width:0%; background:linear-gradient(90deg,#8a6a1a,#e8c877,#ffe9a8,#e8c877); border-radius:4px; transition:width .4s ease; box-shadow:0 0 10px rgba(232,200,119,.9); }
-  .menu-icon-btn { position:relative; width:36px; height:36px; border-radius:10px; background:linear-gradient(140deg,rgba(40,48,64,.9),rgba(20,24,31,.95)); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; flex:0 0 36px; }
+  .menu-icon-btn { position:relative; width:36px; height:36px; border-radius:10px; background:var(--panel); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; flex:0 0 36px; }
   .menu-icon-btn span { display:block; width:15px; height:2px; border-radius:2px; background:var(--text); }
   .menu-icon-btn .dot { position:absolute; top:4px; right:4px; width:9px; height:9px; border-radius:50%; background:#ffcc00; box-shadow:0 0 10px rgba(255,204,0,1); display:none; }
   .menu-icon-btn.has-dot .dot { display:block; animation:pulse 1.4s infinite; }
-  @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.2); } }
 
   .sim-stage { width:100%; max-width:330px; margin-bottom:12px; display:flex; justify-content:center; filter:drop-shadow(0 14px 28px rgba(0,0,0,.7)); }
   .sim-3d { position:relative; width:100%; aspect-ratio:1.586/1; transform:rotateX(10deg) rotateY(-6deg); transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1); background:#1a1e26; border-radius:16px; overflow:hidden; }
@@ -39,33 +44,9 @@
   .flash-layer { position:absolute; inset:0; z-index:20; pointer-events:none; opacity:0; border-radius:16px; }
   @keyframes flashAnim { 0% { opacity:1; background:radial-gradient(circle at center,rgba(255,255,255,.95),transparent 65%); } 100% { opacity:0; } }
 
-  /* ============ SIM-ЧИП — как у настоящей SIM ============ */
-  .sim-chip {
-    position:absolute; left:6%; top:58%;
-    transform:translateY(-50%);
-    width:62px; height:48px; border-radius:5px;
-    background: linear-gradient(135deg,#f5e0a0 0%,#d4b46a 30%,#f0d98a 60%,#b8923f 100%);
-    box-shadow: 0 3px 8px rgba(0,0,0,.7), inset 0 1px 2px rgba(255,255,255,.9), inset 0 -2px 4px rgba(0,0,0,.55);
-    z-index:5; overflow:hidden;
-  }
-  /* 6 контактных площадок как на настоящей SIM */
-  .sim-chip::before {
-    content:""; position:absolute; inset:5px;
-    background:
-      /* 2 вертикальные прорези */
-      linear-gradient(to right,
-        transparent 31%, rgba(0,0,0,.65) 31%, rgba(0,0,0,.65) 34%, transparent 34%,
-        transparent 66%, rgba(0,0,0,.65) 66%, rgba(0,0,0,.65) 69%, transparent 69%),
-      /* горизонтальная центральная прорезь */
-      linear-gradient(to bottom,
-        transparent 45%, rgba(0,0,0,.65) 45%, rgba(0,0,0,.65) 55%, transparent 55%);
-    border-radius:3px;
-  }
-  .sim-chip::after {
-    content:""; position:absolute; inset:0;
-    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.5) 48%, rgba(255,255,255,.8) 50%, rgba(255,255,255,.5) 52%, transparent 70%);
-    animation: chipShine 4s ease-in-out infinite;
-  }
+  .sim-chip { position:absolute; left:6%; top:58%; transform:translateY(-50%); width:62px; height:48px; border-radius:5px; background: linear-gradient(135deg,#f5e0a0 0%,#d4b46a 30%,#f0d98a 60%,#b8923f 100%); box-shadow: 0 3px 8px rgba(0,0,0,.7), inset 0 1px 2px rgba(255,255,255,.9), inset 0 -2px 4px rgba(0,0,0,.55); z-index:5; overflow:hidden; }
+  .sim-chip::before { content:""; position:absolute; inset:5px; background: linear-gradient(to right, transparent 31%, rgba(0,0,0,.65) 31%, rgba(0,0,0,.65) 34%, transparent 34%, transparent 66%, rgba(0,0,0,.65) 66%, rgba(0,0,0,.65) 69%, transparent 69%), linear-gradient(to bottom, transparent 45%, rgba(0,0,0,.65) 45%, rgba(0,0,0,.65) 55%, transparent 55%); border-radius:3px; }
+  .sim-chip::after { content:""; position:absolute; inset:0; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.5) 48%, rgba(255,255,255,.8) 50%, rgba(255,255,255,.5) 52%, transparent 70%); animation: chipShine 4s ease-in-out infinite; }
   @keyframes chipShine { 0%,100% { transform:translateX(-100%); } 50% { transform:translateX(100%); } }
 
   .sim-3d.rar-trash .sim-face { background:linear-gradient(140deg,#4a5058 0%,#2a3038 55%,#1a1e24 100%); }
@@ -100,12 +81,12 @@
   .sim-rarity { font-size:9px; font-weight:900; letter-spacing:1px; text-transform:uppercase; padding:3px 7px; border-radius:4px; background:rgba(0,0,0,.75); border:1px solid currentColor; }
   .r-trash{color:#8b9199} .r-common{color:#b8bcc2} .r-uncommon{color:#7ac0e8} .r-rare{color:#6a9aff} .r-epic{color:#b88aff} .r-legend{color:#ffd966} .r-myth{color:#ff9a5a}
 
-  .country-picker { width:100%; max-width:440px; margin-bottom:8px; background:linear-gradient(140deg,rgba(28,34,44,.95),rgba(14,17,22,.95)); border:1px solid var(--line); border-radius:11px; padding:8px 10px; }
+  .country-picker { width:100%; max-width:440px; margin-bottom:8px; background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:8px 10px; }
   .country-picker .label { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:5px; font-weight:800; }
   .country-scroll { display:flex; gap:5px; overflow-x:auto; padding-bottom:3px; }
   .country-scroll::-webkit-scrollbar { height:3px; }
-  .country-opt { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:2px; min-width:64px; padding:6px 5px; background:linear-gradient(140deg,rgba(20,24,31,.9),rgba(10,13,18,.95)); border:2px solid var(--line); border-radius:9px; cursor:pointer; transition:all .2s; }
-  .country-opt.active { border-color:var(--gold); background:linear-gradient(140deg,rgba(232,200,119,.15),rgba(20,24,31,.95)); box-shadow:0 0 14px rgba(232,200,119,.4); }
+  .country-opt { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:2px; min-width:64px; padding:6px 5px; background:var(--panel); border:2px solid var(--line); border-radius:9px; cursor:pointer; transition:all .2s; }
+  .country-opt.active { border-color:var(--gold); background:linear-gradient(140deg,rgba(232,200,119,.15),transparent); box-shadow:0 0 14px rgba(232,200,119,.4); }
   .country-opt .flag { font-size:18px; }
   .country-opt .name { font-size:9px; font-weight:800; text-align:center; }
   .country-opt .price { font-size:8px; color:var(--gold); font-weight:900; }
@@ -113,7 +94,7 @@
   .controls { width:100%; max-width:440px; }
   .spin-row { display:flex; gap:5px; margin-bottom:5px; }
   .spin-row button { flex:1; }
-  button { padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:linear-gradient(140deg,#2a3040,#14181f); color:var(--text); font-size:12px; font-weight:800; cursor:pointer; transition:all .15s; font-family:inherit; }
+  button { padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--text); font-size:12px; font-weight:800; cursor:pointer; transition:all .15s; font-family:inherit; }
   button:hover:not(:disabled) { transform:translateY(-1px); }
   button:active:not(:disabled) { transform:translateY(0) scale(.98); }
   button:disabled { opacity:.4; cursor:not-allowed; }
@@ -127,12 +108,12 @@
   .hide-during-spin.hidden { display:none; }
 
   .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-top:12px; width:100%; max-width:440px; }
-  .stat { background:linear-gradient(140deg,rgba(28,34,44,.9),rgba(14,17,22,.95)); border:1px solid rgba(255,255,255,.06); border-radius:9px; padding:8px 5px; text-align:center; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:8px 5px; text-align:center; }
   .stat .label { font-size:8px; color:var(--muted); text-transform:uppercase; margin-bottom:2px; font-weight:700; }
   .stat .value { font-size:13px; color:var(--text); font-weight:900; }
 
   .menu { width:100%; max-width:440px; display:grid; grid-template-columns:1fr 1fr; gap:7px; }
-  .menu-btn { position:relative; display:flex; align-items:center; gap:9px; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:11px; padding:11px 12px; cursor:pointer; transition:all .2s; color:var(--text); font-family:inherit; font-size:12px; font-weight:800; text-align:left; }
+  .menu-btn { position:relative; display:flex; align-items:center; gap:9px; background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:11px 12px; cursor:pointer; transition:all .2s; color:var(--text); font-family:inherit; font-size:12px; font-weight:800; text-align:left; }
   .menu-btn:hover { border-color:var(--gold); transform:translateY(-2px); }
   .menu-btn .ico { font-size:18px; flex-shrink:0; }
   .menu-btn .badge { margin-left:auto; background:var(--gold); color:#0a0d12; font-size:9px; font-weight:900; padding:2px 6px; border-radius:8px; }
@@ -147,82 +128,128 @@
   .sell-all-top .total { font-size:16px; font-weight:900; color:#fff; }
   .sell-all-top button { width:100%; background:linear-gradient(140deg,#2e7a2e,#1a4a1a); border-color:rgba(180,255,180,.6); color:#fff; padding:10px; font-size:12px; }
   .my-list { width:100%; max-width:440px; display:flex; flex-direction:column; gap:7px; }
-  .my-card { display:grid; grid-template-columns:40px 1fr auto; gap:9px; align-items:center; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:11px; padding:9px 11px; }
+  .my-card { display:grid; grid-template-columns:40px 1fr auto; gap:9px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:9px 11px; }
   .my-card.rar-epic { border-color:rgba(180,120,240,.7); }
   .my-card.rar-legend { border-color:rgba(255,220,130,.8); }
   .my-card.rar-myth { border-color:rgba(255,140,80,.9); }
   .my-card .flag-big { font-size:22px; text-align:center; }
-  .my-card .num-line { font-size:13px; font-weight:900; color:#fff; }
+  .my-card .num-line { font-size:13px; font-weight:900; color:var(--text); }
   .my-card .num-line .p { color:var(--gold); margin-right:3px; }
   .my-card .meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; font-size:10px; color:var(--muted); }
   .my-card .meta b { color:var(--text); }
   .my-card .price-col { text-align:right; }
   .my-card .price-col .price { font-size:13px; font-weight:900; color:var(--gold); }
   .my-card .price-col .rar { font-size:9px; font-weight:900; text-transform:uppercase; margin-top:2px; }
-  .my-card button { margin-top:4px; padding:4px 9px; font-size:10px; border-color:rgba(255,220,130,.5); color:#ffe9a8; }
-  .empty { text-align:center; color:var(--muted); padding:40px 18px; font-size:12px; background:linear-gradient(140deg,rgba(28,34,44,.5),rgba(14,17,22,.7)); border:1px dashed rgba(255,255,255,.1); border-radius:11px; }
+  .my-card button { margin-top:4px; padding:4px 9px; font-size:10px; border-color:rgba(255,220,130,.5); color:var(--gold); }
+  .empty { text-align:center; color:var(--muted); padding:40px 18px; font-size:12px; background:var(--bg-soft); border:1px dashed rgba(255,255,255,.1); border-radius:11px; }
 
-  .profile { width:100%; max-width:440px; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:13px; padding:20px 16px; display:flex; flex-direction:column; align-items:center; gap:9px; }
+  .profile { width:100%; max-width:440px; background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:20px 16px; display:flex; flex-direction:column; align-items:center; gap:9px; }
   .profile .avatar { width:72px; height:72px; border-radius:50%; background:linear-gradient(140deg,#4a5a7a,#2a3040); display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; color:#fff; overflow:hidden; border:2px solid rgba(232,200,119,.4); }
   .profile .avatar img { width:100%; height:100%; object-fit:cover; }
-  .profile .name { font-size:18px; font-weight:900; color:#fff; text-align:center; }
+  .profile .name { font-size:18px; font-weight:900; color:var(--text); text-align:center; }
   .profile .username { font-size:12px; color:var(--gold); font-weight:700; }
   .profile .userid { font-size:10px; color:var(--muted); }
-  .profile .p-balance { margin-top:6px; padding:9px 18px; border-radius:11px; background:linear-gradient(140deg,rgba(232,200,119,.12),rgba(0,0,0,.5)); border:1px solid rgba(232,200,119,.4); font-size:17px; font-weight:900; color:var(--gold); }
+  .profile .p-balance { margin-top:6px; padding:9px 18px; border-radius:11px; background:linear-gradient(140deg,rgba(232,200,119,.12),rgba(0,0,0,.3)); border:1px solid rgba(232,200,119,.4); font-size:17px; font-weight:900; color:var(--gold); }
   .profile .league { margin-top:4px; font-size:12px; font-weight:900; padding:4px 12px; border-radius:8px; }
   .league-bronze { color:#cd7f32; background:rgba(205,127,50,.15); border:1px solid rgba(205,127,50,.5); }
   .league-silver { color:#c0c0c0; background:rgba(192,192,192,.15); border:1px solid rgba(192,192,192,.5); }
   .league-gold { color:#ffd700; background:rgba(255,215,0,.15); border:1px solid rgba(255,215,0,.5); }
 
+  /* График */
+  .chart-wrap { width:100%; max-width:440px; margin-top:12px; padding:12px; background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+  .chart-wrap h3 { margin:0 0 10px; font-size:12px; color:var(--muted); text-transform:uppercase; font-weight:800; letter-spacing:.5px; }
+  .chart { width:100%; height:100px; position:relative; }
+  .chart svg { width:100%; height:100%; overflow:visible; }
+  .chart .line { fill:none; stroke:var(--gold); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 4px rgba(232,200,119,.7)); }
+  .chart .area { fill:url(#chartGrad); }
+  .chart .dot { fill:var(--gold); stroke:#0a0d12; stroke-width:1.5; }
+
+  /* Статистика */
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:440px; margin-top:10px; }
+  .stat-cell { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px; text-align:center; }
+  .stat-cell .lab { font-size:10px; color:var(--muted); text-transform:uppercase; font-weight:800; letter-spacing:.5px; margin-bottom:4px; }
+  .stat-cell .val { font-size:15px; color:var(--text); font-weight:900; word-break:break-word; }
+
+  .best-number-card { width:100%; max-width:440px; margin-top:12px; padding:14px; background:var(--panel); border:1px solid rgba(232,200,119,.5); border-radius:12px; display:grid; grid-template-columns:48px 1fr auto; gap:12px; align-items:center; }
+  .best-number-card .flag { font-size:32px; }
+  .best-number-card .n { font-size:16px; font-weight:900; color:var(--text); }
+  .best-number-card .n .p { color:var(--gold); margin-right:3px; }
+  .best-number-card .m { font-size:11px; color:var(--muted); margin-top:3px; }
+  .best-number-card .price { font-size:15px; font-weight:900; color:var(--gold); text-align:right; }
+
+  /* История */
+  .hist-item { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:6px; font-size:11px; }
+  .hist-item .h-num { font-weight:900; color:var(--text); font-size:12px; }
+  .hist-item .h-num .p { color:var(--gold); margin-right:2px; }
+  .hist-item .h-meta { color:var(--muted); font-size:10px; margin-top:2px; }
+  .hist-item .h-price { font-weight:900; color:var(--gold); font-size:13px; text-align:right; }
+  .hist-item .h-price .x2 { color:#ff8a5a; font-size:10px; }
+
   .top3 { width:100%; max-width:440px; display:flex; flex-direction:column; gap:7px; }
-  .top3-card { display:grid; grid-template-columns:46px 1fr auto; gap:10px; align-items:center; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:11px; padding:10px 12px; }
+  .top3-card { display:grid; grid-template-columns:46px 1fr auto; gap:10px; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:10px 12px; }
   .top3-card.rank-1 { border-color:rgba(255,215,0,.8); }
   .top3-card.rank-2 { border-color:rgba(192,192,192,.7); }
   .top3-card.rank-3 { border-color:rgba(205,127,50,.7); }
   .top3-card .avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(140deg,#4a5a7a,#2a3040); font-size:16px; font-weight:900; color:#fff; }
   .top3-card .avatar img { width:100%; height:100%; object-fit:cover; }
-  .top3-card .info .name { font-size:13px; font-weight:900; color:#fff; }
+  .top3-card .info .name { font-size:13px; font-weight:900; color:var(--text); }
   .top3-card .info .uname { font-size:10px; color:var(--gold); margin-top:1px; font-weight:700; }
   .top3-card .bal { font-size:14px; font-weight:900; color:var(--gold); text-align:right; }
 
   .wheel-wrap { position:relative; width:220px; height:220px; margin:0 auto 8px; }
   .wheel-pointer { position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent; border-top:20px solid var(--gold); filter:drop-shadow(0 0 8px rgba(232,200,119,1)); z-index:10; }
   .wheel { position:absolute; inset:0; border-radius:50%; border:4px solid var(--line); background:conic-gradient(from 0deg,#2e7a2e 0deg 144deg,#7a2e2e 144deg 360deg); transform:rotate(0deg); transition:transform 4s cubic-bezier(.17,.85,.3,1); }
-  .wheel-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:64px; height:64px; border-radius:50%; background:linear-gradient(140deg,#2a3040,#14181f); border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:900; color:var(--gold); z-index:6; text-align:center; }
+  .wheel-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:64px; height:64px; border-radius:50%; background:var(--panel); border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:900; color:var(--gold); z-index:6; text-align:center; }
 
-  .panel { width:100%; max-width:440px; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:13px; padding:18px 16px; }
+  .panel { width:100%; max-width:440px; background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:18px 16px; }
   .panel h2 { margin:0 0 5px; font-size:15px; color:var(--gold); text-align:center; font-weight:900; }
   .panel p.sub { margin:0 0 14px; font-size:11px; color:var(--muted); text-align:center; }
   .panel label { display:block; font-size:10px; color:var(--muted); margin-bottom:5px; margin-top:11px; text-transform:uppercase; font-weight:800; }
-  .panel input,.panel select { width:100%; padding:11px 13px; border-radius:9px; background:rgba(0,0,0,.5); border:1px solid var(--line); color:var(--text); font-size:13px; font-family:inherit; outline:none; }
+  .panel input,.panel select { width:100%; padding:11px 13px; border-radius:9px; background:rgba(0,0,0,.35); border:1px solid var(--line); color:var(--text); font-size:13px; font-family:inherit; outline:none; }
+  body.light .panel input, body.light .panel select { background:#f7f9fc; }
   .panel .action-btn { margin-top:12px; width:100%; padding:12px; background:linear-gradient(140deg,#4a3a1a,#2e2410); border:1px solid rgba(255,220,130,.6); color:#ffe9a8; font-size:13px; font-weight:900; border-radius:10px; cursor:pointer; }
   .panel .action-btn:disabled { opacity:.4; cursor:not-allowed; }
   .result-msg { margin-top:11px; text-align:center; font-size:12px; font-weight:800; padding:9px; border-radius:9px; display:none; }
   .result-msg.win { background:rgba(46,122,46,.3); border:1px solid #2e7a2e; color:#b8ffb8; display:block; }
   .result-msg.lose { background:rgba(122,46,46,.3); border:1px solid #7a2e2e; color:#ffb8b8; display:block; }
 
-  .quest-item { background:rgba(0,0,0,.4); border:1px solid var(--line); border-radius:10px; padding:11px 13px; margin-bottom:8px; }
-  .quest-item .q-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
-  .quest-item .q-text { font-size:12px; font-weight:800; color:#fff; }
-  .quest-item .q-reward { font-size:11px; font-weight:900; color:var(--gold); }
-  .quest-item .q-bar { width:100%; height:6px; border-radius:3px; background:rgba(0,0,0,.6); overflow:hidden; margin-bottom:6px; }
-  .quest-item .q-fill { height:100%; background:linear-gradient(90deg,#8a6a1a,#e8c877); transition:width .3s; }
-  .quest-item .q-status { font-size:10px; color:var(--muted); font-weight:700; text-align:right; }
-  .quest-item.ready { border-color:var(--gold); box-shadow:0 0 14px rgba(232,200,119,.35); }
-  .quest-item.claimed { opacity:.5; }
-  .quest-claim-btn { width:100%; margin-top:6px; padding:8px; background:linear-gradient(140deg,#2e7a2e,#1a4a1a); border:1px solid rgba(180,255,180,.6); color:#fff; font-size:11px; font-weight:900; border-radius:8px; cursor:pointer; }
-  .quest-claim-btn:disabled { opacity:.4; cursor:not-allowed; }
+  /* Настройки */
+  .set-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--line); }
+  .set-row:last-child { border-bottom:none; }
+  .set-row .lbl { font-size:13px; font-weight:700; color:var(--text); }
+  .set-row .sub { font-size:10px; color:var(--muted); margin-top:2px; }
+  .toggle { width:44px; height:26px; border-radius:13px; background:rgba(0,0,0,.4); border:1px solid var(--line); position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+  body.light .toggle { background:rgba(0,0,0,.1); }
+  .toggle::after { content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#6a7280; transition:all .2s; }
+  .toggle.on { background:linear-gradient(140deg,#2e7a2e,#1a4a1a); border-color:rgba(180,255,180,.6); }
+  .toggle.on::after { left:20px; background:#fff; }
 
-  .ach-item { display:grid; grid-template-columns:44px 1fr; gap:10px; align-items:center; background:rgba(0,0,0,.4); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:7px; }
-  .ach-item.locked { opacity:.5; }
-  .ach-item.unlocked { border-color:rgba(232,200,119,.6); box-shadow:0 0 12px rgba(232,200,119,.2); }
-  .ach-item .ach-ico { font-size:26px; text-align:center; }
-  .ach-item .ach-name { font-size:12px; font-weight:900; color:#fff; }
-  .ach-item .ach-desc { font-size:10px; color:var(--muted); margin-top:2px; }
-  .ach-item .ach-reward { font-size:10px; color:var(--gold); font-weight:900; margin-top:2px; }
+  .dev-section { margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }
+  .dev-title { font-size:11px; color:var(--muted); text-transform:uppercase; font-weight:800; letter-spacing:.5px; margin-bottom:10px; text-align:center; }
+  .dev-info { text-align:center; font-size:11px; color:var(--muted); margin-bottom:12px; line-height:1.5; }
+  .dev-info b { color:var(--gold); font-weight:900; }
+  .dev-btn { width:100%; padding:11px; margin-top:6px; background:var(--panel); border:1px solid var(--line); border-radius:9px; color:var(--text); font-size:12px; font-weight:800; cursor:pointer; transition:all .2s; font-family:inherit; text-align:center; }
+  .dev-btn:hover { border-color:var(--gold); }
+
+  /* Админ */
+  .admin-player { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:7px; cursor:pointer; transition:all .2s; }
+  .admin-player:hover { border-color:var(--gold); }
+  .admin-player.online { border-color:rgba(140,255,140,.5); }
+  .admin-player .ap-line1 { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .admin-player .avatar { width:30px; height:30px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(140deg,#4a5a7a,#2a3040); font-size:12px; font-weight:900; color:#fff; flex-shrink:0; }
+  .admin-player .avatar img { width:100%; height:100%; object-fit:cover; }
+  .admin-player .nm { font-weight:900; color:var(--text); font-size:12px; }
+  .admin-player .un { font-size:10px; color:var(--muted); }
+  .admin-player .ap-line2 { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); }
+  .admin-player .ap-line2 b { color:var(--gold); }
+  .admin-player .status-on { color:#7aff7a; font-size:9px; font-weight:800; }
+  .admin-player .status-banned { color:#ff7a7a; font-size:9px; font-weight:800; }
+  .admin-search { width:100%; padding:10px 12px; margin-bottom:10px; background:rgba(0,0,0,.35); border:1px solid var(--line); border-radius:9px; color:var(--text); font-size:13px; font-family:inherit; outline:none; }
+  body.light .admin-search { background:#f7f9fc; }
 
   .daily-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; }
-  .daily-day { background:rgba(0,0,0,.4); border:1px solid var(--line); border-radius:9px; padding:8px 3px; text-align:center; }
+  .daily-day { background:rgba(0,0,0,.3); border:1px solid var(--line); border-radius:9px; padding:8px 3px; text-align:center; }
+  body.light .daily-day { background:#f7f9fc; }
   .daily-day.locked { opacity:.3; }
   .daily-day.claimed { opacity:.5; border-color:#2e7a2e; }
   .daily-day.today { border-color:var(--gold); box-shadow:0 0 14px rgba(232,200,119,.5); opacity:1; }
@@ -231,27 +258,52 @@
   .daily-day .dstatus { font-size:8px; color:var(--muted); margin-top:2px; }
 
   .ref-stat { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin:10px 0; }
-  .ref-stat .cell { background:rgba(0,0,0,.5); border:1px solid var(--line); border-radius:9px; padding:11px; text-align:center; }
+  .ref-stat .cell { background:rgba(0,0,0,.3); border:1px solid var(--line); border-radius:9px; padding:11px; text-align:center; }
+  body.light .ref-stat .cell { background:#f7f9fc; }
   .ref-stat .cell .lab { font-size:9px; color:var(--muted); text-transform:uppercase; margin-bottom:3px; font-weight:800; }
   .ref-stat .cell .val { font-size:17px; font-weight:900; color:var(--gold); }
   .ref-link-box { display:flex; gap:5px; margin-top:7px; }
-  .ref-link-box input { flex:1; padding:10px 11px; border-radius:9px; background:rgba(0,0,0,.5); border:1px solid var(--line); color:var(--text); font-size:11px; font-family:inherit; outline:none; }
+  .ref-link-box input { flex:1; padding:10px 11px; border-radius:9px; background:rgba(0,0,0,.35); border:1px solid var(--line); color:var(--text); font-size:11px; font-family:inherit; outline:none; }
+  body.light .ref-link-box input { background:#f7f9fc; }
   .ref-link-box button { flex:0 0 auto; padding:10px 13px; font-size:12px; font-weight:900; }
 
-  .back-btn { margin-top:12px; width:100%; max-width:440px; padding:11px; background:linear-gradient(140deg,#2a3040,#14181f); border:1px solid var(--line); border-radius:10px; color:var(--muted); font-size:12px; font-weight:800; cursor:pointer; }
+  .quest-item { background:rgba(0,0,0,.3); border:1px solid var(--line); border-radius:10px; padding:11px 13px; margin-bottom:8px; }
+  body.light .quest-item { background:#f7f9fc; }
+  .quest-item .q-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .quest-item .q-text { font-size:12px; font-weight:800; color:var(--text); }
+  .quest-item .q-reward { font-size:11px; font-weight:900; color:var(--gold); }
+  .quest-item .q-bar { width:100%; height:6px; border-radius:3px; background:rgba(0,0,0,.4); overflow:hidden; margin-bottom:6px; }
+  body.light .quest-item .q-bar { background:rgba(0,0,0,.1); }
+  .quest-item .q-fill { height:100%; background:linear-gradient(90deg,#8a6a1a,#e8c877); transition:width .3s; }
+  .quest-item .q-status { font-size:10px; color:var(--muted); font-weight:700; text-align:right; }
+  .quest-item.ready { border-color:var(--gold); box-shadow:0 0 14px rgba(232,200,119,.35); }
+  .quest-item.claimed { opacity:.5; }
+  .quest-claim-btn { width:100%; margin-top:6px; padding:8px; background:linear-gradient(140deg,#2e7a2e,#1a4a1a); border:1px solid rgba(180,255,180,.6); color:#fff; font-size:11px; font-weight:900; border-radius:8px; cursor:pointer; }
+
+  .ach-item { display:grid; grid-template-columns:44px 1fr; gap:10px; align-items:center; background:rgba(0,0,0,.3); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:7px; }
+  body.light .ach-item { background:#f7f9fc; }
+  .ach-item.locked { opacity:.5; }
+  .ach-item.unlocked { border-color:rgba(232,200,119,.6); box-shadow:0 0 12px rgba(232,200,119,.2); }
+  .ach-item .ach-ico { font-size:26px; text-align:center; }
+  .ach-item .ach-name { font-size:12px; font-weight:900; color:var(--text); }
+  .ach-item .ach-desc { font-size:10px; color:var(--muted); margin-top:2px; }
+  .ach-item .ach-reward { font-size:10px; color:var(--gold); font-weight:900; margin-top:2px; }
+
+  .back-btn { margin-top:12px; width:100%; max-width:440px; padding:11px; background:var(--panel); border:1px solid var(--line); border-radius:10px; color:var(--muted); font-size:12px; font-weight:800; cursor:pointer; }
 
   .modal { position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.9); display:none; align-items:center; justify-content:center; padding:20px; overflow-y:auto; }
   .modal.show { display:flex; animation:fadeIn .3s ease; }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-  .modal-card { width:100%; max-width:340px; background:linear-gradient(140deg,#2a3040,#14181f); border:2px solid rgba(232,200,119,.5); border-radius:16px; padding:20px 16px; }
+  .modal-card { width:100%; max-width:340px; background:var(--panel); border:2px solid rgba(232,200,119,.5); border-radius:16px; padding:20px 16px; }
   .modal-card h2 { margin:0 0 12px; font-size:16px; color:var(--gold); text-align:center; font-weight:900; }
-  .multi-item { background:rgba(0,0,0,.5); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:8px; }
+  .multi-item { background:rgba(0,0,0,.35); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:8px; }
+  body.light .multi-item { background:#f7f9fc; }
   .multi-item.rar-epic { border-color:rgba(180,120,240,.7); }
   .multi-item.rar-legend { border-color:rgba(255,220,130,.8); }
   .multi-item.rar-myth { border-color:rgba(255,140,80,.9); }
   .multi-item .line1 { display:flex; align-items:center; gap:7px; margin-bottom:2px; }
   .multi-item .flag { font-size:18px; }
-  .multi-item .num { font-size:12px; font-weight:900; color:#fff; }
+  .multi-item .num { font-size:12px; font-weight:900; color:var(--text); }
   .multi-item .num .p { color:var(--gold); margin-right:2px; }
   .multi-item .line2 { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); font-weight:700; }
   .multi-item .line2 b { color:var(--gold); font-weight:900; font-size:12px; }
@@ -267,10 +319,10 @@
   .ach-popup .desc { font-size:11px; color:var(--muted); margin-top:2px; }
   .ach-popup .reward { font-size:13px; font-weight:900; color:var(--gold); margin-top:6px; }
 
-  .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:linear-gradient(140deg,#2e3546,#14181f); border:1px solid rgba(232,200,119,.5); color:var(--text); padding:11px 20px; border-radius:11px; opacity:0; pointer-events:none; z-index:300; font-size:12px; font-weight:800; max-width:90vw; text-align:center; transition:opacity .3s,transform .3s; }
+  .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--panel); border:1px solid rgba(232,200,119,.5); color:var(--text); padding:11px 20px; border-radius:11px; opacity:0; pointer-events:none; z-index:300; font-size:12px; font-weight:800; max-width:90vw; text-align:center; transition:opacity .3s,transform .3s; }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-  #tab-game,#tab-menu,#tab-my,#tab-profile,#tab-transfer,#tab-top,#tab-upgrade,#tab-ref,#tab-daily,#tab-quests,#tab-achievements { display:none; width:100%; flex-direction:column; align-items:center; }
+  #tab-game,#tab-menu,#tab-my,#tab-profile,#tab-transfer,#tab-top,#tab-upgrade,#tab-ref,#tab-daily,#tab-quests,#tab-achievements,#tab-stats,#tab-settings,#tab-admin { display:none; width:100%; flex-direction:column; align-items:center; }
 </style>
 </head>
 <body>
@@ -278,6 +330,7 @@
 
   <div class="top-row">
     <div class="balance-pill"><span id="balance">50000</span></div>
+    <div class="golden-badge" id="golden-badge">🔥 ×2</div>
     <div class="level-mini">
       <div class="num">Ур.<span id="lv-num">1</span></div>
       <div class="track"><div class="fill" id="lv-fill"></div></div>
@@ -338,13 +391,15 @@
     <div class="menu">
       <button class="menu-btn" id="menu-my"><span class="ico">📂</span><span>Номера</span><span class="badge" id="menu-badge">0</span></button>
       <button class="menu-btn" id="menu-profile"><span class="ico">👤</span><span>Профиль</span></button>
+      <button class="menu-btn" id="menu-stats"><span class="ico">📊</span><span>Статистика</span></button>
       <button class="menu-btn" id="menu-quests"><span class="ico">📋</span><span>Задания</span><div class="yellow-dot" id="quests-dot"></div></button>
       <button class="menu-btn" id="menu-achievements"><span class="ico">🏆</span><span>Достижения</span><div class="yellow-dot" id="ach-dot"></div></button>
       <button class="menu-btn" id="menu-daily"><span class="ico">🎁</span><span>Ежедневка</span><span class="badge hidden" id="daily-badge">!</span></button>
       <button class="menu-btn" id="menu-transfer"><span class="ico">💸</span><span>Перевод</span></button>
-      <button class="menu-btn" id="menu-top"><span class="ico">📊</span><span>Топ-10</span></button>
+      <button class="menu-btn" id="menu-top"><span class="ico">🏆</span><span>Топ-10</span></button>
       <button class="menu-btn" id="menu-upgrade"><span class="ico">🎡</span><span>Улучшение</span></button>
-      <button class="menu-btn full" id="menu-ref"><span class="ico">👥</span><span>Пригласить друга</span></button>
+      <button class="menu-btn" id="menu-ref"><span class="ico">👥</span><span>Рефералка</span></button>
+      <button class="menu-btn full" id="menu-settings"><span class="ico">⚙️</span><span>Настройки</span></button>
     </div>
   </div>
 
@@ -366,7 +421,43 @@
       <div class="p-balance" id="pf-balance">0 ₽</div>
       <div class="league" id="pf-league">Бронза</div>
     </div>
+    <div class="chart-wrap">
+      <h3>📈 Баланс за неделю</h3>
+      <div class="chart" id="chart-container">
+        <svg viewBox="0 0 300 100" preserveAspectRatio="none" id="chart-svg">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#e8c877" stop-opacity=".5"/>
+              <stop offset="100%" stop-color="#e8c877" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path class="area" id="chart-area"/>
+          <path class="line" id="chart-line"/>
+        </svg>
+      </div>
+    </div>
     <button class="back-btn" id="backFromProfile">← Назад</button>
+  </div>
+
+  <div id="tab-stats">
+    <div class="panel">
+      <h2>📊 Статистика</h2>
+      <p class="sub">Общая информация об игре</p>
+    </div>
+    <div class="stat-grid" id="stats-grid"></div>
+    <div class="best-number-card" id="best-number-wrap" style="display:none;">
+      <div class="flag" id="best-flag">🏳️</div>
+      <div>
+        <div class="n" id="best-num"><span class="p">+—</span>—</div>
+        <div class="m" id="best-meta">—</div>
+      </div>
+      <div class="price" id="best-price">0 ₽</div>
+    </div>
+    <div class="panel" style="margin-top:12px;">
+      <h2 style="font-size:13px;">📜 Последние 20 прокруток</h2>
+    </div>
+    <div id="history-list" style="width:100%; max-width:440px;"></div>
+    <button class="back-btn" id="backFromStats">← Назад</button>
   </div>
 
   <div id="tab-quests">
@@ -381,7 +472,7 @@
   <div id="tab-achievements">
     <div class="panel">
       <h2>🏆 Достижения</h2>
-      <p class="sub">Открыто: <span id="ach-progress">0</span>/21</p>
+      <p class="sub">Открыто: <span id="ach-progress">0</span></p>
       <div id="achievements-list"></div>
     </div>
     <button class="back-btn" id="backFromAch">← Назад</button>
@@ -449,6 +540,82 @@
     <button class="back-btn" id="backFromDaily">← Назад</button>
   </div>
 
+  <div id="tab-settings">
+    <div class="panel">
+      <h2>⚙️ Настройки</h2>
+      <p class="sub">Игра «Крути номер»</p>
+
+      <div class="set-row">
+        <div>
+          <div class="lbl">🌙 Светлая тема</div>
+          <div class="sub">Переключить оформление</div>
+        </div>
+        <div class="toggle" id="t-theme"></div>
+      </div>
+
+      <div class="set-row">
+        <div>
+          <div class="lbl">🔊 Звуковые эффекты</div>
+          <div class="sub">Звуки при прокрутке и победах</div>
+        </div>
+        <div class="toggle on" id="t-sound"></div>
+      </div>
+
+      <div class="set-row">
+        <div>
+          <div class="lbl">📳 Вибрация</div>
+          <div class="sub">Лёгкая вибрация при действиях</div>
+        </div>
+        <div class="toggle on" id="t-vibe"></div>
+      </div>
+
+      <div class="dev-section">
+        <div class="dev-title">👨‍💻 Для разработчика</div>
+        <div class="dev-info">
+          <b>BOT MODEL ZYUZYA 33</b><br>
+          Version ALPHA 0.0.6
+        </div>
+        <button class="dev-btn" id="dev-code">🔗 Ссылка на код игры</button>
+        <button class="dev-btn" id="dev-logs">📜 Посмотреть логи игры</button>
+        <button class="dev-btn" id="dev-admin">🔐 Вход в админ-панель</button>
+      </div>
+    </div>
+    <button class="back-btn" id="backFromSettings">← Назад</button>
+  </div>
+
+  <div id="tab-admin">
+    <div id="admin-login-view">
+      <div class="panel">
+        <h2>🔐 Вход в админ-панель</h2>
+        <p class="sub">Введите логин и пароль</p>
+        <label>Логин</label>
+        <input id="adm-login" type="text" placeholder="Логин">
+        <label>Пароль</label>
+        <input id="adm-password" type="password" placeholder="Пароль">
+        <button class="action-btn" id="adm-submit">Войти</button>
+      </div>
+    </div>
+
+    <div id="admin-panel-view" style="display:none; width:100%; max-width:440px;">
+      <div class="panel">
+        <h2>👑 Админ-панель</h2>
+        <p class="sub">Управление игрой</p>
+
+        <label>🔍 Поиск игрока</label>
+        <input class="admin-search" id="adm-search" type="text" placeholder="Username или имя...">
+
+        <div style="display:flex; gap:6px; margin-top:10px;">
+          <button class="dev-btn" id="adm-x2" style="margin-top:0; font-size:11px;">🔥 ×2 всем</button>
+          <button class="dev-btn" id="adm-bonus" style="margin-top:0; font-size:11px;">🎁 Бонус всем</button>
+          <button class="dev-btn" id="adm-reset" style="margin-top:0; font-size:11px; color:#ff8a8a;">⚠️ Сезон</button>
+        </div>
+
+        <div style="margin-top:14px; max-height:400px; overflow-y:auto;" id="adm-players"></div>
+      </div>
+      <button class="back-btn" id="backFromAdmin">← Выйти</button>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -468,10 +635,47 @@
 </div>
 
 <div class="modal" id="win-modal">
-  <div class="modal-card" style="border-color:rgba(255,215,0,.9);box-shadow:0 20px 60px rgba(0,0,0,.95),0 0 60px rgba(255,215,0,.6);">
+  <div class="modal-card" style="border-color:rgba(255,215,0,.9);">
     <h2 style="font-size:20px;">🏆 ПОБЕДА!</h2>
-    <p class="sub" style="text-align:center;font-size:13px;line-height:1.5;padding:8px 0 16px;">Ты достиг <b style="color:#ffd700;">1000 уровня</b>!<br>Это была долгая дорога. Молодец!</p>
-    <button class="modal-close" id="win-close" style="background:linear-gradient(140deg,#8a6a1a,#4a3810);">Продолжить</button>
+    <p class="sub" style="text-align:center;font-size:13px;line-height:1.5;padding:8px 0 16px;">Ты достиг <b style="color:#ffd700;">1000 уровня</b>!</p>
+    <button class="modal-close" id="win-close">Продолжить</button>
+  </div>
+</div>
+
+<div class="modal" id="season-modal">
+  <div class="modal-card" style="border-color:rgba(255,215,0,.9);">
+    <h2 style="font-size:20px;">🎬 СЕЗОН ЗАВЕРШЁН</h2>
+    <p class="sub" style="text-align:center;font-size:13px;line-height:1.6;padding:8px 0 16px;">
+      Все данные обнулены.<br>Баланс вернулся в начальный, номера и достижения сброшены.<br><br>
+      <b style="color:#ffd700;">Новый сезон начался!</b>
+    </p>
+    <button class="modal-close" id="season-close">Закрыть</button>
+  </div>
+</div>
+
+<div class="modal" id="admin-player-modal">
+  <div class="modal-card">
+    <h2 id="ap-name">Игрок</h2>
+    <div id="ap-info" style="font-size:11px; color:var(--muted); text-align:center; margin-bottom:12px;"></div>
+
+    <label>💰 Баланс</label>
+    <input id="ap-balance" type="number" placeholder="0">
+    <button class="modal-close" id="ap-balance-set" style="margin-top:6px; font-size:11px;">Сохранить баланс</button>
+
+    <label>👤 Username</label>
+    <input id="ap-username" type="text" placeholder="без @">
+    <button class="modal-close" id="ap-username-set" style="margin-top:6px; font-size:11px;">Сохранить username</button>
+
+    <label>🎚 Уровень</label>
+    <input id="ap-level" type="number" placeholder="1">
+    <button class="modal-close" id="ap-level-set" style="margin-top:6px; font-size:11px;">Сохранить уровень</button>
+
+    <div style="display:flex; gap:6px; margin-top:10px;">
+      <button class="modal-close" id="ap-ban" style="flex:1; background:linear-gradient(140deg,#5a1a1a,#2a0a0a); color:#ffb8b8; font-size:11px;">🚫 Бан</button>
+      <button class="modal-close" id="ap-unban" style="flex:1; background:linear-gradient(140deg,#1a5a1a,#0a2a0a); color:#b8ffb8; font-size:11px;">✅ Разбан</button>
+    </div>
+
+    <button class="modal-close" id="ap-close" style="margin-top:8px; background:var(--panel); color:var(--text); border:1px solid var(--line);">Закрыть</button>
   </div>
 </div>
 
@@ -530,12 +734,30 @@
   const tabGame = $("tab-game"), tabMy = $("tab-my"), tabProfile = $("tab-profile"),
         tabMenu = $("tab-menu"), tabTransfer = $("tab-transfer"), tabTop = $("tab-top"),
         tabUpgrade = $("tab-upgrade"), tabRef = $("tab-ref"), tabDaily = $("tab-daily"),
-        tabQuests = $("tab-quests"), tabAch = $("tab-achievements");
+        tabQuests = $("tab-quests"), tabAch = $("tab-achievements"),
+        tabStats = $("tab-stats"), tabSettings = $("tab-settings"), tabAdmin = $("tab-admin");
   const sim3d = $("sim-3d"), simFace = $("sim-face"), flashLayer = $("flash-layer");
   const skipBtn = $("skipBtn");
   const hideDuringSpin = document.querySelectorAll(".hide-during-spin");
+  const goldenBadge = $("golden-badge");
 
   let selectedCountry = "russia";
+  let goldenUntil = 0, x2Until = 0;
+  let isAdmin = false, adminId = null;
+  let adminSelectedPlayer = null;
+  let selectedColor = null;  // для звука/вибро
+  let settings = loadSettings();
+
+  function loadSettings() {
+    try {
+      const r = localStorage.getItem("sim_settings_" + USER_ID);
+      if (r) return JSON.parse(r);
+    } catch(e){}
+    return { theme: "dark", sound: true, vibe: true };
+  }
+  function saveSettings() {
+    try { localStorage.setItem("sim_settings_" + USER_ID, JSON.stringify(settings)); } catch(e){}
+  }
 
   const DEFAULT_STATE = {
     balance:50000,last:null,my_numbers:[],
@@ -544,31 +766,96 @@
     achievements: [], quests: [], winShown: false
   };
   let STATE = loadState();
-  function loadState() { try { const r = localStorage.getItem("sim_spinner_v20_" + USER_ID); if (r) return JSON.parse(r); } catch(e){} return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
-  function saveState() { try { localStorage.setItem("sim_spinner_v20_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+  function loadState() { try { const r = localStorage.getItem("sim_spinner_v21_" + USER_ID); if (r) return JSON.parse(r); } catch(e){} return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
+  function saveState() { try { localStorage.setItem("sim_spinner_v21_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+
+  // ==== звук и вибро ====
+  function playSound(type) {
+    if (!settings.sound) return;
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      const freqs = { spin: 400, win: 800, lose: 200, click: 600, ach: 1000 };
+      osc.frequency.value = freqs[type] || 500;
+      osc.type = "sine";
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    } catch(e){}
+  }
+  function vibrate(ms) { if (settings.vibe && navigator.vibrate) try { navigator.vibrate(ms); } catch(e){} }
+
+  // ==== тема ====
+  function applyTheme() {
+    if (settings.theme === "light") document.body.classList.add("light");
+    else document.body.classList.remove("light");
+    $("t-theme").classList.toggle("on", settings.theme === "light");
+  }
+  applyTheme();
+  $("t-theme").addEventListener("click", () => {
+    settings.theme = settings.theme === "light" ? "dark" : "light";
+    saveSettings(); applyTheme(); playSound("click");
+  });
+  $("t-sound").addEventListener("click", () => {
+    settings.sound = !settings.sound;
+    $("t-sound").classList.toggle("on", settings.sound);
+    saveSettings(); playSound("click");
+  });
+  $("t-vibe").addEventListener("click", () => {
+    settings.vibe = !settings.vibe;
+    $("t-vibe").classList.toggle("on", settings.vibe);
+    saveSettings(); vibrate(30);
+  });
 
   async function syncBalance() {
     try {
       const p = new URLSearchParams({user_id:USER_ID,username:USER_USERNAME_RAW,first_name:USER_NAME,photo:USER_PHOTO});
       const r = await fetch(API + "/api/balance?" + p);
+      if (r.status === 403) {
+        const d = await r.json();
+        alert("Вы забанены: " + (d.reason || ""));
+        return;
+      }
       const d = await r.json();
-      if (d.balance !== undefined) { STATE.balance = d.balance; STATE.level = d.level||STATE.level; STATE.xp = d.xp||STATE.xp; saveState(); updateStats(); }
-    } catch(e) {}
-  }
-
-  async function syncSpin(cost, price, mode, rarity, country) {
-    try {
-      const r = await fetch(API + "/api/spin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user_id:USER_ID,mode,cost,price,rarity,country})});
-      const d = await r.json();
-      if (d.balance !== undefined) { STATE.balance = d.balance; STATE.level = d.level; STATE.xp = d.xp; saveState(); updateStats(); }
-      if (d.new_achievements && d.new_achievements.length) {
-        d.new_achievements.forEach(a => showAchievementPopup(a));
+      if (d.balance !== undefined) {
+        STATE.balance = d.balance; STATE.level = d.level||STATE.level; STATE.xp = d.xp||STATE.xp;
+        goldenUntil = d.golden_until || 0;
+        x2Until = d.x2_until || 0;
+        updateGoldenBadge();
+        saveState(); updateStats();
       }
     } catch(e) {}
   }
 
-  let achQueue = [];
-  let achShowing = false;
+  function updateGoldenBadge() {
+    const now = Math.floor(Date.now() / 1000);
+    const active = (goldenUntil > now) || (x2Until > now);
+    goldenBadge.classList.toggle("show", active);
+  }
+
+  async function syncSpin(cost, price, mode, rarity, country, countryId, operator, number) {
+    try {
+      const r = await fetch(API + "/api/spin",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({user_id:USER_ID,mode,cost,price,rarity,country,country_id:countryId,operator,number})});
+      const d = await r.json();
+      if (d.balance !== undefined) {
+        STATE.balance = d.balance; STATE.level = d.level; STATE.xp = d.xp;
+        saveState(); updateStats();
+        if (d.final_price && d.mult > 1) {
+          // пересчитать итоговую цену
+          STATE.balance = d.balance;
+        }
+      }
+      if (d.new_achievements && d.new_achievements.length) {
+        d.new_achievements.forEach(a => { showAchievementPopup(a); playSound("ach"); vibrate(50); });
+      }
+    } catch(e) {}
+  }
+
+  let achQueue = [], achShowing = false;
   function showAchievementPopup(a) {
     achQueue.push(a);
     if (!achShowing) nextAchPopup();
@@ -582,15 +869,12 @@
     $("achPopupReward").textContent = "Награда: +" + (a.reward||0).toLocaleString("ru-RU") + " ₽";
     const p = $("achPopup");
     p.classList.add("show");
-    setTimeout(() => {
-      p.classList.remove("show");
-      setTimeout(nextAchPopup, 400);
-    }, 3200);
+    setTimeout(() => { p.classList.remove("show"); setTimeout(nextAchPopup, 400); }, 3200);
   }
 
   async function loadQuests() {
     const list = $("quests-list");
-    list.innerHTML = "<div style='text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Загрузка...</div>";
+    list.innerHTML = "<div style='text-align:center;color:var(--muted);padding:16px;font-size:11px;'>Загрузка...</div>";
     try {
       const r = await fetch(API + "/api/quests?user_id=" + USER_ID);
       const d = await r.json();
@@ -617,7 +901,7 @@
       });
       $("quests-dot").classList.toggle("show", hasReady);
       updateMenuDot();
-    } catch(e) { list.innerHTML = "<div style='text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Сервер недоступен</div>"; }
+    } catch(e) { list.innerHTML = "<div style='text-align:center;color:var(--muted);padding:16px;font-size:11px;'>Сервер недоступен</div>"; }
   }
 
   async function claimQuest(qid) {
@@ -627,13 +911,14 @@
       if (d.error) { toast(d.error); return; }
       STATE.balance = d.balance; saveState(); updateStats();
       toast("✅ +" + d.reward.toLocaleString("ru-RU") + " ₽");
+      playSound("win"); vibrate(40);
       loadQuests();
     } catch(e) { toast("Ошибка"); }
   }
 
   async function loadAchievements() {
     const list = $("achievements-list");
-    list.innerHTML = "<div style='text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Загрузка...</div>";
+    list.innerHTML = "<div style='text-align:center;color:var(--muted);padding:16px;font-size:11px;'>Загрузка...</div>";
     try {
       const r = await fetch(API + "/api/achievements?user_id=" + USER_ID);
       const d = await r.json();
@@ -652,8 +937,93 @@
           '</div>';
         list.appendChild(div);
       });
-      $("ach-progress").textContent = unlocked;
-    } catch(e) { list.innerHTML = "<div style='text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Сервер недоступен</div>"; }
+      $("ach-progress").textContent = unlocked + "/" + d.achievements.length;
+    } catch(e) { list.innerHTML = "<div style='text-align:center;color:var(--muted);padding:16px;font-size:11px;'>Сервер недоступен</div>"; }
+  }
+
+  async function loadStats() {
+    try {
+      const r = await fetch(API + "/api/stats?user_id=" + USER_ID);
+      const d = await r.json();
+      const grid = $("stats-grid");
+      const items = [
+        { lab: "Прокруток", val: d.spins },
+        { lab: "Продано", val: d.sold },
+        { lab: "Заработано", val: d.earned.toLocaleString("ru-RU") + " ₽" },
+        { lab: "Средний чек", val: d.avg_check.toLocaleString("ru-RU") + " ₽" },
+        { lab: "Любимая страна", val: d.favorite_country },
+        { lab: "Любимый оператор", val: d.favorite_operator },
+        { lab: "Лучшая цена", val: d.best_price.toLocaleString("ru-RU") + " ₽" },
+        { lab: "Уровень", val: STATE.level },
+      ];
+      grid.innerHTML = "";
+      items.forEach(it => {
+        const el = document.createElement("div");
+        el.className = "stat-cell";
+        el.innerHTML = '<div class="lab">' + it.lab + '</div><div class="val">' + it.val + '</div>';
+        grid.appendChild(el);
+      });
+
+      // Лучший номер
+      if (d.best_number) {
+        const bn = d.best_number;
+        const c = COUNTRY_LIST.find(x => x.id === bn.country_id) || { flag: "🏳️", code: "" };
+        $("best-flag").textContent = c.flag || "🏳️";
+        $("best-num").innerHTML = '<span class="p">' + (COUNTRY_CODES[bn.country_id] || "") + '</span>' + bn.number;
+        $("best-meta").textContent = (bn.rarity || "") + " · " + (bn.operator || "");
+        $("best-price").textContent = bn.price.toLocaleString("ru-RU") + " ₽";
+        $("best-number-wrap").style.display = "grid";
+      } else {
+        $("best-number-wrap").style.display = "none";
+      }
+
+      // История
+      const hlist = $("history-list");
+      hlist.innerHTML = "";
+      if (!d.history || !d.history.length) {
+        hlist.innerHTML = "<div class='empty'>Пока пусто</div>";
+      } else {
+        d.history.slice().reverse().forEach(h => {
+          const el = document.createElement("div");
+          el.className = "hist-item";
+          const c = COUNTRY_LIST.find(x => x.id === h.country_id) || { flag: "🏳️" };
+          const x2txt = h.x2 ? ' <span class="x2">×2</span>' : '';
+          el.innerHTML =
+            '<div>' +
+              '<div class="h-num">' + c.flag + ' <span class="p">' + (COUNTRY_CODES[h.country_id] || "") + '</span>' + (h.number || "—") + '</div>' +
+              '<div class="h-meta">' + (h.rarity || "") + ' · ' + (h.operator || "") + (h.sold ? ' · продан' : ' · оставлен') + '</div>' +
+            '</div>' +
+            '<div></div>' +
+            '<div class="h-price">' + h.price.toLocaleString("ru-RU") + '₽' + x2txt + '</div>';
+          hlist.appendChild(el);
+        });
+      }
+    } catch(e) { console.error(e); }
+  }
+
+  async function loadChart() {
+    try {
+      const r = await fetch(API + "/api/stats?user_id=" + USER_ID);
+      const d = await r.json();
+      const daily = d.daily_balance || [];
+      const line = $("chart-line"), area = $("chart-area");
+      if (daily.length < 2) {
+        line.setAttribute("d", ""); area.setAttribute("d", "");
+        return;
+      }
+      const W = 300, H = 100, pad = 5;
+      const vals = daily.map(x => x.balance);
+      const maxV = Math.max(...vals, 1);
+      const stepX = (W - pad * 2) / (daily.length - 1);
+      let dLine = "";
+      daily.forEach((p, i) => {
+        const x = pad + i * stepX;
+        const y = H - pad - (p.balance / maxV) * (H - pad * 2);
+        dLine += (i === 0 ? "M" : "L") + x.toFixed(1) + " " + y.toFixed(1) + " ";
+      });
+      line.setAttribute("d", dLine);
+      area.setAttribute("d", dLine + "L" + (pad + (daily.length - 1) * stepX) + " " + (H - pad) + " L" + pad + " " + (H - pad) + " Z");
+    } catch(e){}
   }
 
   function updateMenuDot() {
@@ -664,7 +1034,7 @@
 
   async function loadDailyGrid() {
     const grid = $("daily-grid");
-    grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Загрузка...</div>";
+    grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:var(--muted);padding:16px;font-size:11px;'>Загрузка...</div>";
     try {
       const r = await fetch(API + "/api/daily/status?user_id=" + USER_ID);
       const d = await r.json();
@@ -677,10 +1047,7 @@
         else if (dd.can_claim) cls += " today";
         else cls += " locked";
         el.className = cls;
-        let status = "—";
-        if (dd.claimed) status = "✓";
-        else if (dd.can_claim) status = "Забрать";
-        else status = "🔒";
+        let status = dd.claimed ? "✓" : dd.can_claim ? "Забрать" : "🔒";
         el.innerHTML = '<div class="dnum">День ' + dd.day + '</div><div class="drew">' + dd.reward.toLocaleString("ru-RU") + '</div><div class="dstatus">' + status + '</div>';
         grid.appendChild(el);
         if (dd.can_claim) canClaim = true;
@@ -688,7 +1055,7 @@
       $("daily-badge").classList.toggle("hidden", !canClaim);
       $("daily-claim-btn").disabled = !canClaim;
       $("daily-claim-btn").textContent = canClaim ? "Забрать" : "Уже забрано";
-    } catch(e) { grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Сервер недоступен</div>"; }
+    } catch(e) { grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:var(--muted);padding:16px;font-size:11px;'>Сервер недоступен</div>"; }
   }
   $("daily-claim-btn").addEventListener("click", async () => {
     try {
@@ -697,6 +1064,7 @@
       if (d.error) { toast(d.error); return; }
       STATE.balance = d.balance; saveState(); updateStats();
       toast("🎁 +" + d.reward.toLocaleString("ru-RU") + " ₽");
+      playSound("win"); vibrate(40);
       if (d.new_achievements) d.new_achievements.forEach(a => showAchievementPopup(a));
       loadDailyGrid();
     } catch(e) { toast("Ошибка"); }
@@ -711,8 +1079,8 @@
       el.addEventListener("click", () => {
         selectedCountry = co.id;
         document.querySelectorAll(".country-opt").forEach(x => x.classList.remove("active"));
-        el.classList.add("active");
-        updateSpinButtons();
+        el.classList.add("active"); updateSpinButtons();
+        playSound("click");
       });
       c.appendChild(el);
     });
@@ -763,8 +1131,8 @@
   function getRarity(b) { let r = RARITIES[0]; for (const it of RARITIES) if (b >= it[0]) r = it; return {name:r[1],mult:r[2],cls:r[3],card:r[4]}; }
   function makeNumber(b, c, om) {
     const r = getRarity(b);
-    const base = 15 * c.priceMult * om * b * r.mult;      // базовая цена снижена с 20 до 15
-    const boost = Math.pow(Math.max(0, b-1.5), 2.4) * c.priceMult * om * 2.4;   // буст снижен с 3 до 2.4
+    const base = 15 * c.priceMult * om * b * r.mult;
+    const boost = Math.pow(Math.max(0, b-1.5), 2.4) * c.priceMult * om * 2.4;
     let p = Math.floor(base + boost);
     if (p > MAX_PRICE) p = MAX_PRICE;
     p = Math.max(p, 3);
@@ -791,13 +1159,10 @@
     return rndDigits(9);
   }
 
-  // ============================================================
-  //  РЕЖИМЫ — удача стала сложнее: реже окуп, чаще мусор
-  // ============================================================
   const MODES = {
-    normal: { minBeauty: 1.00, bonus: 0.85, patternChance: 0.20 },   // bonus был 1.0, chance 0.35
-    lucky:  { minBeauty: 1.10, bonus: 1.10, patternChance: 0.45 },   // было 1.15 / 1.3 / 0.6
-    super:  { minBeauty: 1.30, bonus: 1.40, patternChance: 0.65 },   // было 1.4 / 1.6 / 0.8
+    normal: { minBeauty: 1.00, bonus: 0.85, patternChance: 0.20 },
+    lucky:  { minBeauty: 1.10, bonus: 1.10, patternChance: 0.45 },
+    super:  { minBeauty: 1.30, bonus: 1.40, patternChance: 0.65 },
   };
 
   function generateNumber(mode) {
@@ -807,7 +1172,7 @@
     const opName = opNames[Math.floor(Math.random()*opNames.length)];
     const opMult = ops[opName];
     let number, beauty;
-    for (let at = 0; at < 6; at++) {    // было 8 попыток, теперь 6 — сложнее достичь минимума
+    for (let at = 0; at < 6; at++) {
       const useP = Math.random() < cfg.patternChance || at >= 3;
       number = useP ? genPattern(mode) : rndDigits(9);
       beauty = Math.round(beautyScore(number) * cfg.bonus * 100) / 100;
@@ -823,13 +1188,16 @@
   }
 
   function showTab(name) {
-    [tabGame,tabMy,tabProfile,tabMenu,tabTransfer,tabTop,tabUpgrade,tabRef,tabDaily,tabQuests,tabAch].forEach(t => t.style.display = "none");
+    [tabGame,tabMy,tabProfile,tabMenu,tabTransfer,tabTop,tabUpgrade,tabRef,tabDaily,tabQuests,tabAch,tabStats,tabSettings,tabAdmin].forEach(t => t.style.display = "none");
     if (name === "game") tabGame.style.display = "flex";
     if (name === "menu") tabMenu.style.display = "flex";
     if (name === "my") { tabMy.style.display = "flex"; renderMyNumbers(); }
-    if (name === "profile") { tabProfile.style.display = "flex"; renderProfile(); }
+    if (name === "profile") { tabProfile.style.display = "flex"; renderProfile(); loadChart(); }
     if (name === "quests") { tabQuests.style.display = "flex"; loadQuests(); }
     if (name === "achievements") { tabAch.style.display = "flex"; loadAchievements(); }
+    if (name === "stats") { tabStats.style.display = "flex"; loadStats(); }
+    if (name === "settings") { tabSettings.style.display = "flex"; }
+    if (name === "admin") { tabAdmin.style.display = "flex"; }
     if (name === "transfer") tabTransfer.style.display = "flex";
     if (name === "top") { tabTop.style.display = "flex"; loadTop(); }
     if (name === "upgrade") { tabUpgrade.style.display = "flex"; renderUpgradeSelect(); }
@@ -837,9 +1205,10 @@
     if (name === "daily") { tabDaily.style.display = "flex"; loadDailyGrid(); }
   }
 
-  $("menuIconBtn").addEventListener("click", () => { showTab(tabGame.style.display === "flex" ? "menu" : "game"); });
+  $("menuIconBtn").addEventListener("click", () => { showTab(tabGame.style.display === "flex" ? "menu" : "game"); playSound("click"); });
   $("menu-my").addEventListener("click", () => showTab("my"));
   $("menu-profile").addEventListener("click", () => showTab("profile"));
+  $("menu-stats").addEventListener("click", () => showTab("stats"));
   $("menu-quests").addEventListener("click", () => showTab("quests"));
   $("menu-achievements").addEventListener("click", () => showTab("achievements"));
   $("menu-daily").addEventListener("click", () => showTab("daily"));
@@ -847,8 +1216,10 @@
   $("menu-top").addEventListener("click", () => showTab("top"));
   $("menu-upgrade").addEventListener("click", () => showTab("upgrade"));
   $("menu-ref").addEventListener("click", () => showTab("ref"));
+  $("menu-settings").addEventListener("click", () => showTab("settings"));
   $("backFromMy").addEventListener("click", () => showTab("menu"));
   $("backFromProfile").addEventListener("click", () => showTab("menu"));
+  $("backFromStats").addEventListener("click", () => showTab("menu"));
   $("backFromQuests").addEventListener("click", () => showTab("menu"));
   $("backFromAch").addEventListener("click", () => showTab("menu"));
   $("backFromTransfer").addEventListener("click", () => showTab("menu"));
@@ -856,6 +1227,149 @@
   $("backFromUpgrade").addEventListener("click", () => showTab("menu"));
   $("backFromRef").addEventListener("click", () => showTab("menu"));
   $("backFromDaily").addEventListener("click", () => showTab("menu"));
+  $("backFromSettings").addEventListener("click", () => showTab("menu"));
+  $("backFromAdmin").addEventListener("click", () => showTab("menu"));
+
+  // Dev-кнопки
+  $("dev-code").addEventListener("click", () => alert("Вы не являетесь разработчиком"));
+  $("dev-logs").addEventListener("click", () => alert("Вы не являетесь разработчиком"));
+  $("dev-admin").addEventListener("click", () => { showTab("admin"); });
+
+  // Админ-вход
+  $("adm-submit").addEventListener("click", async () => {
+    const login = $("adm-login").value.trim();
+    const password = $("adm-password").value.trim();
+    if (!login || !password) { alert("Заполни логин и пароль"); return; }
+    try {
+      const r = await fetch(API + "/api/admin/access",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({user_id:USER_ID,login,password,action:"login"})});
+      const d = await r.json();
+      if (d.error) {
+        if (confirm("Неверные данные.\n\nУстановить этот логин/пароль как постоянные?\n(Одноразовые из бота одноразовые, а тут ты сохранишь свои навсегда)")) {
+          const r2 = await fetch(API + "/api/admin/access",{method:"POST",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({user_id:USER_ID,login,password,action:"set_permanent"})});
+          const d2 = await r2.json();
+          if (d2.admin) { isAdmin = true; adminId = USER_ID; showAdminPanel(); }
+        }
+        return;
+      }
+      isAdmin = true; adminId = d.admin_id || USER_ID;
+      showAdminPanel();
+    } catch(e) { alert("Сервер недоступен"); }
+  });
+
+  function showAdminPanel() {
+    $("admin-login-view").style.display = "none";
+    $("admin-panel-view").style.display = "block";
+    loadAdminPlayers();
+  }
+
+  async function loadAdminPlayers() {
+    try {
+      const r = await fetch(API + "/api/admin/players");
+      const d = await r.json();
+      const search = ($("adm-search").value || "").toLowerCase();
+      const list = $("adm-players");
+      list.innerHTML = "";
+      d.players.forEach(p => {
+        if (search && !(p.username || "").toLowerCase().includes(search) && !(p.first_name || "").toLowerCase().includes(search) && !p.user_id.includes(search)) return;
+        const el = document.createElement("div");
+        el.className = "admin-player" + (p.online ? " online" : "");
+        const av = p.photo ? '<img src="' + p.photo + '">' : (p.first_name || "?").charAt(0).toUpperCase();
+        el.innerHTML =
+          '<div class="ap-line1">' +
+            '<div class="avatar">' + av + '</div>' +
+            '<div>' +
+              '<div class="nm">' + (p.first_name || "Игрок") + (p.banned ? " <span class=\'status-banned\'>🚫</span>" : "") + (p.online ? " <span class=\'status-on\'>●</span>" : "") + '</div>' +
+              '<div class="un">@' + (p.username || "нет") + ' · ID ' + p.user_id + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ap-line2"><span>Ур. ' + p.level + '</span><b>' + p.balance.toLocaleString("ru-RU") + ' ₽</b></div>';
+        el.addEventListener("click", () => openPlayerModal(p));
+        list.appendChild(el);
+      });
+      if (!list.children.length) list.innerHTML = "<div class='empty'>Никого не найдено</div>";
+    } catch(e) { $("adm-players").innerHTML = "<div class='empty'>Ошибка загрузки</div>"; }
+  }
+  $("adm-search").addEventListener("input", loadAdminPlayers);
+
+  async function openPlayerModal(p) {
+    adminSelectedPlayer = p;
+    try {
+      const r = await fetch(API + "/api/admin/player/" + p.user_id);
+      const d = await r.json();
+      $("ap-name").textContent = d.first_name || "Игрок";
+      $("ap-info").innerHTML = "@" + (d.username || "нет") + "<br>ID: " + p.user_id + " · Ур. " + d.level + "<br>Прокруток: " + d.total_spins + (d.banned ? "<br><span style='color:#ff7a7a;'>🚫 Забанен: " + (d.ban_reason || "") + "</span>" : "");
+      $("ap-balance").value = d.balance;
+      $("ap-username").value = d.username || "";
+      $("ap-level").value = d.level || 1;
+      $("admin-player-modal").classList.add("show");
+    } catch(e) { alert("Ошибка"); }
+  }
+
+  $("ap-balance-set").addEventListener("click", async () => {
+    if (!adminSelectedPlayer) return;
+    const amount = parseInt($("ap-balance").value, 10);
+    if (isNaN(amount)) { alert("Неверное число"); return; }
+    await fetch(API + "/api/admin/set_balance",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:adminSelectedPlayer.user_id,amount,admin_id:adminId})});
+    toast("✅ Баланс обновлён"); adminSelectedPlayer.balance = amount; loadAdminPlayers();
+  });
+  $("ap-username-set").addEventListener("click", async () => {
+    if (!adminSelectedPlayer) return;
+    const username = $("ap-username").value.trim();
+    await fetch(API + "/api/admin/set_username",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:adminSelectedPlayer.user_id,username,admin_id:adminId})});
+    toast("✅ Username обновлён"); loadAdminPlayers();
+  });
+  $("ap-level-set").addEventListener("click", async () => {
+    if (!adminSelectedPlayer) return;
+    const level = parseInt($("ap-level").value, 10);
+    if (isNaN(level)) return;
+    await fetch(API + "/api/admin/set_level",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:adminSelectedPlayer.user_id,level,admin_id:adminId})});
+    toast("✅ Уровень обновлён"); loadAdminPlayers();
+  });
+  $("ap-ban").addEventListener("click", async () => {
+    if (!adminSelectedPlayer) return;
+    const reason = prompt("Причина бана:", "Нарушение правил");
+    if (!reason) return;
+    await fetch(API + "/api/admin/ban",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:adminSelectedPlayer.user_id,action:"ban",reason,admin_id:adminId})});
+    toast("🚫 Забанен"); $("admin-player-modal").classList.remove("show"); loadAdminPlayers();
+  });
+  $("ap-unban").addEventListener("click", async () => {
+    if (!adminSelectedPlayer) return;
+    await fetch(API + "/api/admin/ban",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_id:adminSelectedPlayer.user_id,action:"unban",admin_id:adminId})});
+    toast("✅ Разбанен"); $("admin-player-modal").classList.remove("show"); loadAdminPlayers();
+  });
+  $("ap-close").addEventListener("click", () => $("admin-player-modal").classList.remove("show"));
+
+  // Быстрые действия
+  $("adm-x2").addEventListener("click", async () => {
+    if (!confirm("Запустить ×2 всем на 30 минут?")) return;
+    await fetch(API + "/api/admin/x2_all",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({admin_id:adminId})});
+    toast("🔥 ×2 активирован"); syncBalance();
+  });
+  $("adm-bonus").addEventListener("click", async () => {
+    const amount = parseInt(prompt("Сколько выдать всем ₽?", "10000"), 10);
+    if (!amount) return;
+    await fetch(API + "/api/admin/give_bonus",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({amount,admin_id:adminId})});
+    toast("🎁 Бонус выдан");
+  });
+  $("adm-reset").addEventListener("click", async () => {
+    if (!confirm("⚠️ Обнулить ВСЁ для ВСЕХ игроков?\n\nЭто нельзя отменить!")) return;
+    if (!confirm("Точно-точно? Сегодняшний сезон завершится.")) return;
+    await fetch(API + "/api/admin/season_reset",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({admin_id:adminId})});
+    toast("🎬 Сезон сброшен");
+    STATE.balance = 50000; STATE.level = 1; STATE.xp = 0;
+    STATE.my_numbers = []; STATE.achievements = []; STATE.quests = [];
+    saveState(); updateStats();
+  });
 
   function renderProfile() {
     $("pf-name").textContent = USER_NAME;
@@ -887,6 +1401,7 @@
       toast("✅ " + amt.toLocaleString("ru-RU") + " ₽ → @" + d.to_username);
       $("tf-username").value = ""; $("tf-amount").value = "";
       if (d.new_achievement) showAchievementPopup(d.new_achievement);
+      playSound("win"); vibrate(30);
     } catch(e) { toast("Сервер недоступен"); }
     b.disabled = false; b.textContent = "Перевести";
   });
@@ -928,7 +1443,7 @@
     if (!it) { toast("Не найден"); return; }
     upgradeSpinning = true; $("up-spin").disabled = true;
     $("up-result").className = "result-msg";
-    const win = Math.random() < 0.35;   // было 0.40 → теперь 35%
+    const win = Math.random() < 0.35;
     let ta;
     if (win) ta = -72 + (Math.random()-0.5)*120;
     else ta = -252 + (Math.random()-0.5)*200;
@@ -940,10 +1455,12 @@
         it.price = it.price * 2; saveState(); updateStats();
         $("up-result").textContent = "🎉 ×2! " + it.price.toLocaleString("ru-RU") + "₽";
         $("up-result").className = "result-msg win";
+        playSound("win"); vibrate(50);
       } else {
         STATE.my_numbers = STATE.my_numbers.filter(x => x.id !== id); saveState(); updateStats();
         $("up-result").textContent = "💥 Сгорел";
         $("up-result").className = "result-msg lose";
+        playSound("lose"); vibrate(80);
       }
       fetch(API + "/api/upgrade_used",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user_id:USER_ID})}).catch(()=>{});
       renderUpgradeSelect();
@@ -987,6 +1504,7 @@
     STATE.my_numbers = [];
     saveState(); updateStats(); renderMyNumbers();
     toast("💰 +" + total.toLocaleString("ru-RU") + "₽");
+    playSound("win");
   });
 
   function buildDigitsRow() {
@@ -1076,6 +1594,7 @@
     multiMode = !multiMode;
     $("multiToggle").classList.toggle("on", multiMode);
     $("multiToggle").textContent = multiMode ? "×3" : "×1";
+    playSound("click");
   });
   $("skipBtn").addEventListener("click", () => { skipRequested = true; skipBtn.classList.remove("show"); });
 
@@ -1100,7 +1619,7 @@
         STATE.stats.best_price = Math.max(STATE.stats.best_price, r.price);
       }
       results.push(r);
-      syncSpin(cost, r.price, mode, r.rarity, r.country);
+      syncSpin(cost, r.price, mode, r.rarity, r.country, r.country_id, r.operator, r.number);
     }
     STATE.last = results[results.length-1];
     saveState();
@@ -1111,6 +1630,7 @@
     sim3d.classList.remove("idle"); sim3d.classList.add("spinning");
     simFace.style.filter = "brightness(.7)";
     skipBtn.classList.add("show");
+    playSound("spin"); vibrate(20);
 
     await animateDigits(results[0].number);
 
@@ -1124,10 +1644,10 @@
     if (count === 1) {
       const r = results[0];
       if (r.kept) {
-        if (r.rarity === "МИФ") toast("🔥 МИФ!");
-        else if (r.rarity === "ЛЕГЕНДА") toast("⭐ ЛЕГЕНДА!");
-        else if (r.rarity === "ЭПИК") toast("💜 ЭПИК!");
-      } else toast("+" + r.price.toLocaleString("ru-RU") + "₽");
+        if (r.rarity === "МИФ") { toast("🔥 МИФ!"); playSound("win"); vibrate(60); }
+        else if (r.rarity === "ЛЕГЕНДА") { toast("⭐ ЛЕГЕНДА!"); playSound("win"); vibrate(50); }
+        else if (r.rarity === "ЭПИК") { toast("💜 ЭПИК!"); playSound("win"); vibrate(40); }
+      } else { toast("+" + r.price.toLocaleString("ru-RU") + "₽"); playSound("lose"); vibrate(15); }
     } else setTimeout(() => showMulti(results), 250);
 
     if (STATE.level >= MAX_LEVEL && !STATE.winShown) {
@@ -1160,6 +1680,7 @@
   }
   $("multi-close").addEventListener("click", () => $("multi-modal").classList.remove("show"));
   $("win-close").addEventListener("click", () => $("win-modal").classList.remove("show"));
+  $("season-close").addEventListener("click", () => $("season-modal").classList.remove("show"));
 
   function renderMyNumbers() {
     myList.innerHTML = "";
@@ -1190,12 +1711,16 @@
     STATE.stats.best_price = Math.max(STATE.stats.best_price, it.price);
     saveState(); updateStats();
     toast("+" + it.price.toLocaleString("ru-RU") + "₽");
+    playSound("win"); vibrate(30);
     renderMyNumbers();
   }
 
   $("spinNormal").addEventListener("click", () => spin("normal"));
   $("spinLucky").addEventListener("click", () => spin("lucky"));
   $("spinSuper").addEventListener("click", () => spin("super"));
+
+  // Синхронизация золотого часа каждые 30 сек
+  setInterval(syncBalance, 30000);
 
   renderCountryPicker();
   updateSpinButtons();
