@@ -13,20 +13,19 @@
 
   .game { max-width:560px; margin:0 auto; padding:12px 14px 40px; display:flex; flex-direction:column; align-items:center; }
 
-  .top-row { width:100%; display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-  .balance-pill { display:flex; align-items:center; gap:4px; padding:7px 10px; border-radius:14px; background:linear-gradient(140deg,rgba(40,48,64,.9),rgba(20,24,31,.95)); border:1px solid rgba(232,200,119,.35); font-size:12px; font-weight:800; color:var(--gold); white-space:nowrap; flex:0 0 auto; }
-  .balance-pill::before { content:"💰"; font-size:12px; }
-  .level-mini { flex:1 1 auto; display:flex; align-items:center; gap:6px; min-width:80px; }
-  .level-mini .num { font-size:11px; font-weight:900; color:var(--gold); white-space:nowrap; }
-  .level-mini .track { flex:1; height:8px; border-radius:4px; background:rgba(0,0,0,.7); border:1px solid rgba(232,200,119,.25); overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,.9); }
+  .top-row { width:100%; display:flex; align-items:center; gap:6px; margin-bottom:10px; min-height:36px; }
+  .balance-pill { display:flex; align-items:center; gap:4px; padding:6px 9px; border-radius:12px; background:linear-gradient(140deg,rgba(40,48,64,.9),rgba(20,24,31,.95)); border:1px solid rgba(232,200,119,.35); font-size:11px; font-weight:800; color:var(--gold); white-space:nowrap; flex:0 1 auto; min-width:0; max-width:125px; overflow:hidden; text-overflow:ellipsis; }
+  .balance-pill::before { content:"💰"; font-size:11px; flex-shrink:0; }
+  .level-mini { flex:1 1 auto; display:flex; align-items:center; gap:5px; min-width:50px; overflow:hidden; }
+  .level-mini .num { font-size:10px; font-weight:900; color:var(--gold); white-space:nowrap; }
+  .level-mini .track { flex:1; height:7px; border-radius:4px; background:rgba(0,0,0,.7); border:1px solid rgba(232,200,119,.25); overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,.9); min-width:20px; }
   .level-mini .fill { height:100%; width:0%; background:linear-gradient(90deg,#8a6a1a,#e8c877,#ffe9a8,#e8c877); border-radius:4px; transition:width .4s ease; box-shadow:0 0 10px rgba(232,200,119,.9); }
-  .menu-icon-btn { position:relative; width:38px; height:38px; border-radius:11px; background:linear-gradient(140deg,rgba(40,48,64,.9),rgba(20,24,31,.95)); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; flex-shrink:0; }
-  .menu-icon-btn span { display:block; width:16px; height:2px; border-radius:2px; background:var(--text); }
-  .menu-icon-btn .dot { position:absolute; top:5px; right:5px; width:9px; height:9px; border-radius:50%; background:#ffcc00; box-shadow:0 0 10px rgba(255,204,0,1); display:none; }
+  .menu-icon-btn { position:relative; width:36px; height:36px; border-radius:10px; background:linear-gradient(140deg,rgba(40,48,64,.9),rgba(20,24,31,.95)); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; flex:0 0 36px; }
+  .menu-icon-btn span { display:block; width:15px; height:2px; border-radius:2px; background:var(--text); }
+  .menu-icon-btn .dot { position:absolute; top:4px; right:4px; width:9px; height:9px; border-radius:50%; background:#ffcc00; box-shadow:0 0 10px rgba(255,204,0,1); display:none; }
   .menu-icon-btn.has-dot .dot { display:block; animation:pulse 1.4s infinite; }
   @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.2); } }
 
-  /* SIM-карта */
   .sim-stage { width:100%; max-width:330px; margin-bottom:12px; display:flex; justify-content:center; filter:drop-shadow(0 14px 28px rgba(0,0,0,.7)); }
   .sim-3d { position:relative; width:100%; aspect-ratio:1.586/1; transform:rotateX(10deg) rotateY(-6deg); transform-style:preserve-3d; transition:transform .6s cubic-bezier(.2,.8,.2,1); background:#1a1e26; border-radius:16px; overflow:hidden; }
   .sim-3d.idle { animation:simFloat 4s ease-in-out infinite; }
@@ -40,9 +39,33 @@
   .flash-layer { position:absolute; inset:0; z-index:20; pointer-events:none; opacity:0; border-radius:16px; }
   @keyframes flashAnim { 0% { opacity:1; background:radial-gradient(circle at center,rgba(255,255,255,.95),transparent 65%); } 100% { opacity:0; } }
 
-  .sim-chip { position:absolute; left:7%; top:60%; transform:translateY(-50%); width:56px; height:44px; border-radius:8px; background:linear-gradient(135deg,#f5e0a0 0%,#c9a95a 20%,#f0d98a 45%,#b8923f 75%,#e8cf88 100%); box-shadow:0 3px 8px rgba(0,0,0,.7),inset 0 1px 2px rgba(255,255,255,.9),inset 0 -2px 4px rgba(0,0,0,.55),inset 2px 0 3px rgba(255,255,255,.45),inset -2px 0 3px rgba(0,0,0,.4); z-index:5; overflow:hidden; }
-  .sim-chip::before { content:""; position:absolute; inset:4px; background-image:linear-gradient(to right,rgba(0,0,0,.75) 1px,transparent 1px),linear-gradient(to bottom,rgba(0,0,0,.75) 1px,transparent 1px); background-size:50% 50%,50% 50%; border-radius:3px; box-shadow:inset 0 0 8px rgba(0,0,0,.5); }
-  .sim-chip::after { content:""; position:absolute; inset:0; background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.85) 48%,rgba(255,255,255,1) 50%,rgba(255,255,255,.85) 52%,transparent 70%); animation:chipShine 3.5s ease-in-out infinite; }
+  /* ============ SIM-ЧИП — как у настоящей SIM ============ */
+  .sim-chip {
+    position:absolute; left:6%; top:58%;
+    transform:translateY(-50%);
+    width:62px; height:48px; border-radius:5px;
+    background: linear-gradient(135deg,#f5e0a0 0%,#d4b46a 30%,#f0d98a 60%,#b8923f 100%);
+    box-shadow: 0 3px 8px rgba(0,0,0,.7), inset 0 1px 2px rgba(255,255,255,.9), inset 0 -2px 4px rgba(0,0,0,.55);
+    z-index:5; overflow:hidden;
+  }
+  /* 6 контактных площадок как на настоящей SIM */
+  .sim-chip::before {
+    content:""; position:absolute; inset:5px;
+    background:
+      /* 2 вертикальные прорези */
+      linear-gradient(to right,
+        transparent 31%, rgba(0,0,0,.65) 31%, rgba(0,0,0,.65) 34%, transparent 34%,
+        transparent 66%, rgba(0,0,0,.65) 66%, rgba(0,0,0,.65) 69%, transparent 69%),
+      /* горизонтальная центральная прорезь */
+      linear-gradient(to bottom,
+        transparent 45%, rgba(0,0,0,.65) 45%, rgba(0,0,0,.65) 55%, transparent 55%);
+    border-radius:3px;
+  }
+  .sim-chip::after {
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.5) 48%, rgba(255,255,255,.8) 50%, rgba(255,255,255,.5) 52%, transparent 70%);
+    animation: chipShine 4s ease-in-out infinite;
+  }
   @keyframes chipShine { 0%,100% { transform:translateX(-100%); } 50% { transform:translateX(100%); } }
 
   .sim-3d.rar-trash .sim-face { background:linear-gradient(140deg,#4a5058 0%,#2a3038 55%,#1a1e24 100%); }
@@ -77,7 +100,6 @@
   .sim-rarity { font-size:9px; font-weight:900; letter-spacing:1px; text-transform:uppercase; padding:3px 7px; border-radius:4px; background:rgba(0,0,0,.75); border:1px solid currentColor; }
   .r-trash{color:#8b9199} .r-common{color:#b8bcc2} .r-uncommon{color:#7ac0e8} .r-rare{color:#6a9aff} .r-epic{color:#b88aff} .r-legend{color:#ffd966} .r-myth{color:#ff9a5a}
 
-  /* Страны */
   .country-picker { width:100%; max-width:440px; margin-bottom:8px; background:linear-gradient(140deg,rgba(28,34,44,.95),rgba(14,17,22,.95)); border:1px solid var(--line); border-radius:11px; padding:8px 10px; }
   .country-picker .label { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-bottom:5px; font-weight:800; }
   .country-scroll { display:flex; gap:5px; overflow-x:auto; padding-bottom:3px; }
@@ -88,7 +110,6 @@
   .country-opt .name { font-size:9px; font-weight:800; text-align:center; }
   .country-opt .price { font-size:8px; color:var(--gold); font-weight:900; }
 
-  /* Кнопки */
   .controls { width:100%; max-width:440px; }
   .spin-row { display:flex; gap:5px; margin-bottom:5px; }
   .spin-row button { flex:1; }
@@ -110,7 +131,6 @@
   .stat .label { font-size:8px; color:var(--muted); text-transform:uppercase; margin-bottom:2px; font-weight:700; }
   .stat .value { font-size:13px; color:var(--text); font-weight:900; }
 
-  /* Меню */
   .menu { width:100%; max-width:440px; display:grid; grid-template-columns:1fr 1fr; gap:7px; }
   .menu-btn { position:relative; display:flex; align-items:center; gap:9px; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:11px; padding:11px 12px; cursor:pointer; transition:all .2s; color:var(--text); font-family:inherit; font-size:12px; font-weight:800; text-align:left; }
   .menu-btn:hover { border-color:var(--gold); transform:translateY(-2px); }
@@ -121,7 +141,6 @@
   .menu-btn .yellow-dot.show { display:block; }
   .menu-btn.full { grid-column:1 / -1; justify-content:center; }
 
-  /* Мои номера */
   .sell-all-top { width:100%; max-width:440px; margin-bottom:10px; padding:11px 13px; background:linear-gradient(140deg,#4a6b4a,#1e2e1e); border:1px solid rgba(140,220,140,.5); border-radius:11px; }
   .sell-all-top .row { display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
   .sell-all-top .sum { font-size:11px; color:#b8e0b8; font-weight:700; }
@@ -143,7 +162,6 @@
   .my-card button { margin-top:4px; padding:4px 9px; font-size:10px; border-color:rgba(255,220,130,.5); color:#ffe9a8; }
   .empty { text-align:center; color:var(--muted); padding:40px 18px; font-size:12px; background:linear-gradient(140deg,rgba(28,34,44,.5),rgba(14,17,22,.7)); border:1px dashed rgba(255,255,255,.1); border-radius:11px; }
 
-  /* Профиль */
   .profile { width:100%; max-width:440px; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:13px; padding:20px 16px; display:flex; flex-direction:column; align-items:center; gap:9px; }
   .profile .avatar { width:72px; height:72px; border-radius:50%; background:linear-gradient(140deg,#4a5a7a,#2a3040); display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; color:#fff; overflow:hidden; border:2px solid rgba(232,200,119,.4); }
   .profile .avatar img { width:100%; height:100%; object-fit:cover; }
@@ -156,7 +174,6 @@
   .league-silver { color:#c0c0c0; background:rgba(192,192,192,.15); border:1px solid rgba(192,192,192,.5); }
   .league-gold { color:#ffd700; background:rgba(255,215,0,.15); border:1px solid rgba(255,215,0,.5); }
 
-  /* Топ */
   .top3 { width:100%; max-width:440px; display:flex; flex-direction:column; gap:7px; }
   .top3-card { display:grid; grid-template-columns:46px 1fr auto; gap:10px; align-items:center; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:11px; padding:10px 12px; }
   .top3-card.rank-1 { border-color:rgba(255,215,0,.8); }
@@ -168,13 +185,11 @@
   .top3-card .info .uname { font-size:10px; color:var(--gold); margin-top:1px; font-weight:700; }
   .top3-card .bal { font-size:14px; font-weight:900; color:var(--gold); text-align:right; }
 
-  /* Колесо */
   .wheel-wrap { position:relative; width:220px; height:220px; margin:0 auto 8px; }
   .wheel-pointer { position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent; border-top:20px solid var(--gold); filter:drop-shadow(0 0 8px rgba(232,200,119,1)); z-index:10; }
   .wheel { position:absolute; inset:0; border-radius:50%; border:4px solid var(--line); background:conic-gradient(from 0deg,#2e7a2e 0deg 144deg,#7a2e2e 144deg 360deg); transform:rotate(0deg); transition:transform 4s cubic-bezier(.17,.85,.3,1); }
   .wheel-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:64px; height:64px; border-radius:50%; background:linear-gradient(140deg,#2a3040,#14181f); border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:900; color:var(--gold); z-index:6; text-align:center; }
 
-  /* Панели */
   .panel { width:100%; max-width:440px; background:linear-gradient(140deg,#1e242e,#0f1318); border:1px solid var(--line); border-radius:13px; padding:18px 16px; }
   .panel h2 { margin:0 0 5px; font-size:15px; color:var(--gold); text-align:center; font-weight:900; }
   .panel p.sub { margin:0 0 14px; font-size:11px; color:var(--muted); text-align:center; }
@@ -186,7 +201,6 @@
   .result-msg.win { background:rgba(46,122,46,.3); border:1px solid #2e7a2e; color:#b8ffb8; display:block; }
   .result-msg.lose { background:rgba(122,46,46,.3); border:1px solid #7a2e2e; color:#ffb8b8; display:block; }
 
-  /* Задания */
   .quest-item { background:rgba(0,0,0,.4); border:1px solid var(--line); border-radius:10px; padding:11px 13px; margin-bottom:8px; }
   .quest-item .q-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
   .quest-item .q-text { font-size:12px; font-weight:800; color:#fff; }
@@ -199,7 +213,6 @@
   .quest-claim-btn { width:100%; margin-top:6px; padding:8px; background:linear-gradient(140deg,#2e7a2e,#1a4a1a); border:1px solid rgba(180,255,180,.6); color:#fff; font-size:11px; font-weight:900; border-radius:8px; cursor:pointer; }
   .quest-claim-btn:disabled { opacity:.4; cursor:not-allowed; }
 
-  /* Достижения */
   .ach-item { display:grid; grid-template-columns:44px 1fr; gap:10px; align-items:center; background:rgba(0,0,0,.4); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:7px; }
   .ach-item.locked { opacity:.5; }
   .ach-item.unlocked { border-color:rgba(232,200,119,.6); box-shadow:0 0 12px rgba(232,200,119,.2); }
@@ -208,17 +221,15 @@
   .ach-item .ach-desc { font-size:10px; color:var(--muted); margin-top:2px; }
   .ach-item .ach-reward { font-size:10px; color:var(--gold); font-weight:900; margin-top:2px; }
 
-  /* Ежедневка */
   .daily-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; }
-  @media (max-width:500px) { .daily-grid { grid-template-columns:repeat(3,1fr); } }
-  .daily-day { background:rgba(0,0,0,.4); border:1px solid var(--line); border-radius:9px; padding:8px 5px; text-align:center; }
+  .daily-day { background:rgba(0,0,0,.4); border:1px solid var(--line); border-radius:9px; padding:8px 3px; text-align:center; }
+  .daily-day.locked { opacity:.3; }
   .daily-day.claimed { opacity:.5; border-color:#2e7a2e; }
-  .daily-day.today { border-color:var(--gold); box-shadow:0 0 14px rgba(232,200,119,.5); }
-  .daily-day .dnum { font-size:9px; color:var(--muted); font-weight:800; text-transform:uppercase; margin-bottom:3px; }
-  .daily-day .drew { font-size:12px; color:var(--gold); font-weight:900; }
+  .daily-day.today { border-color:var(--gold); box-shadow:0 0 14px rgba(232,200,119,.5); opacity:1; }
+  .daily-day .dnum { font-size:8px; color:var(--muted); font-weight:800; text-transform:uppercase; margin-bottom:3px; }
+  .daily-day .drew { font-size:11px; color:var(--gold); font-weight:900; }
   .daily-day .dstatus { font-size:8px; color:var(--muted); margin-top:2px; }
 
-  /* Рефералка */
   .ref-stat { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin:10px 0; }
   .ref-stat .cell { background:rgba(0,0,0,.5); border:1px solid var(--line); border-radius:9px; padding:11px; text-align:center; }
   .ref-stat .cell .lab { font-size:9px; color:var(--muted); text-transform:uppercase; margin-bottom:3px; font-weight:800; }
@@ -229,11 +240,10 @@
 
   .back-btn { margin-top:12px; width:100%; max-width:440px; padding:11px; background:linear-gradient(140deg,#2a3040,#14181f); border:1px solid var(--line); border-radius:10px; color:var(--muted); font-size:12px; font-weight:800; cursor:pointer; }
 
-  /* Модалки */
   .modal { position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.9); display:none; align-items:center; justify-content:center; padding:20px; overflow-y:auto; }
   .modal.show { display:flex; animation:fadeIn .3s ease; }
   @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-  .modal-card { width:100%; max-width:340px; background:linear-gradient(140deg,#2a3040,#14181f); border:2px solid rgba(232,200,119,.5); border-radius:16px; padding:20px 16px; box-shadow:0 20px 60px rgba(0,0,0,.95); }
+  .modal-card { width:100%; max-width:340px; background:linear-gradient(140deg,#2a3040,#14181f); border:2px solid rgba(232,200,119,.5); border-radius:16px; padding:20px 16px; }
   .modal-card h2 { margin:0 0 12px; font-size:16px; color:var(--gold); text-align:center; font-weight:900; }
   .multi-item { background:rgba(0,0,0,.5); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:8px; }
   .multi-item.rar-epic { border-color:rgba(180,120,240,.7); }
@@ -250,7 +260,6 @@
   .multi-item .status.sold { color:#ffd966; }
   .modal-close { width:100%; padding:11px; margin-top:6px; background:linear-gradient(140deg,#8a6a1a,#4a3810); border:1px solid rgba(255,220,130,.6); color:#ffe9a8; font-size:13px; font-weight:900; border-radius:10px; cursor:pointer; }
 
-  /* Достижение popup */
   .ach-popup { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-120%); z-index:400; width:90%; max-width:360px; background:linear-gradient(140deg,#3a2e1a,#1a1408); border:2px solid var(--gold); border-radius:14px; padding:14px 16px; box-shadow:0 20px 60px rgba(0,0,0,.9),0 0 40px rgba(232,200,119,.5); transition:transform .4s cubic-bezier(.34,1.56,.64,1); }
   .ach-popup.show { transform:translateX(-50%) translateY(0); }
   .ach-popup .title { font-size:11px; color:var(--gold); font-weight:900; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
@@ -268,7 +277,7 @@
 <div class="game">
 
   <div class="top-row">
-    <div class="balance-pill"><span id="balance">100000</span></div>
+    <div class="balance-pill"><span id="balance">50000</span></div>
     <div class="level-mini">
       <div class="num">Ур.<span id="lv-num">1</span></div>
       <div class="track"><div class="fill" id="lv-fill"></div></div>
@@ -372,7 +381,7 @@
   <div id="tab-achievements">
     <div class="panel">
       <h2>🏆 Достижения</h2>
-      <p class="sub">Открыто: <span id="ach-progress">0</span>/20</p>
+      <p class="sub">Открыто: <span id="ach-progress">0</span>/21</p>
       <div id="achievements-list"></div>
     </div>
     <button class="back-btn" id="backFromAch">← Назад</button>
@@ -399,7 +408,7 @@
   <div id="tab-upgrade">
     <div class="panel">
       <h2>🎡 Улучшение</h2>
-      <p class="sub">🟢 ×2 · 🔴 сгорание (шанс 40%)</p>
+      <p class="sub">🟢 ×2 · 🔴 сгорание (шанс 35%)</p>
       <div class="wheel-wrap">
         <div class="wheel-pointer"></div>
         <div class="wheel" id="wheel"></div>
@@ -416,7 +425,7 @@
   <div id="tab-ref">
     <div class="panel">
       <h2>👥 Рефералка</h2>
-      <p class="sub">+50к за друга · +20% с его МИФов</p>
+      <p class="sub">+25к за друга · +5% с его МИФов</p>
       <div class="ref-stat">
         <div class="cell"><div class="lab">Друзей</div><div class="val" id="ref-count">0</div></div>
         <div class="cell"><div class="lab">Заработано</div><div class="val" id="ref-earned">0 ₽</div></div>
@@ -461,7 +470,7 @@
 <div class="modal" id="win-modal">
   <div class="modal-card" style="border-color:rgba(255,215,0,.9);box-shadow:0 20px 60px rgba(0,0,0,.95),0 0 60px rgba(255,215,0,.6);">
     <h2 style="font-size:20px;">🏆 ПОБЕДА!</h2>
-    <p class="sub" style="text-align:center;font-size:13px;line-height:1.5;padding:8px 0 16px;">Ты достиг <b style="color:#ffd700;">100 уровня</b>!<br>Теперь ты можешь сделать престиж — начать заново с бонусами.</p>
+    <p class="sub" style="text-align:center;font-size:13px;line-height:1.5;padding:8px 0 16px;">Ты достиг <b style="color:#ffd700;">1000 уровня</b>!<br>Это была долгая дорога. Молодец!</p>
     <button class="modal-close" id="win-close" style="background:linear-gradient(140deg,#8a6a1a,#4a3810);">Продолжить</button>
   </div>
 </div>
@@ -508,7 +517,7 @@
   ];
   const PASSLINE = ["420420420", "133713371", "123456789"];
   const KEEP_FROM = ["ЭПИК","ЛЕГЕНДА","МИФ"];
-  const DIGITS = 9, MAX_PRICE = 40000000, MAX_LEVEL = 100;
+  const DIGITS = 9, MAX_PRICE = 40000000, MAX_LEVEL = 1000;
   const $ = id => document.getElementById(id);
 
   const balanceEl = $("balance"), digitsRow = $("digits-row"), prefixEl = $("prefix");
@@ -529,14 +538,14 @@
   let selectedCountry = "russia";
 
   const DEFAULT_STATE = {
-    balance:100000,last:null,my_numbers:[],
+    balance:50000,last:null,my_numbers:[],
     stats:{spins:0,sold:0,earned:0,spent:0,best_price:0},
     next_id:1,streak:{epic:0,legend:0,myth:0},level:1,xp:0,
-    achievements: [], quests: []
+    achievements: [], quests: [], winShown: false
   };
   let STATE = loadState();
-  function loadState() { try { const r = localStorage.getItem("sim_spinner_v19_" + USER_ID); if (r) return JSON.parse(r); } catch(e){} return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
-  function saveState() { try { localStorage.setItem("sim_spinner_v19_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
+  function loadState() { try { const r = localStorage.getItem("sim_spinner_v20_" + USER_ID); if (r) return JSON.parse(r); } catch(e){} return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
+  function saveState() { try { localStorage.setItem("sim_spinner_v20_" + USER_ID, JSON.stringify(STATE)); } catch(e){} }
 
   async function syncBalance() {
     try {
@@ -558,7 +567,6 @@
     } catch(e) {}
   }
 
-  // ==== Достижения (popup) ====
   let achQueue = [];
   let achShowing = false;
   function showAchievementPopup(a) {
@@ -580,7 +588,6 @@
     }, 3200);
   }
 
-  // ==== Задания ====
   async function loadQuests() {
     const list = $("quests-list");
     list.innerHTML = "<div style='text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Загрузка...</div>";
@@ -624,7 +631,6 @@
     } catch(e) { toast("Ошибка"); }
   }
 
-  // ==== Достижения список ====
   async function loadAchievements() {
     const list = $("achievements-list");
     list.innerHTML = "<div style='text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Загрузка...</div>";
@@ -656,7 +662,6 @@
     $("menuDot").style.display = (qDot || aDot) ? "block" : "none";
   }
 
-  // ==== Ежедневка ====
   async function loadDailyGrid() {
     const grid = $("daily-grid");
     grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Загрузка...</div>";
@@ -664,17 +669,25 @@
       const r = await fetch(API + "/api/daily/status?user_id=" + USER_ID);
       const d = await r.json();
       grid.innerHTML = "";
-      let todayAvail = false;
+      let canClaim = false;
       d.days.forEach(dd => {
         const el = document.createElement("div");
-        el.className = "daily-day" + (dd.claimed ? " claimed" : "") + (dd.today ? " today" : "");
-        el.innerHTML = '<div class="dnum">День ' + dd.day + '</div><div class="drew">' + dd.reward.toLocaleString("ru-RU") + '</div><div class="dstatus">' + (dd.claimed ? "✓" : dd.today ? "Забрать" : "—") + '</div>';
+        let cls = "daily-day";
+        if (dd.claimed) cls += " claimed";
+        else if (dd.can_claim) cls += " today";
+        else cls += " locked";
+        el.className = cls;
+        let status = "—";
+        if (dd.claimed) status = "✓";
+        else if (dd.can_claim) status = "Забрать";
+        else status = "🔒";
+        el.innerHTML = '<div class="dnum">День ' + dd.day + '</div><div class="drew">' + dd.reward.toLocaleString("ru-RU") + '</div><div class="dstatus">' + status + '</div>';
         grid.appendChild(el);
-        if (dd.can_claim) todayAvail = true;
+        if (dd.can_claim) canClaim = true;
       });
-      $("daily-badge").classList.toggle("hidden", !todayAvail);
-      $("daily-claim-btn").disabled = !todayAvail;
-      $("daily-claim-btn").textContent = todayAvail ? "Забрать" : "Уже забрано";
+      $("daily-badge").classList.toggle("hidden", !canClaim);
+      $("daily-claim-btn").disabled = !canClaim;
+      $("daily-claim-btn").textContent = canClaim ? "Забрать" : "Уже забрано";
     } catch(e) { grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:#7a8290;padding:16px;font-size:11px;'>Сервер недоступен</div>"; }
   }
   $("daily-claim-btn").addEventListener("click", async () => {
@@ -689,7 +702,6 @@
     } catch(e) { toast("Ошибка"); }
   });
 
-  // ==== Страны ====
   function renderCountryPicker() {
     const c = $("country-scroll"); c.innerHTML = "";
     COUNTRY_LIST.forEach(co => {
@@ -749,21 +761,21 @@
     return Math.round(s * 100) / 100;
   }
   function getRarity(b) { let r = RARITIES[0]; for (const it of RARITIES) if (b >= it[0]) r = it; return {name:r[1],mult:r[2],cls:r[3],card:r[4]}; }
-  function makeNumber(b, c, om, passName) {
+  function makeNumber(b, c, om) {
     const r = getRarity(b);
-    const base = 20 * c.priceMult * om * b * r.mult;
-    const boost = Math.pow(Math.max(0, b-1.5), 2.4) * c.priceMult * om * 3;
+    const base = 15 * c.priceMult * om * b * r.mult;      // базовая цена снижена с 20 до 15
+    const boost = Math.pow(Math.max(0, b-1.5), 2.4) * c.priceMult * om * 2.4;   // буст снижен с 3 до 2.4
     let p = Math.floor(base + boost);
     if (p > MAX_PRICE) p = MAX_PRICE;
-    p = Math.max(p, 5);
+    p = Math.max(p, 3);
     return {price:p, rarity:r};
   }
   function rndDigits(n) { return Array.from({length:n},()=>"0123456789"[Math.floor(Math.random()*10)]).join(""); }
   function genPattern(mode) {
     let patterns, weights;
-    if (mode === "super") { patterns = ["repeat_high","repeat_mid","sequence","zeros","magic","palindrome","passline"]; weights = [3,4,2,2,4,3,1]; }
-    else if (mode === "lucky") { patterns = ["repeat_mid","magic","zeros","sequence","palindrome","double","passline"]; weights = [3,5,3,2,2,3,1]; }
-    else { patterns = ["magic","double","zeros","palindrome","passline"]; weights = [4,4,2,1,1]; }
+    if (mode === "super") { patterns = ["repeat_high","repeat_mid","sequence","zeros","magic","palindrome","passline"]; weights = [2,3,2,2,4,3,1]; }
+    else if (mode === "lucky") { patterns = ["repeat_mid","magic","zeros","sequence","palindrome","double","passline"]; weights = [2,4,2,2,2,3,1]; }
+    else { patterns = ["magic","double","zeros","palindrome","passline"]; weights = [3,3,1,1,1]; }
     const total = weights.reduce((a,b)=>a+b,0);
     let r = Math.random()*total, idx = 0;
     for (let i = 0; i < weights.length; i++) { r -= weights[i]; if (r <= 0) { idx = i; break; } }
@@ -778,7 +790,15 @@
     if (p === "double") { let s = ""; for (let i = 0; i < 4; i++) { const d = "0123456789"[Math.floor(Math.random()*10)]; s += d + d; } return s + "0123456789"[Math.floor(Math.random()*10)]; }
     return rndDigits(9);
   }
-  const MODES = { normal:{minBeauty:1,bonus:1,patternChance:0.35}, lucky:{minBeauty:1.15,bonus:1.3,patternChance:0.6}, super:{minBeauty:1.4,bonus:1.6,patternChance:0.8} };
+
+  // ============================================================
+  //  РЕЖИМЫ — удача стала сложнее: реже окуп, чаще мусор
+  // ============================================================
+  const MODES = {
+    normal: { minBeauty: 1.00, bonus: 0.85, patternChance: 0.20 },   // bonus был 1.0, chance 0.35
+    lucky:  { minBeauty: 1.10, bonus: 1.10, patternChance: 0.45 },   // было 1.15 / 1.3 / 0.6
+    super:  { minBeauty: 1.30, bonus: 1.40, patternChance: 0.65 },   // было 1.4 / 1.6 / 0.8
+  };
 
   function generateNumber(mode) {
     const cfg = MODES[mode], st = STATE.streak;
@@ -787,8 +807,8 @@
     const opName = opNames[Math.floor(Math.random()*opNames.length)];
     const opMult = ops[opName];
     let number, beauty;
-    for (let at = 0; at < 8; at++) {
-      const useP = Math.random() < cfg.patternChance || at >= 4;
+    for (let at = 0; at < 6; at++) {    // было 8 попыток, теперь 6 — сложнее достичь минимума
+      const useP = Math.random() < cfg.patternChance || at >= 3;
       number = useP ? genPattern(mode) : rndDigits(9);
       beauty = Math.round(beautyScore(number) * cfg.bonus * 100) / 100;
       if (beauty >= cfg.minBeauty) break;
@@ -845,7 +865,6 @@
     const av = $("pf-avatar");
     if (USER_PHOTO) av.innerHTML = '<img src="' + USER_PHOTO + '" alt="">';
     else av.textContent = USER_NAME.charAt(0).toUpperCase();
-    // Лига
     const lg = $("pf-league");
     const bal = STATE.balance;
     if (bal < 1000000) { lg.textContent = "🥉 Бронзовая лига"; lg.className = "league league-bronze"; }
@@ -909,7 +928,7 @@
     if (!it) { toast("Не найден"); return; }
     upgradeSpinning = true; $("up-spin").disabled = true;
     $("up-result").className = "result-msg";
-    const win = Math.random() < 0.40;
+    const win = Math.random() < 0.35;   // было 0.40 → теперь 35%
     let ta;
     if (win) ta = -72 + (Math.random()-0.5)*120;
     else ta = -252 + (Math.random()-0.5)*200;
@@ -926,7 +945,6 @@
         $("up-result").textContent = "💥 Сгорел";
         $("up-result").className = "result-msg lose";
       }
-      // Сообщаем серверу о прогрессе
       fetch(API + "/api/upgrade_used",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user_id:USER_ID})}).catch(()=>{});
       renderUpgradeSelect();
       upgradeSpinning = false; $("up-spin").disabled = false;
@@ -1112,7 +1130,6 @@
       } else toast("+" + r.price.toLocaleString("ru-RU") + "₽");
     } else setTimeout(() => showMulti(results), 250);
 
-    // Проверяем победу
     if (STATE.level >= MAX_LEVEL && !STATE.winShown) {
       STATE.winShown = true; saveState();
       $("win-modal").classList.add("show");
@@ -1180,15 +1197,12 @@
   $("spinLucky").addEventListener("click", () => spin("lucky"));
   $("spinSuper").addEventListener("click", () => spin("super"));
 
-  // Инициализация
   renderCountryPicker();
   updateSpinButtons();
   updateStats();
   if (STATE.last) showResult(STATE.last);
   showTab("game");
   syncBalance();
-
-  // Проверка готовых заданий и ежедневки
   fetch(API + "/api/quests?user_id=" + USER_ID).then(r => r.json()).then(d => {
     const hasReady = d.quests && d.quests.some(q => q.progress >= q.target && !q.claimed);
     if (hasReady) { $("quests-dot").classList.add("show"); updateMenuDot(); }
